@@ -1,1 +1,1 @@
-# ckfinder
+# CkFinderComposer自动加载

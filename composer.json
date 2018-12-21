@@ -1,0 +1,19 @@
+{
+    "name"       : "itxq/ckfinder",
+    "description": "实现CkFinderComposer引用",
+    "type"       : "library",
+    "authors"    : [
+        {
+            "name" : "IT小强xqitw.cn",
+            "email": "mail@xqitw.cn"
+        }
+    ],
+    "require"    : {
+        "php": ">=5.6.0"
+    },
+    "autoload"   : {
+        "psr-4": {
+            "itxq\\ckfinder\\": "src"
+        }
+    }
+}
