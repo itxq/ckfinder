@@ -43,7 +43,7 @@ return [
     'secureImageUploads'       => true,
     'checkSizeAfterScaling'    => true,
     'htmlExtensions'           => ['html', 'htm', 'xml', 'js'],
-    'hideFolders'              => ['.*', 'CVS', '__thumbs'],
+    'hideFolders'              => ['.*', 'CVS'],
     'hideFiles'                => ['.*'],
     'forceAscii'               => false,
     'xSendfile'                => false,
