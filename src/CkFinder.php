@@ -58,10 +58,9 @@ class CkFinder
      * 外部调用接口
      * @param array $publicConfig - 公开存储空间设置
      * @param array|false $privateConfig - 私密存储空间设置(false表示不启用私密存储空间)
-     * @param array $resourceTypes - 存储空间根目录设置
      */
-    public function run($publicConfig = [], $privateConfig = [], $resourceTypes = []) {
-        $ckFinder = new \CKSource\CKFinder\CKFinder(array_merge($this->config($publicConfig, $privateConfig, $resourceTypes), $this->config));
+    public function run($publicConfig = [], $privateConfig = []) {
+        $ckFinder = new \CKSource\CKFinder\CKFinder(array_merge($this->config($publicConfig, $privateConfig), $this->config));
         $ckFinder->run();
         exit();
     }
@@ -70,14 +69,18 @@ class CkFinder
      * 初始化默认配置并整合用户自定义配置
      * @param array $publicConfig - 公开存储空间设置
      * @param array|false $privateConfig - 私密存储空间设置(false表示不启用私密存储空间)
-     * @param array $resourceTypes - 存储空间根目录设置
      * @return array
      */
-    protected function config($publicConfig = [], $privateConfig = [], $resourceTypes = []) {
+    protected function config($publicConfig = [], $privateConfig = []) {
         $sysTempDir = sys_get_temp_dir();
         $config = include __DIR__ . '/../config/config.php';
-        $config['privateDir']['backend'] = self::PUBLIC_BACKEND;
+        $config['privateDir']['backend'] = isset($this->config['backend']) ? $this->config['backend'] : self::PUBLIC_BACKEND;
         $config['tempDirectory'] = !is_writable($sysTempDir) ? __DIR__ : $sysTempDir;
+        
+        // 存储空间设置
+        if (isset($this->config['backends'])) {
+            return $config;
+        }
         $publicBackend = array_merge([
             'name'               => self::PUBLIC_BACKEND,
             'adapter'            => 'local',
@@ -101,48 +104,30 @@ class CkFinder
             $config['backends'][] = $privateBackend;
         }
         
-        if (is_array($resourceTypes) && count($resourceTypes) >= 1) {
-            $config['resourceTypes'] = $resourceTypes;
-        } else {
-            $publicResourceType = [
-                'name'              => '公开',
-                'directory'         => self::PUBLIC_BACKEND . '_files',
+        // 资源目录设置
+        if (isset($this->config['resourceTypes'])) {
+            return $config;
+        }
+        $publicResourceType = [
+            'name'              => '公开',
+            'directory'         => self::PUBLIC_BACKEND . '_files',
+            'maxSize'           => 0,
+            'allowedExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pptx,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,xlsx,zip',
+            'deniedExtensions'  => '',
+            'backend'           => self::PUBLIC_BACKEND
+        ];
+        $config['resourceTypes'] = [$publicResourceType];
+        if ($privateConfig !== false) {
+            $config['resourceTypes'][] = [
+                'name'              => '私密',
+                'directory'         => self::PRIVATE_BACKEND . '_files',
                 'maxSize'           => 0,
                 'allowedExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pptx,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,xlsx,zip',
                 'deniedExtensions'  => '',
-                'backend'           => self::PUBLIC_BACKEND
+                'backend'           => self::PRIVATE_BACKEND
             ];
-            $config['resourceTypes'] = [$publicResourceType];
-            if ($privateConfig !== false) {
-                $config['resourceTypes'][] = [
-                    'name'              => '私密',
-                    'directory'         => self::PRIVATE_BACKEND . '_files',
-                    'maxSize'           => 0,
-                    'allowedExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pptx,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,xlsx,zip',
-                    'deniedExtensions'  => '',
-                    'backend'           => self::PRIVATE_BACKEND
-                ];
-            }
         }
         return $config;
-    }
-    
-    /**
-     * 检查目录，不存在则创建
-     * @param $dir - 路径
-     * @return bool|string - 返回路径、创建失败会返回false
-     */
-    protected function checkDir($dir) {
-        if (empty($dir)) {
-            return false;
-        }
-        if (is_dir($dir)) {
-            return realpath($dir) . DIRECTORY_SEPARATOR;
-        }
-        if (!mkdir($dir, 0777, true)) {
-            return false;
-        }
-        return realpath($dir) . DIRECTORY_SEPARATOR;
     }
 }
 
@@ -182,7 +167,7 @@ trait CkFinderTrait
      * @param bool $force - 是否强制重新实例化
      * @return static
      */
-    public static function ins($config = [], $force = false) {
+    public static function ins($config = [], $force = true) {
         $className = get_called_class();
         if (!isset(self::$instances[$className]) || !self::$instances[$className] instanceof $className || $force === true) {
             $instance = new $className($config);
