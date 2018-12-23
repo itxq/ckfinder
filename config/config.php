@@ -36,7 +36,7 @@ return [
     'csrfProtection'           => true,
     'headers'                  => [],
     'pluginsDirectory'         => __DIR__ . '/../plugins',
-    'plugins'                  => [],
+    'plugins'                  => ['Upy'],
     'overwriteOnUpload'        => false,
     'checkDoubleExtension'     => true,
     'disallowUnsafeCharacters' => false,
