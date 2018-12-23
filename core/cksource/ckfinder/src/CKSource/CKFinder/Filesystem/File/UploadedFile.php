@@ -152,9 +152,6 @@ class UploadedFile extends File
         $backend=$this->workingFolder->getBackend();
         $path=$this->workingFolder->getPath();
         $filePath = Path::combine($path, $name);
-        if (!$backend->has($filePath)) {
-            return false;
-        }
         if (!$backend->has($filePath)){
             return $name;
         }
