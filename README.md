@@ -14,7 +14,7 @@
 
 + core/cksource/ckfinder/src/CKSource/CKFinder/Filesystem/File/UploadedFile.php
 
-### 实现composer加载
+### composer加载
 
 ```
 composer require itxq/ckfinder
@@ -37,4 +37,37 @@ try {
 } catch (\Exception$exception) {
     // var_dump($exception->getMessage());
 }
+```
+
+### 又拍云存储
+
+```php
+
+try {
+    \itxq\ckfinder\CkFinder::ins([
+        'auto_rename' => ['folder' => false, 'file' => true],
+        'licenseName' => '',
+        'licenseKey'  => ''
+    ])->run(
+        [
+            'adapter'  => 'upy',
+            'service'  => '',
+            'operator' => '',
+            'password' => '',
+            'root'     => \itxq\ckfinder\CkFinder::PUBLIC_BACKEND . '/',
+            'baseUrl'  => 'https://ypy.test.com/'. \itxq\ckfinder\CkFinder::PUBLIC_BACKEND
+        ],
+        [
+            'adapter'  => 'upy',
+            'service'  => '',
+            'operator' => '',
+            'password' => '',
+            'root'     => \itxq\ckfinder\CkFinder::PRIVATE_BACKEND . '/',
+            'baseUrl'  => 'https://ypy.test.com/'. \itxq\ckfinder\CkFinder::PRIVATE_BACKEND
+        ]
+    );
+} catch (\Exception$exception) {
+    // var_dump($exception->getMessage());
+}
+exit();
 ```
