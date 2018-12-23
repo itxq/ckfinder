@@ -18,6 +18,7 @@ use CKSource\CKFinder\Acl\Permission;
 use CKSource\CKFinder\Event\CKFinderEvent;
 use CKSource\CKFinder\Event\CreateFolderEvent;
 use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
+use itxq\ckfinder\tools\AutoRename;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -30,7 +31,10 @@ class CreateFolder extends CommandAbstract
     public function execute(Request $request, WorkingFolder $workingFolder, EventDispatcher $dispatcher)
     {
         $newFolderName = (string) $request->query->get('newFolderName', '');
-
+        // ---------------------------------------------------------------------------------------
+        // 自动重命名 AutoRename
+        $newFolderName = AutoRename::ins()->config($this->app)->autoRename($newFolderName, '');
+        // ---------------------------------------------------------------------------------------
         $createFolderEvent = new CreateFolderEvent($this->app, $workingFolder, $newFolderName);
 
         $dispatcher->dispatch(CKFinderEvent::CREATE_FOLDER, $createFolderEvent);
