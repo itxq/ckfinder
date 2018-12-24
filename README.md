@@ -1,18 +1,10 @@
 # CkFinder3.4.5 for PHP 优化版 （添加又拍云存储）
 
-### 已修改的核心文件
+### 开源地址：
 
-+ core/cksource/ckfinder/src/CKSource/CKFinder/Command/CreateFolder.php
+[【GigHub:】https://github.com/itxq/ckfinder](https://github.com/itxq/ckfinder)
 
-+ core/cksource/ckfinder/src/CKSource/CKFinder/Command/RenameFolder.php
-
-+ core/cksource/ckfinder/src/CKSource/CKFinder/Command/RenameFile.php
-
-+ core/cksource/ckfinder/src/CKSource/CKFinder/Command/FileUpload.php
-
-+ core/cksource/ckfinder/src/CKSource/CKFinder/Filesystem/File/File.php
-
-+ core/cksource/ckfinder/src/CKSource/CKFinder/Filesystem/File/UploadedFile.php
+[【码云:】https://gitee.com/itxq/ckfinder](https://github.com/itxq/ckfinder)
 
 ### 扩展安装：
 
@@ -68,3 +60,17 @@ try {
 }
 
 ```
+
+### 修改文件：
+
++ core/cksource/ckfinder/src/CKSource/CKFinder/Command/CreateFolder.php
+
++ core/cksource/ckfinder/src/CKSource/CKFinder/Command/RenameFolder.php
+
++ core/cksource/ckfinder/src/CKSource/CKFinder/Command/RenameFile.php
+
++ core/cksource/ckfinder/src/CKSource/CKFinder/Command/FileUpload.php
+
++ core/cksource/ckfinder/src/CKSource/CKFinder/Filesystem/File/File.php
+
++ core/cksource/ckfinder/src/CKSource/CKFinder/Filesystem/File/UploadedFile.php
