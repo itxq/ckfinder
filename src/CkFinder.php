@@ -34,6 +34,16 @@ class CkFinder
     const PRIVATE_BACKEND = 'private';
     
     /**
+     * 本地存储空间
+     */
+    const ADAPTER_LOCAL = 'local';
+    
+    /**
+     * 又拍云存储空间
+     */
+    const ADAPTER_UPY = 'upy';
+    
+    /**
      * @var string - 默认根目录
      */
     protected $rootDir = __DIR__ . '/../uploads';
@@ -44,7 +54,7 @@ class CkFinder
     protected $baseUrl = '';
     
     /**
-     * SingleModelTrait 构造函数. 禁止直接实例化该类
+     * CkFinder 构造函数. 禁止直接实例化该类
      * @param array|mixed $config - 配置信息
      */
     protected function __construct($config = []) {
@@ -58,9 +68,9 @@ class CkFinder
     
     /**
      * 添加资源目录
-     * @param $name - 显示名称
-     * @param $directory - 目录路径
-     * @param $backend - 所属存储空间
+     * @param string $name - 显示名称
+     * @param string $directory - 目录路径
+     * @param string $backend - 所属存储空间
      * @param array $config - 更多配置
      * @return CkFinder
      */
@@ -74,22 +84,33 @@ class CkFinder
     
     /**
      * 添加存储空间
-     * @param $name - 名称
-     * @param $adapter - 存储空间类型（local-本地存储；upy-又拍云存储）
+     * @param string $name - 名称
+     * @param string $adapter - 存储空间类型（local-本地存储；upy-又拍云存储）
      * @param $config - 其他配置
      * @return CkFinder
      */
-    public function addBackend($name, $adapter = 'local', $config = []) {
+    public function addBackend($name, $adapter = self::ADAPTER_LOCAL, $config = []) {
+        $defaultConfig = ['chmodFiles' => 0777, 'chmodFolders' => 0755, 'filesystemEncoding' => 'UTF-8'];
         $config['name'] = $name;
         $config['adapter'] = $adapter;
-        $this->config['backends'][] = $config;
+        $this->config['backends'][] = array_merge($defaultConfig, $config);
+        return $this;
+    }
+    
+    /**
+     * 设置PrivateDirKey
+     * @param string $key - （可用于区分不同用户的缓存目录，建议使用用户ID）
+     * @return CkFinder
+     */
+    public function setPrivateDirKey($key) {
+        $this->config['private_dir_key'] = $key;
         return $this;
     }
     
     /**
      * 添加配置
-     * @param $name - 配置项名称
-     * @param $value - 配置项的值
+     * @param string $name - 配置项名称
+     * @param mixed $value - 配置项的值
      * @return CkFinder
      */
     public function setConfig($name, $value) {
@@ -103,8 +124,6 @@ class CkFinder
     
     /**
      * 外部调用接口
-     * @param array $publicConfig - 公开存储空间设置
-     * @param array|false $privateConfig - 私密存储空间设置(false表示不启用私密存储空间)
      */
     public function run() {
         $this->config();
@@ -171,11 +190,15 @@ class CkFinder
      * 设置PrivateDir
      */
     protected function setPrivateDir() {
+        $root = realpath(__DIR__ . '/../runtime') . DIRECTORY_SEPARATOR;
+        if (isset($this->config['private_dir_key']) && !empty($this->config['private_dir_key'])) {
+            $root .= $this->config['private_dir_key'] . DIRECTORY_SEPARATOR;
+        }
         $this->config['backends'][] = [
             'name'               => 'ckfinder_cache',
             'adapter'            => 'local',
             'baseUrl'            => '',
-            'root'               => realpath(__DIR__ . '/../runtime') . DIRECTORY_SEPARATOR,
+            'root'               => $root,
             'chmodFiles'         => 0777,
             'chmodFolders'       => 0755,
             'filesystemEncoding' => 'UTF-8'
