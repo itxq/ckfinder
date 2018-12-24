@@ -54,7 +54,7 @@ class UpyAdapter extends AbstractAdapter
      * @throws \Exception
      */
     public function __construct($config) {
-        $this->tempDir = __DIR__ . '/runtime';
+        $this->tempDir = __DIR__ . '/../runtime';
         if (!is_dir($this->tempDir) && !mkdir($this->tempDir, 0777, true)) {
             throw new \Exception('临时目录｛' . $this->tempDir . '｝不可写');
         }
