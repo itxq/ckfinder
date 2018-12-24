@@ -43,21 +43,12 @@ class UpyAdapter extends AbstractAdapter
     protected $pathPrefix = '/';
     
     /**
-     * @var null|string - 临时目录
-     */
-    protected $tempDir = null;
-    
-    /**
      * 又拍云储存
      * UpyAdapter 构造函数.
      * @param $config
      * @throws \Exception
      */
     public function __construct($config) {
-        $this->tempDir = __DIR__ . '/../../runtime';
-        if (!is_dir($this->tempDir) && !mkdir($this->tempDir, 0777, true)) {
-            throw new \Exception('临时目录｛' . $this->tempDir . '｝不可写');
-        }
         $this->config = $config;
         $this->pathPrefix = $this->getSubValue('root', $config, '');
         $serviceName = $this->getSubValue('service', $config, '');
@@ -269,15 +260,15 @@ class UpyAdapter extends AbstractAdapter
      * @throws \Exception
      */
     public function readStream($path) {
-        $tempPath = $this->tempDir . basename($path);
         $path = $this->applyPathPrefix($path);
         $info = $this->info($path);
         $info['content'] = $this->readContent($path, 'file');
         $info['stream'] = $info['content'];
-        if (file_put_contents($tempPath, $info['content'])) {
-            $info['stream'] = fopen($tempPath, 'rb');
-            @unlink($tempPath);
+        $tempName = tempnam('', 'tmp');
+        if (!$tempName || !file_put_contents($tempName, $info['content'])) {
+            return $info;
         }
+        $info['stream'] = fopen($tempName, 'rb');
         return $info;
     }
     
