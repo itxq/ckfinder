@@ -41,7 +41,7 @@ class CkFinder
     /**
      * @var string - 默认URL根路径
      */
-    protected $baseUrl = '/';
+    protected $baseUrl = '';
     
     /**
      * SingleModelTrait 构造函数. 禁止直接实例化该类
@@ -57,78 +57,135 @@ class CkFinder
     }
     
     /**
+     * 添加资源目录
+     * @param $name - 显示名称
+     * @param $directory - 目录路径
+     * @param $backend - 所属存储空间
+     * @param array $config - 更多配置
+     * @return CkFinder
+     */
+    public function addResource($name, $directory, $backend, $config = []) {
+        $config['name'] = $name;
+        $config['directory'] = $directory;
+        $config['backend'] = $backend;
+        $this->config['resourceTypes'][] = $config;
+        return $this;
+    }
+    
+    /**
+     * 添加存储空间
+     * @param $name - 名称
+     * @param $adapter - 存储空间类型（local-本地存储；upy-又拍云存储）
+     * @param $config - 其他配置
+     * @return CkFinder
+     */
+    public function addBackend($name, $adapter = 'local', $config = []) {
+        $config['name'] = $name;
+        $config['adapter'] = $adapter;
+        $this->config['backends'][] = $config;
+        return $this;
+    }
+    
+    /**
+     * 添加配置
+     * @param $name - 配置项名称
+     * @param $value - 配置项的值
+     * @return CkFinder
+     */
+    public function setConfig($name, $value) {
+        if (is_array($name)) {
+            $this->config = array_merge($this->config, $name);
+        } else {
+            $this->config[$name] = $value;
+        }
+        return $this;
+    }
+    
+    /**
      * 外部调用接口
      * @param array $publicConfig - 公开存储空间设置
      * @param array|false $privateConfig - 私密存储空间设置(false表示不启用私密存储空间)
      */
-    public function run($publicConfig = [], $privateConfig = []) {
-        $ckFinder = new \CKSource\CKFinder\CKFinder(array_merge($this->config($publicConfig, $privateConfig), $this->config));
+    public function run() {
+        $this->config();
+        $ckFinder = new \CKSource\CKFinder\CKFinder($this->config);
         $ckFinder->run();
         exit();
     }
     
     /**
-     * 初始化默认配置并整合用户自定义配置
-     * @param array $publicConfig - 公开存储空间设置
-     * @param array|false $privateConfig - 私密存储空间设置(false表示不启用私密存储空间)
-     * @return array
+     * 配置整合
      */
-    protected function config($publicConfig = [], $privateConfig = []) {
+    protected function config() {
         $sysTempDir = sys_get_temp_dir();
         $config = include __DIR__ . '/../config/config.php';
-        $config['privateDir']['backend'] = isset($this->config['backend']) ? $this->config['backend'] : self::PUBLIC_BACKEND;
-        $config['tempDirectory'] = !is_writable($sysTempDir) ? __DIR__ : $sysTempDir;
-        
+        $this->config = array_merge($config, $this->config);
+        $this->config['tempDirectory'] = !is_writable($sysTempDir) ? __DIR__ : $sysTempDir;
         // 存储空间设置
-        if (isset($this->config['backends'])) {
-            return $config;
-        }
-        $publicBackend = array_merge([
-            'name'               => self::PUBLIC_BACKEND,
-            'adapter'            => 'local',
-            'baseUrl'            => $this->baseUrl,
-            'root'               => $this->rootDir,
-            'chmodFiles'         => 0777,
-            'chmodFolders'       => 0755,
-            'filesystemEncoding' => 'UTF-8'
-        ], (array)$publicConfig);
-        $config['backends'] = [$publicBackend];
-        if ($privateConfig !== false) {
-            $privateBackend = array_merge([
-                'name'               => self::PRIVATE_BACKEND,
+        if (!isset($this->config['backends'])) {
+            $publicBackend = [
+                'name'               => self::PUBLIC_BACKEND,
                 'adapter'            => 'local',
-                'baseUrl'            => $this->baseUrl,
-                'root'               => $this->rootDir . '/../' . self::PRIVATE_BACKEND . '_uploads',
+                'baseUrl'            => $this->baseUrl . '/' . self::PUBLIC_BACKEND,
+                'root'               => $this->rootDir . '/' . self::PUBLIC_BACKEND . '/',
                 'chmodFiles'         => 0777,
                 'chmodFolders'       => 0755,
                 'filesystemEncoding' => 'UTF-8'
-            ], (array)$privateConfig);
-            $config['backends'][] = $privateBackend;
+            ];
+            $privateBackend = [
+                'name'               => self::PRIVATE_BACKEND,
+                'adapter'            => 'local',
+                'baseUrl'            => $this->baseUrl . '/' . self::PRIVATE_BACKEND,
+                'root'               => $this->rootDir . '/' . self::PRIVATE_BACKEND . '/',
+                'chmodFiles'         => 0777,
+                'chmodFolders'       => 0755,
+                'filesystemEncoding' => 'UTF-8'
+            ];
+            $this->config['backends'] = [$publicBackend, $privateBackend];
         }
-        
         // 资源目录设置
-        if (isset($this->config['resourceTypes'])) {
-            return $config;
-        }
-        $publicResourceType = [
-            'name'              => '公开',
-            'directory'         => self::PUBLIC_BACKEND . '_files',
-            'maxSize'           => 0,
-            'allowedExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pptx,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,xlsx,zip',
-            'deniedExtensions'  => '',
-            'backend'           => self::PUBLIC_BACKEND
-        ];
-        $config['resourceTypes'] = [$publicResourceType];
-        if ($privateConfig !== false) {
-            $config['resourceTypes'][] = [
+        if (!isset($this->config['resourceTypes'])) {
+            $publicResourceType = [
+                'name'              => '公开',
+                'directory'         => 'files',
+                'maxSize'           => 0,
+                'allowedExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pptx,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,xlsx,zip',
+                'deniedExtensions'  => '',
+                'backend'           => self::PUBLIC_BACKEND
+            ];
+            $privateResourceType = [
                 'name'              => '私密',
-                'directory'         => self::PRIVATE_BACKEND . '_files',
+                'directory'         => 'files',
                 'maxSize'           => 0,
                 'allowedExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pptx,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,xlsx,zip',
                 'deniedExtensions'  => '',
                 'backend'           => self::PRIVATE_BACKEND
             ];
+            $this->config['resourceTypes'] = [$publicResourceType, $privateResourceType];
         }
-        return $config;
+        // 设置PrivateDir
+        $this->setPrivateDir();
+    }
+    
+    /**
+     * 设置PrivateDir
+     */
+    protected function setPrivateDir() {
+        $this->config['backends'][] = [
+            'name'               => 'ckfinder_cache',
+            'adapter'            => 'local',
+            'baseUrl'            => '',
+            'root'               => realpath(__DIR__ . '/../runtime') . DIRECTORY_SEPARATOR,
+            'chmodFiles'         => 0777,
+            'chmodFolders'       => 0755,
+            'filesystemEncoding' => 'UTF-8'
+        ];
+        $this->config['privateDir'] = [
+            'backend' => 'ckfinder_cache',
+            'tags'    => '.ckfinder/tags',
+            'logs'    => '.ckfinder/logs',
+            'cache'   => '.ckfinder/cache',
+            'thumbs'  => '.ckfinder/cache/thumbs',
+        ];
     }
 }
