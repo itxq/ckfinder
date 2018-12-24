@@ -1,4 +1,8 @@
 /.idea
 /vendor/
 /test/
+/runtime/
+!/runtime/README.md
+/uploads/
+!/uploads/README.md
 /composer.lock
