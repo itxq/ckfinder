@@ -2,7 +2,7 @@
 
 ### 开源地址：
 
-[【GigHub:】https://github.com/itxq/ckfinder](https://github.com/itxq/ckfinder)
+[【GitHub:】https://github.com/itxq/ckfinder](https://github.com/itxq/ckfinder)
 
 [【码云:】https://gitee.com/itxq/ckfinder](https://github.com/itxq/ckfinder)
 
