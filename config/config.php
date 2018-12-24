@@ -9,14 +9,6 @@ return [
     'authentication'           => function () {
         return true;
     },
-    'licenseName'              => '',
-    'licenseKey'               => '',
-    'privateDir'               => [
-        'tags'   => '.ckfinder/tags',
-        'logs'   => '.ckfinder/logs',
-        'cache'  => '.ckfinder/cache',
-        'thumbs' => '.ckfinder/cache/thumbs',
-    ],
     'images'                   => [
         'maxWidth'  => 20000,
         'maxHeight' => 20000,
@@ -43,7 +35,7 @@ return [
     'secureImageUploads'       => true,
     'checkSizeAfterScaling'    => true,
     'htmlExtensions'           => ['html', 'htm', 'xml', 'js'],
-    'hideFolders'              => ['.*', 'CVS'],
+    'hideFolders'              => ['.*', 'CVS', '__thumbs'],
     'hideFiles'                => ['.*'],
     'forceAscii'               => false,
     'xSendfile'                => false,
