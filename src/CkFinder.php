@@ -71,14 +71,18 @@ class CkFinder
      * @param string $name - 显示名称
      * @param string $directory - 目录路径
      * @param string $backend - 所属存储空间
+     * @param bool $isDefault - 是否为默认目录
      * @param array $config - 更多配置
      * @return CkFinder
      */
-    public function addResource($name, $directory, $backend, $config = []) {
+    public function addResource($name, $directory, $backend, $isDefault = false, $config = []) {
         $config['name'] = $name;
         $config['directory'] = $directory;
         $config['backend'] = $backend;
         $this->config['resourceTypes'][] = $config;
+        if ($isDefault) {
+            $this->setConfig('defaultResourceTypes', $name);
+        }
         return $this;
     }
     
