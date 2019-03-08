@@ -23,9 +23,9 @@ class AutoRename
 {
     use SingleModelTrait;
     
-    const FILE = 'file';
+    public const FILE = 'file';
     
-    const FOLDER = 'folder';
+    public const FOLDER = 'folder';
     
     /**
      * @var - CKFinder 配置
@@ -37,7 +37,8 @@ class AutoRename
      * @param CKFinder $app
      * @return $this
      */
-    public function config(CKFinder $app) {
+    public function config(CKFinder $app): AutoRename
+    {
         $config = $app['config']->get('auto_rename');
         $this->iniConfig($config);
         return $this;
@@ -49,7 +50,8 @@ class AutoRename
      * @param string $extension - 扩展名
      * @return mixed|string
      */
-    public function autoRename($name, $extension = '') {
+    public function autoRename($name, $extension = '')
+    {
         if (empty($extension) && $this->config[self::FOLDER] === false) {
             return $name;
         }
@@ -59,7 +61,7 @@ class AutoRename
         $name = PinYin::ins()->turn($name, false, '', 'utf-8');
         // uuid 用于名称为空时
         $name = empty($name) ? $this->uuid() : strtolower($name);
-        if ($name == '.' . $extension) {
+        if ($name === '.' . $extension) {
             $name = $this->uuid() . (empty($extension) ? '' : $name);
         }
         return $name;
@@ -69,7 +71,8 @@ class AutoRename
      * 生成uuid
      * @return string
      */
-    private function uuid() {
+    private function uuid(): string
+    {
         $charId = md5(uniqid(mt_rand(), true));
         $uuid = substr($charId, 0, 8)
             . substr($charId, 8, 4)
@@ -81,13 +84,14 @@ class AutoRename
     
     /**
      * 初始化配置信息
-     * @param $config - CKFinder 配置
+     * @param array $config - CKFinder 配置
      */
-    private function iniConfig($config) {
+    private function iniConfig(array $config): void
+    {
         $this->config = $this->defaultConfig;
-        if (is_array($config) && isset($config['file']) && isset($config['folder'])) {
-            $this->config['file'] = boolval($config['file']);
-            $this->config['folder'] = boolval($config['folder']);
+        if (is_array($config) && isset($config['file'], $config['folder'])) {
+            $this->config['file'] = (bool)$config['file'];
+            $this->config['folder'] = (bool)$config['folder'];
         } else if ($config === true || $config === false) {
             $this->config['file'] = $config;
             $this->config['folder'] = $config;

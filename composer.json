@@ -2,14 +2,16 @@
     "name"       : "itxq/ckfinder",
     "description": "实现CkFinderComposer引用",
     "type"       : "library",
+    "license"    : "Apache-2.0",
     "authors"    : [
         {
-            "name" : "IT小强xqitw.cn",
-            "email": "mail@xqitw.cn"
+            "name"    : "IT小强xqitw.cn",
+            "email"   : "mail@xqitw.cn",
+            "homepage": "https://www.xqitw.cn/"
         }
     ],
     "require"    : {
-        "php"      : ">=5.6.0",
+        "php"      : ">=7.1.0",
         "upyun/sdk": "^3.3",
         "ext-iconv": ">=1.0"
     },

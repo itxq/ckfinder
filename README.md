@@ -27,6 +27,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 try {
     \itxq\ckfinder\CkFinder::ins()
+        // 配置缓存目录
+        ->setConfig('runtime_path', 'E:\runtime')
         // 授权信息
         ->setConfig('licenseName', '')
         ->setConfig('licenseKey', '')

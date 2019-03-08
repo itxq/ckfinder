@@ -48,7 +48,8 @@ class UpyAdapter extends AbstractAdapter
      * @param $config
      * @throws \Exception
      */
-    public function __construct($config) {
+    public function __construct($config)
+    {
         $this->config = $config;
         $this->pathPrefix = $this->getSubValue('root', $config, '');
         $serviceName = $this->getSubValue('service', $config, '');
@@ -65,9 +66,10 @@ class UpyAdapter extends AbstractAdapter
      * @return array
      * @throws \Exception
      */
-    public function listContents($directory = '', $recursive = false) {
+    public function listContents($directory = '', $recursive = false): array
+    {
         $directory = $this->applyPathPrefix($directory);
-        if (strlen($directory)) {
+        if ($directory !== '') {
             $directory = rtrim($directory, '/') . '/';
         }
         $read = $this->readContent($directory, 'dir');
@@ -87,7 +89,8 @@ class UpyAdapter extends AbstractAdapter
      * @param Config $config
      * @return array|bool|false
      */
-    public function write($path, $contents, Config $config) {
+    public function write($path, $contents, Config $config)
+    {
         return $this->upload($path, $contents);
     }
     
@@ -98,7 +101,8 @@ class UpyAdapter extends AbstractAdapter
      * @param Config $config
      * @return array|bool|false
      */
-    public function writeStream($path, $resource, Config $config) {
+    public function writeStream($path, $resource, Config $config)
+    {
         return $this->upload($path, $resource);
     }
     
@@ -109,7 +113,8 @@ class UpyAdapter extends AbstractAdapter
      * @param Config $config
      * @return array|bool|false
      */
-    public function update($path, $contents, Config $config) {
+    public function update($path, $contents, Config $config)
+    {
         return $this->upload($path, $contents);
     }
     
@@ -120,7 +125,8 @@ class UpyAdapter extends AbstractAdapter
      * @param Config $config
      * @return array|bool|false
      */
-    public function updateStream($path, $resource, Config $config) {
+    public function updateStream($path, $resource, Config $config)
+    {
         return $this->upload($path, $resource);
     }
     
@@ -131,7 +137,8 @@ class UpyAdapter extends AbstractAdapter
      * @return bool
      * @throws \Exception
      */
-    public function rename($path, $newpath) {
+    public function rename($path, $newpath): bool
+    {
         $copy = $this->copy($path, $newpath);
         if ($copy) {
             return $this->delete($path);
@@ -146,7 +153,8 @@ class UpyAdapter extends AbstractAdapter
      * @return bool
      * @throws \Exception
      */
-    public function copy($path, $newpath) {
+    public function copy($path, $newpath): bool
+    {
         $t_path = $this->applyPathPrefix($path);
         $info = $this->info($t_path);
         if ($info['type'] === 'file') {
@@ -155,13 +163,13 @@ class UpyAdapter extends AbstractAdapter
             } catch (\Exception $exception) {
                 $up = false;
             }
-            return $up === false ? false : true;
+            return $up !== false;
         }
         $list = $this->listContents($path, true);
         foreach ($list as $k => $v) {
             $_path = $v['path'];
             if (strpos($_path, $path) === 0) {
-                $_path = substr($_path, (strlen($path) + 1));
+                $_path = substr($_path, strlen($path) + 1);
             }
             if ($this->copy($path . '/' . $_path, $newpath . '/' . $_path) === false) {
                 return false;
@@ -176,7 +184,8 @@ class UpyAdapter extends AbstractAdapter
      * @return bool
      * @throws \Exception
      */
-    public function deleteDir($dirname) {
+    public function deleteDir($dirname): bool
+    {
         return $this->delete($dirname);
     }
     
@@ -186,14 +195,14 @@ class UpyAdapter extends AbstractAdapter
      * @param Config $config
      * @return array|false
      */
-    public function createDir($dirname, Config $config) {
+    public function createDir($dirname, Config $config)
+    {
         try {
             $path = $this->applyPathPrefix($dirname);
             if ($this->client->createDir($path)) {
                 return ['path' => $dirname, 'type' => 'dir'];
-            } else {
-                return false;
             }
+            return false;
         } catch (\Exception $exception) {
             return false;
         }
@@ -204,7 +213,8 @@ class UpyAdapter extends AbstractAdapter
      * @param string $path - 远程路径
      * @return bool
      */
-    public function delete($path) {
+    public function delete($path): bool
+    {
         $t_path = $this->applyPathPrefix($path);
         try {
             $info = $this->info($t_path);
@@ -215,7 +225,7 @@ class UpyAdapter extends AbstractAdapter
             foreach ($list as $k => $v) {
                 $_path = $v['path'];
                 if (strpos($_path, $path) === 0) {
-                    $_path = substr($_path, (strlen($path) + 1));
+                    $_path = substr($_path, strlen($path) + 1);
                 }
                 if ($this->delete($path . '/' . $_path) === false) {
                     return false;
@@ -232,7 +242,8 @@ class UpyAdapter extends AbstractAdapter
      * @param string $path
      * @return array|bool|null
      */
-    public function has($path) {
+    public function has($path)
+    {
         try {
             $path = $this->applyPathPrefix($path);
             return $this->client->has($path);
@@ -246,7 +257,8 @@ class UpyAdapter extends AbstractAdapter
      * @param string $path
      * @return array
      */
-    public function read($path) {
+    public function read($path): array
+    {
         $path = $this->applyPathPrefix($path);
         $info = $this->info($path);
         $info['contents'] = $this->readContent($path, 'file');
@@ -259,7 +271,8 @@ class UpyAdapter extends AbstractAdapter
      * @return array|false
      * @throws \Exception
      */
-    public function readStream($path) {
+    public function readStream($path)
+    {
         $path = $this->applyPathPrefix($path);
         $info = $this->info($path);
         $info['content'] = $this->readContent($path, 'file');
@@ -277,7 +290,8 @@ class UpyAdapter extends AbstractAdapter
      * @param string $path
      * @return array|false
      */
-    public function getMetadata($path) {
+    public function getMetadata($path)
+    {
         $path = $this->applyPathPrefix($path);
         return $this->info($path);
     }
@@ -287,7 +301,8 @@ class UpyAdapter extends AbstractAdapter
      * @param string $path
      * @return array|false
      */
-    public function getSize($path) {
+    public function getSize($path)
+    {
         return $this->getMetadata($path);
     }
     
@@ -296,7 +311,8 @@ class UpyAdapter extends AbstractAdapter
      * @param string $path
      * @return array|false
      */
-    public function getMimetype($path) {
+    public function getMimetype($path)
+    {
         return $this->getMetadata($path);
     }
     
@@ -305,7 +321,8 @@ class UpyAdapter extends AbstractAdapter
      * @param string $path
      * @return array|false
      */
-    public function getTimestamp($path) {
+    public function getTimestamp($path)
+    {
         return $this->getMetadata($path);
     }
     
@@ -316,7 +333,8 @@ class UpyAdapter extends AbstractAdapter
      * @param mixed $content
      * @return array
      */
-    protected function normalize($path, $timestamp, $content = null) {
+    protected function normalize($path, $timestamp, $content = null): array
+    {
         $data = [
             'path'      => $path,
             'timestamp' => (int)$timestamp,
@@ -341,20 +359,22 @@ class UpyAdapter extends AbstractAdapter
      * @param array $list 返回的数据集（不需要设置）
      * @return bool|mixed
      */
-    protected function readContent($path, $type = '', $saveHandler = null, $params = [], $start = null, $list = []) {
+    protected function readContent($path, $type = '', $saveHandler = null, $params = [], $start = null, $list = [])
+    {
         try {
             $params['X-List-Limit'] = 10000;
             $params['X-List-Iter'] = $start;
             $allowType = ['file', 'dir'];
-            if (empty($type) || !in_array($type, $allowType)) {
+            if (empty($type) || !in_array($type, $allowType, true)) {
                 $info = $this->info($path);
                 $type = $this->getSubValue('type', $info, false);
             }
             if ($type === 'file') {
                 return $this->client->read($path, $saveHandler, $params);
-            } else if ($type === 'dir') {
+            }
+            if ($type === 'dir') {
                 $data = $this->client->read($path, $saveHandler, $params);
-                $isEnd = boolval($this->getSubValue('is_end', $data, true));
+                $isEnd = (bool)$this->getSubValue('is_end', $data, true);
                 $curList = $this->getSubValue('files', $data, []);
                 $list = array_merge($list, $curList);
                 if ($isEnd === true) {
@@ -362,9 +382,8 @@ class UpyAdapter extends AbstractAdapter
                 }
                 $start = $this->getSubValue('iter', $data, null);
                 return $this->readContent($path, $type, $saveHandler, $params, $start, $list);
-            } else {
-                return false;
             }
+            return false;
         } catch (\Exception$exception) {
             return $list;
         }
@@ -375,7 +394,8 @@ class UpyAdapter extends AbstractAdapter
      * @param string $path 云存储的文件路径
      * @return array 返回标准化的数组
      */
-    protected function info($path) {
+    protected function info($path): array
+    {
         $info = $this->client->info($path);
         $type = str_replace('*', '', $info['x-upyun-file-type']);
         if ($type !== 'file') {
@@ -398,7 +418,8 @@ class UpyAdapter extends AbstractAdapter
      * @param string|resource $contents Either a string or a stream.
      * @return array|bool
      */
-    protected function upload($path, $contents) {
+    protected function upload($path, $contents)
+    {
         try {
             $path = $this->applyPathPrefix($path);
             $this->client->write($path, $contents, [], false);
@@ -415,11 +436,12 @@ class UpyAdapter extends AbstractAdapter
      * @param mixed $default - 指定默认值
      * @return mixed
      */
-    protected function getSubValue($name, $data, $default = '') {
+    protected function getSubValue(string $name, $data, $default = '')
+    {
         if (is_object($data)) {
-            $value = isset($data->$name) ? $data->$name : $default;
+            $value = $data->$name ?? $default;
         } else if (is_array($data)) {
-            $value = isset($data[$name]) ? $data[$name] : $default;
+            $value = $data[$name] ?? $default;
         } else {
             $value = $default;
         }

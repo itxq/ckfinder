@@ -26,27 +26,27 @@ class CkFinder
     /**
      * 常量 公开存储空间名称
      */
-    const PUBLIC_BACKEND = 'public';
+    public const PUBLIC_BACKEND = 'public';
     
     /**
      * 常量 私密存储空间名称
      */
-    const PRIVATE_BACKEND = 'private';
+    public const PRIVATE_BACKEND = 'private';
     
     /**
      * 本地存储空间
      */
-    const ADAPTER_LOCAL = 'local';
+    public const ADAPTER_LOCAL = 'local';
     
     /**
      * 又拍云存储空间
      */
-    const ADAPTER_UPY = 'upy';
+    public const ADAPTER_UPY = 'upy';
     
     /**
      * @var string - 默认根目录
      */
-    protected $rootDir = __DIR__ . '/../uploads';
+    protected $rootDir = '';
     
     /**
      * @var string - 默认URL根路径
@@ -57,11 +57,13 @@ class CkFinder
      * CkFinder 构造函数. 禁止直接实例化该类
      * @param array|mixed $config - 配置信息
      */
-    protected function __construct($config = []) {
+    protected function __construct($config = [])
+    {
+        $this->rootDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR;
         $constName = '__CK_AUTOLOAD__';
         if (!defined($constName)) {
             define($constName, 1);
-            require __DIR__ . '/../core/autoload.php';
+            require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'autoload.php';
         }
         $this->config = array_merge($this->config, $config);
     }
@@ -71,18 +73,15 @@ class CkFinder
      * @param string $name - 显示名称
      * @param string $directory - 目录路径
      * @param string $backend - 所属存储空间
-     * @param bool $isDefault - 是否为默认目录
      * @param array $config - 更多配置
      * @return CkFinder
      */
-    public function addResource($name, $directory, $backend, $isDefault = false, $config = []) {
+    public function addResource(string $name, string $directory, string $backend, array $config = []): CkFinder
+    {
         $config['name'] = $name;
         $config['directory'] = $directory;
         $config['backend'] = $backend;
         $this->config['resourceTypes'][] = $config;
-        if ($isDefault) {
-            $this->setConfig('defaultResourceTypes', $name);
-        }
         return $this;
     }
     
@@ -93,7 +92,8 @@ class CkFinder
      * @param $config - 其他配置
      * @return CkFinder
      */
-    public function addBackend($name, $adapter = self::ADAPTER_LOCAL, $config = []) {
+    public function addBackend(string $name, string $adapter = self::ADAPTER_LOCAL, array $config = []): CkFinder
+    {
         $defaultConfig = ['chmodFiles' => 0777, 'chmodFolders' => 0755, 'filesystemEncoding' => 'UTF-8'];
         $config['name'] = $name;
         $config['adapter'] = $adapter;
@@ -106,18 +106,20 @@ class CkFinder
      * @param string $key - （可用于区分不同用户的缓存目录，建议使用用户ID）
      * @return CkFinder
      */
-    public function setPrivateDirKey($key) {
+    public function setPrivateDirKey(string $key): CkFinder
+    {
         $this->config['private_dir_key'] = $key;
         return $this;
     }
     
     /**
      * 添加配置
-     * @param string $name - 配置项名称
+     * @param string|array $name - 配置项名称
      * @param mixed $value - 配置项的值
      * @return CkFinder
      */
-    public function setConfig($name, $value) {
+    public function setConfig($name, $value): CkFinder
+    {
         if (is_array($name)) {
             $this->config = array_merge($this->config, $name);
         } else {
@@ -127,9 +129,13 @@ class CkFinder
     }
     
     /**
-     * 外部调用接口
+     * @title 外部调用接口
+     * @author IT小强
+     * @createTime 2019-03-08 15:55:09
+     * @throws \Exception
      */
-    public function run() {
+    public function run(): void
+    {
         $this->config();
         $ckFinder = new \CKSource\CKFinder\CKFinder($this->config);
         $ckFinder->run();
@@ -137,11 +143,15 @@ class CkFinder
     }
     
     /**
-     * 配置整合
+     * @title 配置整合
+     * @author IT小强
+     * @createTime 2019-03-08 15:54:48
+     * @throws \Exception
      */
-    protected function config() {
+    protected function config(): void
+    {
         $sysTempDir = sys_get_temp_dir();
-        $config = include __DIR__ . '/../config/config.php';
+        $config = include dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
         $this->config = array_merge($config, $this->config);
         $this->config['tempDirectory'] = !is_writable($sysTempDir) ? __DIR__ : $sysTempDir;
         // 存储空间设置
@@ -191,10 +201,22 @@ class CkFinder
     }
     
     /**
-     * 设置PrivateDir
+     * @title 设置PrivateDir
+     * @author IT小强
+     * @createTime 2019-03-08 15:50:09
+     * @throws \Exception
      */
-    protected function setPrivateDir() {
-        $root = realpath(__DIR__ . '/../runtime') . DIRECTORY_SEPARATOR;
+    protected function setPrivateDir(): void
+    {
+        if (isset($this->config['runtime_path']) && !empty($this->config['runtime_path'])) {
+            $root = realpath($this->config['runtime_path']);
+        } else {
+            $root = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'runtime';
+        }
+        if (!is_dir($root)) {
+            throw new CkFinderException('缓存目录不存在');
+        }
+        $root .= DIRECTORY_SEPARATOR;
         if (isset($this->config['private_dir_key']) && !empty($this->config['private_dir_key'])) {
             $root .= $this->config['private_dir_key'] . DIRECTORY_SEPARATOR;
         }
