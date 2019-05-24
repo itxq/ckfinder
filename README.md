@@ -1,5 +1,13 @@
-# CkFinder3.4.5 for PHP 优化版 （添加又拍云存储）
+CkFinder3.4.5 for PHP 优化版 （添加又拍云存储）
+===============
 
+[![PHP Version](https://img.shields.io/badge/php-%3E%3D7.1-8892BF.svg)](http://www.php.net/)
+[![Latest Stable Version](https://poser.pugx.org/itxq/ckfinder/version)](https://packagist.org/packages/itxq/ckfinder)
+[![Total Downloads](https://poser.pugx.org/itxq/ckfinder/downloads)](https://packagist.org/packages/itxq/ckfinder)
+[![Latest Unstable Version](https://poser.pugx.org/itxq/ckfinder/v/unstable)](//packagist.org/packages/itxq/ckfinder)
+[![License](https://poser.pugx.org/itxq/ckfinder/license)](https://packagist.org/packages/itxq/ckfinder)
+[![composer.lock available](https://poser.pugx.org/itxq/ckfinder/composerlock)](https://packagist.org/packages/itxq/ckfinder)
+  
 ### 开源地址：
 
 [【GitHub:】https://github.com/itxq/ckfinder](https://github.com/itxq/ckfinder)
