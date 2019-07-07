@@ -25,6 +25,6 @@ In order to build the documentation, install [doxygen](http://www.doxygen.org). 
 
 ## License
 
-Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
 
 See `license.txt` for licensing details.

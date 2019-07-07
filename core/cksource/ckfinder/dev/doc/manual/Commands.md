@@ -1142,7 +1142,7 @@ This command accepts an additional URL parameter called `responseType` that defi
 Upload a file to the root (`/`) directory of the `Files` resource type:
 
 ~~~~~~~~~~~~~
-/ckfinder/core/connector/php/connector.php?command=FileUpload&type=Files&currentFolder=/
+/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files&currentFolder=/
 ~~~~~~~~~~~~~
         </td>
     </tr>

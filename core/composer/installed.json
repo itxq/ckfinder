@@ -1,24 +1,23 @@
 [
     {
         "name": "aws/aws-sdk-php",
-        "version": "3.74.1",
-        "version_normalized": "3.74.1.0",
+        "version": "3.91.1",
+        "version_normalized": "3.91.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/aws/aws-sdk-php.git",
-            "reference": "e02575af8021ee57b818107c1fd8759110374044"
+            "reference": "808a8cde13d5ba458d6365828385fead955c933e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e02575af8021ee57b818107c1fd8759110374044",
-            "reference": "e02575af8021ee57b818107c1fd8759110374044",
+            "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/808a8cde13d5ba458d6365828385fead955c933e",
+            "reference": "808a8cde13d5ba458d6365828385fead955c933e",
             "shasum": ""
         },
         "require": {
             "ext-json": "*",
             "ext-pcre": "*",
             "ext-simplexml": "*",
-            "ext-spl": "*",
             "guzzlehttp/guzzle": "^5.3.3|^6.2.1",
             "guzzlehttp/promises": "~1.0",
             "guzzlehttp/psr7": "^1.4.1",
@@ -45,7 +44,7 @@
             "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages",
             "ext-sockets": "To use client-side monitoring"
         },
-        "time": "2018-11-21T19:18:43+00:00",
+        "time": "2019-04-02T18:07:41+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -91,7 +90,7 @@
         "source": {
             "type": "git",
             "url": "git@github.com:cksource/ckfinder-connector-php.git",
-            "reference": "802cb26bcaa95e825da8dea0e34631341bc20024"
+            "reference": "35f20b13a77ad8360b9001fb8cfd0f53a5a509bf"
         },
         "require": {
             "league/flysystem": "1.0.45",
@@ -111,7 +110,7 @@
             "mikey179/vfsstream": "~1.4",
             "phpunit/phpunit": "~4.0"
         },
-        "time": "2018-11-23T07:44:42+00:00",
+        "time": "2019-04-03T06:14:37+00:00",
         "type": "library",
         "installation-source": "source",
         "autoload": {
@@ -151,15 +150,16 @@
         "source": {
             "type": "git",
             "url": "https://github.com/guzzle/guzzle.git",
-            "reference": "b309ed9ad49331e5bf90a86e175286498190a3da"
+            "reference": "fa745406c2f48210693ba05f11280a1473037b2f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/guzzle/guzzle/zipball/b309ed9ad49331e5bf90a86e175286498190a3da",
-            "reference": "b309ed9ad49331e5bf90a86e175286498190a3da",
+            "url": "https://api.github.com/repos/guzzle/guzzle/zipball/fa745406c2f48210693ba05f11280a1473037b2f",
+            "reference": "fa745406c2f48210693ba05f11280a1473037b2f",
             "shasum": ""
         },
         "require": {
+            "ext-json": "*",
             "guzzlehttp/promises": "^1.0",
             "guzzlehttp/psr7": "^1.4",
             "php": ">=5.5"
@@ -172,7 +172,7 @@
         "suggest": {
             "psr/log": "Required for using the Log middleware"
         },
-        "time": "2018-11-21T17:36:52+00:00",
+        "time": "2019-02-26T17:21:14+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -271,26 +271,30 @@
         "source": {
             "type": "git",
             "url": "https://github.com/guzzle/psr7.git",
-            "reference": "18fa36860bbb2133b259233b9aaa0efb85277dd9"
+            "reference": "a346647434953deb5bd599d92922b2d225e25170"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/guzzle/psr7/zipball/18fa36860bbb2133b259233b9aaa0efb85277dd9",
-            "reference": "18fa36860bbb2133b259233b9aaa0efb85277dd9",
+            "url": "https://api.github.com/repos/guzzle/psr7/zipball/a346647434953deb5bd599d92922b2d225e25170",
+            "reference": "a346647434953deb5bd599d92922b2d225e25170",
             "shasum": ""
         },
         "require": {
             "php": ">=5.4.0",
             "psr/http-message": "~1.0",
-            "ralouphie/getallheaders": "^2.0.5"
+            "ralouphie/getallheaders": "^2.0.5 || ^3.0.0"
         },
         "provide": {
             "psr/http-message-implementation": "1.0"
         },
         "require-dev": {
+            "ext-zlib": "*",
             "phpunit/phpunit": "~4.8.36 || ^5.7.27 || ^6.5.8"
         },
-        "time": "2018-11-19T17:50:46+00:00",
+        "suggest": {
+            "zendframework/zend-httphandlerrunner": "Emit PSR-7 responses"
+        },
+        "time": "2019-04-01T06:40:32+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -585,7 +589,7 @@
         },
         "require": {
             "guzzlehttp/guzzle": "~6.0",
-            "php": ">=5.5.0"
+            "php": ">=5.6.0"
         },
         "require-dev": {
             "friendsofphp/php-cs-fixer": "@stable",
@@ -638,12 +642,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/Seldaek/monolog.git",
-            "reference": "bb3771b9483435227770a670a5d6312c62edbeed"
+            "reference": "4d5b7e6ba1127789c7ff59d6f762298eaa29787f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Seldaek/monolog/zipball/bb3771b9483435227770a670a5d6312c62edbeed",
-            "reference": "bb3771b9483435227770a670a5d6312c62edbeed",
+            "url": "https://api.github.com/repos/Seldaek/monolog/zipball/4d5b7e6ba1127789c7ff59d6f762298eaa29787f",
+            "reference": "4d5b7e6ba1127789c7ff59d6f762298eaa29787f",
             "shasum": ""
         },
         "require": {
@@ -679,7 +683,7 @@
             "ruflin/elastica": "Allow sending log messages to an Elastic Search server",
             "sentry/sentry": "Allow sending log messages to a Sentry server"
         },
-        "time": "2018-11-13T20:35:15+00:00",
+        "time": "2018-12-26T14:24:03+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -875,18 +879,18 @@
         "source": {
             "type": "git",
             "url": "https://github.com/php-fig/container.git",
-            "reference": "2cc4a01788191489dc7459446ba832fa79a216a7"
+            "reference": "014d250daebff39eba15ba990eeb2a140798e77c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-fig/container/zipball/2cc4a01788191489dc7459446ba832fa79a216a7",
-            "reference": "2cc4a01788191489dc7459446ba832fa79a216a7",
+            "url": "https://api.github.com/repos/php-fig/container/zipball/014d250daebff39eba15ba990eeb2a140798e77c",
+            "reference": "014d250daebff39eba15ba990eeb2a140798e77c",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2017-06-28T15:35:32+00:00",
+        "time": "2018-12-29T15:36:03+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1064,17 +1068,17 @@
     },
     {
         "name": "spatie/dropbox-api",
-        "version": "1.6.6",
-        "version_normalized": "1.6.6.0",
+        "version": "1.7.1",
+        "version_normalized": "1.7.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/spatie/dropbox-api.git",
-            "reference": "7ffa228049c36bfb62fbeba2d1a73ea8aaaac424"
+            "reference": "22f0d5b03781ef411d134b05aeb237c0eebde544"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/spatie/dropbox-api/zipball/7ffa228049c36bfb62fbeba2d1a73ea8aaaac424",
-            "reference": "7ffa228049c36bfb62fbeba2d1a73ea8aaaac424",
+            "url": "https://api.github.com/repos/spatie/dropbox-api/zipball/22f0d5b03781ef411d134b05aeb237c0eebde544",
+            "reference": "22f0d5b03781ef411d134b05aeb237c0eebde544",
             "shasum": ""
         },
         "require": {
@@ -1084,7 +1088,7 @@
         "require-dev": {
             "phpunit/phpunit": "^6.0"
         },
-        "time": "2018-07-19T16:27:05+00:00",
+        "time": "2019-02-15T11:05:52+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1360,12 +1364,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/http-kernel.git",
-            "reference": "56e184851e64dd4c32dee9eb45348271d0e1fc1e"
+            "reference": "1b7e922e88baa26761721161c43971718981a10c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/http-kernel/zipball/56e184851e64dd4c32dee9eb45348271d0e1fc1e",
-            "reference": "56e184851e64dd4c32dee9eb45348271d0e1fc1e",
+            "url": "https://api.github.com/repos/symfony/http-kernel/zipball/1b7e922e88baa26761721161c43971718981a10c",
+            "reference": "1b7e922e88baa26761721161c43971718981a10c",
             "shasum": ""
         },
         "require": {
@@ -1406,7 +1410,7 @@
             "symfony/finder": "",
             "symfony/var-dumper": ""
         },
-        "time": "2018-08-01T13:56:47+00:00",
+        "time": "2018-12-06T14:39:39+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1441,17 +1445,17 @@
     },
     {
         "name": "symfony/polyfill-ctype",
-        "version": "v1.10.0",
-        "version_normalized": "1.10.0.0",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-ctype.git",
-            "reference": "e3d826245268269cd66f8326bd8bc066687b4a19"
+            "reference": "82ebae02209c21113908c229e9883c419720738a"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/e3d826245268269cd66f8326bd8bc066687b4a19",
-            "reference": "e3d826245268269cd66f8326bd8bc066687b4a19",
+            "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/82ebae02209c21113908c229e9883c419720738a",
+            "reference": "82ebae02209c21113908c229e9883c419720738a",
             "shasum": ""
         },
         "require": {
@@ -1460,14 +1464,14 @@
         "suggest": {
             "ext-ctype": "For best performance"
         },
-        "time": "2018-08-06T14:22:27+00:00",
+        "time": "2019-02-06T07:57:58+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.9-dev"
+                "dev-master": "1.11-dev"
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "Symfony\\Polyfill\\Ctype\\": ""
@@ -1487,7 +1491,7 @@
             },
             {
                 "name": "Gert de Pagter",
-                "email": "BackEndTea@gmail.com"
+                "email": "backendtea@gmail.com"
             }
         ],
         "description": "Symfony polyfill for ctype functions",
@@ -1501,17 +1505,17 @@
     },
     {
         "name": "symfony/polyfill-mbstring",
-        "version": "v1.10.0",
-        "version_normalized": "1.10.0.0",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-mbstring.git",
-            "reference": "c79c051f5b3a46be09205c73b80b346e4153e494"
+            "reference": "fe5e94c604826c35a32fa832f35bd036b6799609"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/c79c051f5b3a46be09205c73b80b346e4153e494",
-            "reference": "c79c051f5b3a46be09205c73b80b346e4153e494",
+            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/fe5e94c604826c35a32fa832f35bd036b6799609",
+            "reference": "fe5e94c604826c35a32fa832f35bd036b6799609",
             "shasum": ""
         },
         "require": {
@@ -1520,14 +1524,14 @@
         "suggest": {
             "ext-mbstring": "For best performance"
         },
-        "time": "2018-09-21T13:07:52+00:00",
+        "time": "2019-02-06T07:57:58+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.9-dev"
+                "dev-master": "1.11-dev"
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "Symfony\\Polyfill\\Mbstring\\": ""

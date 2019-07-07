@@ -10,8 +10,16 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionAcm(array $args = [])
  * @method \Aws\AlexaForBusiness\AlexaForBusinessClient createAlexaForBusiness(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionAlexaForBusiness(array $args = [])
+ * @method \Aws\Amplify\AmplifyClient createAmplify(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionAmplify(array $args = [])
  * @method \Aws\ApiGateway\ApiGatewayClient createApiGateway(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionApiGateway(array $args = [])
+ * @method \Aws\ApiGatewayManagementApi\ApiGatewayManagementApiClient createApiGatewayManagementApi(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionApiGatewayManagementApi(array $args = [])
+ * @method \Aws\ApiGatewayV2\ApiGatewayV2Client createApiGatewayV2(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionApiGatewayV2(array $args = [])
+ * @method \Aws\AppMesh\AppMeshClient createAppMesh(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionAppMesh(array $args = [])
  * @method \Aws\AppSync\AppSyncClient createAppSync(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionAppSync(array $args = [])
  * @method \Aws\ApplicationAutoScaling\ApplicationAutoScalingClient createApplicationAutoScaling(array $args = [])
@@ -26,6 +34,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionAutoScaling(array $args = [])
  * @method \Aws\AutoScalingPlans\AutoScalingPlansClient createAutoScalingPlans(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionAutoScalingPlans(array $args = [])
+ * @method \Aws\Backup\BackupClient createBackup(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionBackup(array $args = [])
  * @method \Aws\Batch\BatchClient createBatch(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionBatch(array $args = [])
  * @method \Aws\Budgets\BudgetsClient createBudgets(array $args = [])
@@ -74,6 +84,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionCognitoSync(array $args = [])
  * @method \Aws\Comprehend\ComprehendClient createComprehend(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionComprehend(array $args = [])
+ * @method \Aws\ComprehendMedical\ComprehendMedicalClient createComprehendMedical(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionComprehendMedical(array $args = [])
  * @method \Aws\ConfigService\ConfigServiceClient createConfigService(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionConfigService(array $args = [])
  * @method \Aws\Connect\ConnectClient createConnect(array $args = [])
@@ -88,6 +100,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionDLM(array $args = [])
  * @method \Aws\DataPipeline\DataPipelineClient createDataPipeline(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionDataPipeline(array $args = [])
+ * @method \Aws\DataSync\DataSyncClient createDataSync(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionDataSync(array $args = [])
  * @method \Aws\DatabaseMigrationService\DatabaseMigrationServiceClient createDatabaseMigrationService(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionDatabaseMigrationService(array $args = [])
  * @method \Aws\DeviceFarm\DeviceFarmClient createDeviceFarm(array $args = [])
@@ -96,6 +110,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionDirectConnect(array $args = [])
  * @method \Aws\DirectoryService\DirectoryServiceClient createDirectoryService(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionDirectoryService(array $args = [])
+ * @method \Aws\DocDB\DocDBClient createDocDB(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionDocDB(array $args = [])
  * @method \Aws\DynamoDb\DynamoDbClient createDynamoDb(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionDynamoDb(array $args = [])
  * @method \Aws\DynamoDbStreams\DynamoDbStreamsClient createDynamoDbStreams(array $args = [])
@@ -126,12 +142,16 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionEmr(array $args = [])
  * @method \Aws\FMS\FMSClient createFMS(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionFMS(array $args = [])
+ * @method \Aws\FSx\FSxClient createFSx(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionFSx(array $args = [])
  * @method \Aws\Firehose\FirehoseClient createFirehose(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionFirehose(array $args = [])
  * @method \Aws\GameLift\GameLiftClient createGameLift(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionGameLift(array $args = [])
  * @method \Aws\Glacier\GlacierClient createGlacier(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionGlacier(array $args = [])
+ * @method \Aws\GlobalAccelerator\GlobalAcceleratorClient createGlobalAccelerator(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionGlobalAccelerator(array $args = [])
  * @method \Aws\Glue\GlueClient createGlue(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionGlue(array $args = [])
  * @method \Aws\Greengrass\GreengrassClient createGreengrass(array $args = [])
@@ -158,10 +178,14 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionIot(array $args = [])
  * @method \Aws\IotDataPlane\IotDataPlaneClient createIotDataPlane(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionIotDataPlane(array $args = [])
+ * @method \Aws\Kafka\KafkaClient createKafka(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionKafka(array $args = [])
  * @method \Aws\Kinesis\KinesisClient createKinesis(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionKinesis(array $args = [])
  * @method \Aws\KinesisAnalytics\KinesisAnalyticsClient createKinesisAnalytics(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionKinesisAnalytics(array $args = [])
+ * @method \Aws\KinesisAnalyticsV2\KinesisAnalyticsV2Client createKinesisAnalyticsV2(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionKinesisAnalyticsV2(array $args = [])
  * @method \Aws\KinesisVideo\KinesisVideoClient createKinesisVideo(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionKinesisVideo(array $args = [])
  * @method \Aws\KinesisVideoArchivedMedia\KinesisVideoArchivedMediaClient createKinesisVideoArchivedMedia(array $args = [])
@@ -176,6 +200,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionLexModelBuildingService(array $args = [])
  * @method \Aws\LexRuntimeService\LexRuntimeServiceClient createLexRuntimeService(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionLexRuntimeService(array $args = [])
+ * @method \Aws\LicenseManager\LicenseManagerClient createLicenseManager(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionLicenseManager(array $args = [])
  * @method \Aws\Lightsail\LightsailClient createLightsail(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionLightsail(array $args = [])
  * @method \Aws\MQ\MQClient createMQ(array $args = [])
@@ -192,6 +218,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionMarketplaceEntitlementService(array $args = [])
  * @method \Aws\MarketplaceMetering\MarketplaceMeteringClient createMarketplaceMetering(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionMarketplaceMetering(array $args = [])
+ * @method \Aws\MediaConnect\MediaConnectClient createMediaConnect(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionMediaConnect(array $args = [])
  * @method \Aws\MediaConvert\MediaConvertClient createMediaConvert(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionMediaConvert(array $args = [])
  * @method \Aws\MediaLive\MediaLiveClient createMediaLive(array $args = [])
@@ -244,6 +272,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionResourceGroups(array $args = [])
  * @method \Aws\ResourceGroupsTaggingAPI\ResourceGroupsTaggingAPIClient createResourceGroupsTaggingAPI(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionResourceGroupsTaggingAPI(array $args = [])
+ * @method \Aws\RoboMaker\RoboMakerClient createRoboMaker(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionRoboMaker(array $args = [])
  * @method \Aws\Route53\Route53Client createRoute53(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionRoute53(array $args = [])
  * @method \Aws\Route53Domains\Route53DomainsClient createRoute53Domains(array $args = [])
@@ -260,6 +290,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionSageMakerRuntime(array $args = [])
  * @method \Aws\SecretsManager\SecretsManagerClient createSecretsManager(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionSecretsManager(array $args = [])
+ * @method \Aws\SecurityHub\SecurityHubClient createSecurityHub(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionSecurityHub(array $args = [])
  * @method \Aws\ServerlessApplicationRepository\ServerlessApplicationRepositoryClient createServerlessApplicationRepository(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionServerlessApplicationRepository(array $args = [])
  * @method \Aws\ServiceCatalog\ServiceCatalogClient createServiceCatalog(array $args = [])
@@ -290,8 +322,12 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionSupport(array $args = [])
  * @method \Aws\Swf\SwfClient createSwf(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionSwf(array $args = [])
+ * @method \Aws\Textract\TextractClient createTextract(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionTextract(array $args = [])
  * @method \Aws\TranscribeService\TranscribeServiceClient createTranscribeService(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionTranscribeService(array $args = [])
+ * @method \Aws\Transfer\TransferClient createTransfer(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionTransfer(array $args = [])
  * @method \Aws\Translate\TranslateClient createTranslate(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionTranslate(array $args = [])
  * @method \Aws\Waf\WafClient createWaf(array $args = [])
@@ -300,6 +336,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionWafRegional(array $args = [])
  * @method \Aws\WorkDocs\WorkDocsClient createWorkDocs(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionWorkDocs(array $args = [])
+ * @method \Aws\WorkLink\WorkLinkClient createWorkLink(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionWorkLink(array $args = [])
  * @method \Aws\WorkMail\WorkMailClient createWorkMail(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionWorkMail(array $args = [])
  * @method \Aws\WorkSpaces\WorkSpacesClient createWorkSpaces(array $args = [])
@@ -311,7 +349,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.74.1';
+    const VERSION = '3.91.1';
 
     /** @var array Arguments for creating clients */
     private $args;
@@ -380,6 +418,19 @@ class Sdk
         $klass = class_exists($klass) ? $klass : 'Aws\\MultiRegionClient';
 
         return new $klass($this->mergeArgs($namespace, $service, $args));
+    }
+
+    /**
+     * Clone existing SDK instance with ability to pass an associative array
+     * of extra client settings.
+     *
+     * @param array $args
+     *
+     * @return self
+     */
+    public function copy(array $args = [])
+    {
+        return new self($args + $this->args);
     }
 
     private function mergeArgs($namespace, array $manifest, array $args = [])

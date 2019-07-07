@@ -51,11 +51,7 @@ class Client
     {
         $this->accessToken = $accessToken;
 
-        $this->client = $client ?? new GuzzleClient([
-                'headers' => [
-                    'Authorization' => "Bearer {$this->accessToken}",
-                ],
-            ]);
+        $this->client = $client ?? new GuzzleClient();
 
         $this->maxChunkSize = ($maxChunkSize < self::MAX_CHUNK_SIZE ? ($maxChunkSize > 1 ? $maxChunkSize : 1) : self::MAX_CHUNK_SIZE);
         $this->maxUploadChunkRetries = $maxUploadChunkRetries;
@@ -109,8 +105,11 @@ class Client
     {
         $parameters = [
             'path' => $this->normalizePath($path),
-            'settings' => $settings,
         ];
+
+        if (count($settings)) {
+            $parameters = array_merge(compact('settings'), $parameters);
+        }
 
         return $this->rpcEndpointRequest('sharing/create_shared_link_with_settings', $parameters);
     }
@@ -231,7 +230,7 @@ class Client
 
         $response = $this->contentEndpointRequest('files/get_thumbnail', $arguments);
 
-        return (string)$response->getBody();
+        return (string) $response->getBody();
     }
 
     /**
@@ -376,7 +375,7 @@ class Client
 
         $cursor = $this->uploadChunk(self::UPLOAD_SESSION_START, $stream, $chunkSize, null);
 
-        while (!$stream->eof()) {
+        while (! $stream->eof()) {
             $cursor = $this->uploadChunk(self::UPLOAD_SESSION_APPEND, $stream, $chunkSize, $cursor);
         }
 
@@ -535,7 +534,7 @@ class Client
 
         $path = trim($path, '/');
 
-        return ($path === '') ? '' : '/' . $path;
+        return ($path === '') ? '' : '/'.$path;
     }
 
     /**
@@ -557,7 +556,7 @@ class Client
 
         try {
             $response = $this->client->post("https://content.dropboxapi.com/2/{$endpoint}", [
-                'headers' => $headers,
+                'headers' => $this->getHeaders($headers),
                 'body' => $body,
             ]);
         } catch (ClientException $exception) {
@@ -570,7 +569,7 @@ class Client
     public function rpcEndpointRequest(string $endpoint, array $parameters = null): array
     {
         try {
-            $options = [];
+            $options = ['headers' => $this->getHeaders()];
 
             if ($parameters) {
                 $options['json'] = $parameters;
@@ -603,7 +602,7 @@ class Client
     protected function getStream($contents)
     {
         if ($this->isPipe($contents)) {
-            /** @var resource $contents */
+            /* @var resource $contents */
             return new PumpStream(function ($length) use ($contents) {
                 $data = fread($contents, $length);
                 if (strlen($data) === 0) {
@@ -612,9 +611,36 @@ class Client
 
                 return $data;
             });
-
         }
 
         return Psr7\stream_for($contents);
+    }
+
+    /**
+     * Get the access token.
+     */
+    public function getAccessToken(): string
+    {
+        return $this->accessToken;
+    }
+
+    /**
+     * Set the access token.
+     */
+    public function setAccessToken(string $accessToken): self
+    {
+        $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
+    /**
+     * Get the HTTP headers.
+     */
+    protected function getHeaders(array $headers = []): array
+    {
+        return array_merge([
+            'Authorization' => "Bearer {$this->accessToken}",
+        ], $headers);
     }
 }

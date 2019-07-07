@@ -4,7 +4,7 @@
  * CKFinder
  * ========
  * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -20,7 +20,6 @@ use CKSource\CKFinder\Error;
 use CKSource\CKFinder\Exception\AccessDeniedException;
 use CKSource\CKFinder\Exception\InvalidUploadException;
 use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
-use CKSource\CKFinder\Filesystem\Path;
 use CKSource\CKFinder\Utils;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use Symfony\Component\HttpFoundation\File\UploadedFile as UploadedFileBase;
@@ -146,27 +145,7 @@ class UploadedFile extends File
     {
         return parent::autorename($this->workingFolder->getBackend(), $this->workingFolder->getPath());
     }
-    // ---------------------------------------------------------------------------------------
-    // 自动重命名 AutoRename
-    public function cm_autorename($name,$i=1){
-        $backend=$this->workingFolder->getBackend();
-        $path=$this->workingFolder->getPath();
-        $filePath = Path::combine($path, $name);
-        if (!$backend->has($filePath)){
-            return $name;
-        }
-        $pieces = explode('.', $name);
-        $basename = array_shift($pieces);
-        $extension = implode('.', $pieces);
-        $newName = "{$basename}-{$i}.{$extension}";
-        $newFilePath =Path::combine($path, $newName);
-        if (!$backend->has($newFilePath)){
-            return $newName;
-        }
-        $i=$i+1;
-       return $this->cm_autorename($name,$i);
-    }
-    // ---------------------------------------------------------------------------------------
+
     /**
      * Checks if the file was renamed.
      *
