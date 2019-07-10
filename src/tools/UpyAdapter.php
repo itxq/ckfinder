@@ -72,11 +72,33 @@ class UpyAdapter extends AbstractAdapter
         if ($directory !== '') {
             $directory = rtrim($directory, '/') . '/';
         }
+
+        // 快速返回信息
+        $info = function($item) use ($directory) {
+            $path      = $directory . $item['name'];
+            $noPrePath = $this->removePathPrefix($path);
+
+            if ($item['type'] !== 'N') {
+                return [
+                    'type' => 'dir',
+                    'path' => $this->removePathPrefix(rtrim($path, '/'))
+                ];
+            }
+
+            return [
+                'path'      => $noPrePath,
+                'timestamp' => (int)$item['time'],
+                'dirname'   => Util::dirname($noPrePath),
+                'mimetype'  => Util::guessMimeType($path, null),
+                'size'      => $item['size'],
+                'type'      => 'file',
+            ];
+        };
         $read = $this->readContent($directory, 'dir');
         $contents = [];
         if (is_array($read) && count($read) >= 1) {
             foreach ($read as $k => $v) {
-                $contents[] = $this->info($directory . $v['name']);
+                $contents[] = $info($v);
             }
         }
         return $recursive ? $contents : Util::emulateDirectories($contents);
