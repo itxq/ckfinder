@@ -1,4 +1,4 @@
-CkFinder3.4.5 for PHP 优化版 （添加又拍云存储）
+CkFinder3.5.0 for PHP 优化版 （添加又拍云存储）
 ===============
 
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D7.1-8892BF.svg)](http://www.php.net/)
