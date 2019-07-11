@@ -1,23 +1,33 @@
 {
-    "name"       : "itxq/ckfinder",
-    "description": "实现CkFinderComposer引用",
-    "type"       : "library",
-    "license"    : "Apache-2.0",
-    "authors"    : [
-        {
-            "name"    : "IT小强xqitw.cn",
-            "email"   : "mail@xqitw.cn",
-            "homepage": "https://www.xqitw.cn/"
-        }
-    ],
-    "require"    : {
-        "php"      : ">=7.1.0",
-        "upyun/sdk": "^3.3",
-        "ext-iconv": ">=1.0"
-    },
-    "autoload"   : {
-        "psr-4": {
-            "itxq\\ckfinder\\": "src"
-        }
+  "name"       : "itxq/ckfinder",
+  "description": "实现CkFinderComposer引用",
+  "type"       : "library",
+  "license"    : "Apache-2.0",
+  "authors"    : [
+    {
+      "name"    : "IT小强xqitw.cn",
+      "email"   : "mail@xqitw.cn",
+      "homepage": "https://www.xqitw.cn/"
     }
+  ],
+  "require"    : {
+    "php"      : ">=7.1.0",
+    "upyun/sdk": "^3.3",
+    "ext-iconv": ">=1.0"
+  },
+  "require-dev": {
+    "itxq/builder-assets": "dev-master"
+  },
+  "autoload"   : {
+    "psr-4": {
+      "itxq\\ckfinder\\": "src"
+    }
+  },
+  "extra"      : {
+    "installer-paths": {
+      "test/assets": [
+        "itxq/builder-assets"
+      ]
+    }
+  }
 }
