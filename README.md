@@ -32,24 +32,25 @@ require_once __DIR__ . '/vendor/autoload.php';
 ### 使用示例：
 
 ```php
+use itxq\ckfinder\CkFinder;
 
 try {
-    \itxq\ckfinder\CkFinder::ins()
+    CkFinder::ins()
         // 配置缓存目录
-        ->setConfig('runtime_path', 'E:\runtime')
+        ->setConfig('runtime_path', __DIR__ . '/../runtime')
         // 授权信息
-        ->setConfig('licenseName', '')
-        ->setConfig('licenseKey', '')
+        ->setConfig('licenseName', 'licenseName')
+        ->setConfig('licenseKey', 'licenseKey')
         // 是否自动重命名（用于过滤用户提交包含中文以及特殊字符，中文会自动转为拼音）
-        ->setConfig('auto_rename', ['folder' => false, 'file' => true])
+        ->setConfig('auto_rename', ['folder' => true, 'file' => true])
         // 设置PrivateDirKey （可用于区分不同用户的缓存目录，建议使用用户ID）
         ->setPrivateDirKey('')
         // 添加一个又拍云存储空间（添加多个存储空间时，name不可重复）
-        ->addBackend('my_upy', \itxq\ckfinder\CkFinder::ADAPTER_UPY, [
+        ->addBackend('my_upy', CkFinder::ADAPTER_UPY, [
             // 又拍云操作员相关设置
-            'service'  => '',
-            'operator' => '',
-            'password' => '',
+            'service'  => 'service',
+            'operator' => 'operator',
+            'password' => 'password',
             // 以下根路径和URL前缀需根据自己项目进行调整
             'root'     => 'my_upy/',
             'baseUrl'  => 'http://test.upy.com/my_upy'
@@ -57,16 +58,16 @@ try {
         // 为又拍云存储空间添加一个资源目录（可添加多个）
         ->addResource('云端存储', '01', 'my_upy')
         // 添加一个本地存储空间（添加多个存储空间时，name不可重复）
-        ->addBackend('my_local', \itxq\ckfinder\CkFinder::ADAPTER_LOCAL, [
+        ->addBackend('my_local', CkFinder::ADAPTER_LOCAL, [
             // 以下根路径和URL前缀需根据自己项目进行调整
-            'root'    => __DIR__ . '/../uploads/my_local',
-            'baseUrl' => 'http://127.0.0.1/ckfinder/uploads/my_local'
+            'root'    => __DIR__ . '/uploads/my_local',
+            'baseUrl' => '/uploads/my_local'
         ])
         // 为本地存储空间添加一个资源目录（可添加多个）
         ->addResource('本地存储', '01', 'my_local')
         ->run();
 } catch (\Exception$exception) {
-    // var_dump($exception->getMessage());
+    var_dump($exception->getMessage());
 }
 
 ```
