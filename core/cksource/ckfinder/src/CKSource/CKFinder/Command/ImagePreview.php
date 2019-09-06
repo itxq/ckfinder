@@ -4,7 +4,7 @@
  * CKFinder
  * ========
  * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -32,8 +32,6 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * This command produces a resized copy of the image that
  * fits requested maximum dimensions.
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 class ImagePreview extends CommandAbstract
 {

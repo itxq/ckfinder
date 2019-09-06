@@ -4,7 +4,7 @@
  * CKFinder
  * ========
  * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -21,7 +21,6 @@ use CKSource\CKFinder\Exception\AccessDeniedException;
 use CKSource\CKFinder\Exception\InvalidNameException;
 use CKSource\CKFinder\Filesystem\File\RenamedFile;
 use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
-use itxq\ckfinder\tools\AutoRename;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -47,11 +46,7 @@ class RenameFile extends CommandAbstract
             $workingFolder->getResourceType(),
             $this->app
         );
-        // ---------------------------------------------------------------------------------------
-        // 自动重命名 AutoRename
-        $newFileName = AutoRename::ins()->config($this->app)->autoRename($newFileName, $renamedFile->getExtension());
-        $renamedFile->setNewFileName($newFileName);
-        // ---------------------------------------------------------------------------------------
+
         $renamed = false;
 
         if ($renamedFile->isValid()) {

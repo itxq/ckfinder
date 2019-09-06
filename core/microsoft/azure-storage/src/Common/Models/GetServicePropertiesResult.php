@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,15 +23,17 @@
  */
 
 namespace MicrosoftAzure\Storage\Common\Models;
+use MicrosoftAzure\Storage\Common\Models\ServiceProperties;
 
 /**
- * Result from calling GetServiceProperties REST wrapper.
+ * Result from calling GetQueueProperties REST wrapper.
  *
  * @category  Microsoft
  * @package   MicrosoftAzure\Storage\Common\Models
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class GetServicePropertiesResult
@@ -40,24 +42,23 @@ class GetServicePropertiesResult
     
     /**
      * Creates object from $parsedResponse.
-     *
-     * @internal
+     * 
      * @param array $parsedResponse XML response parsed into array.
-     *
-     * @return \MicrosoftAzure\Storage\Common\Models\GetServicePropertiesResult
+     * 
+     * @return MicrosoftAzure\Storage\Common\Models\GetServicePropertiesResult
      */
-    public static function create(array $parsedResponse)
+    public static function create($parsedResponse)
     {
-        $result = new GetServicePropertiesResult();
-        $result->setValue(ServiceProperties::create($parsedResponse));
+        $result                     = new GetServicePropertiesResult();
+        $result->_serviceProperties = ServiceProperties::create($parsedResponse);
         
         return $result;
     }
     
     /**
      * Gets service properties object.
-     *
-     * @return \MicrosoftAzure\Storage\Common\Models\ServiceProperties
+     * 
+     * @return MicrosoftAzure\Storage\Common\Models\ServiceProperties 
      */
     public function getValue()
     {
@@ -66,13 +67,15 @@ class GetServicePropertiesResult
     
     /**
      * Sets service properties object.
-     *
+     * 
      * @param ServiceProperties $serviceProperties object to use.
-     *
-     * @return void
+     * 
+     * @return none 
      */
-    protected function setValue($serviceProperties)
+    public function setValue($serviceProperties)
     {
         $this->_serviceProperties = clone $serviceProperties;
     }
 }
+
+

@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,8 +23,8 @@
  */
  
 namespace MicrosoftAzure\Storage\Blob\Models;
-
-use Psr\Http\Message\StreamInterface;
+use MicrosoftAzure\Storage\Blob\Models\BlobProperties;
+use MicrosoftAzure\Storage\Common\Internal\Utilities;
 
 /**
  * Holds result of GetBlob API.
@@ -34,33 +34,40 @@ use Psr\Http\Message\StreamInterface;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class GetBlobResult
 {
-    private $properties;
-    private $metadata;
-    private $contentStream;
+    /**
+     * @var BlobProperties
+     */
+    private $_properties;
+    
+    /**
+     * @var array
+     */
+    private $_metadata;
+    
+    /**
+     * @var resource
+     */
+    private $_contentStream;
     
     /**
      * Creates GetBlobResult from getBlob call.
-     *
-     * @param array           $headers  The HTTP response headers.
-     * @param StreamInterface $body     The response body.
-     * @param array           $metadata The blob metadata.
-     *
-     * @internal
-     *
+     * 
+     * @param array  $headers  The HTTP response headers.
+     * @param string $body     The response body.
+     * @param array  $metadata The blob metadata.
+     * 
      * @return GetBlobResult
      */
-    public static function create(
-        array $headers,
-        StreamInterface $body,
-        array $metadata
-    ) {
+    public static function create($headers, $body, $metadata)
+    {
         $result = new GetBlobResult();
-        $result->setContentStream($body->detach());
-        $result->setProperties(BlobProperties::createFromHttpHeaders($headers));
+        $result->setContentStream(Utilities::stringToStream($body));
+        $result->setProperties(BlobProperties::create($headers));
         $result->setMetadata(is_null($metadata) ? array() : $metadata);
         
         return $result;
@@ -73,19 +80,19 @@ class GetBlobResult
      */
     public function getMetadata()
     {
-        return $this->metadata;
+        return $this->_metadata;
     }
 
     /**
      * Sets blob metadata.
      *
-     * @param array $metadata value.
-     *
-     * @return void
+     * @param string $metadata value.
+     * 
+     * @return none
      */
-    protected function setMetadata(array $metadata)
+    public function setMetadata($metadata)
     {
-        $this->metadata = $metadata;
+        $this->_metadata = $metadata;
     }
     
     /**
@@ -95,40 +102,42 @@ class GetBlobResult
      */
     public function getProperties()
     {
-        return $this->properties;
+        return $this->_properties;
     }
 
     /**
      * Sets blob properties.
      *
      * @param BlobProperties $properties value.
-     *
-     * @return void
+     * 
+     * @return none
      */
-    protected function setProperties(BlobProperties $properties)
+    public function setProperties($properties)
     {
-        $this->properties = $properties;
+        $this->_properties = $properties;
     }
     
     /**
      * Gets blob contentStream.
      *
-     * @return \resource
+     * @return resource
      */
     public function getContentStream()
     {
-        return $this->contentStream;
+        return $this->_contentStream;
     }
 
     /**
      * Sets blob contentStream.
      *
-     * @param \resource $contentStream The stream handle.
-     *
-     * @return void
+     * @param resource $contentStream The stream handle.
+     * 
+     * @return none
      */
-    protected function setContentStream($contentStream)
+    public function setContentStream($contentStream)
     {
-        $this->contentStream = $contentStream;
+        $this->_contentStream = $contentStream;
     }
 }
+
+

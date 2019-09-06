@@ -4,7 +4,7 @@
  * CKFinder
  * ========
  * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -82,9 +82,11 @@ class Proxy extends CommandAbstract
         }
 
         $response = new StreamedResponse();
-        $response->headers->set('Content-Type', $file->getMimeType());
-        $response->headers->set('Content-Length', $file->getSize());
-        $response->headers->set('Content-Disposition', 'inline; filename="' . $fileName. '"');
+        $headers = $response->headers;
+        $headers->set('Content-Type', $file->getMimeType());
+        $headers->set('Content-Length', $file->getSize());
+        $headers->set('X-Content-Type-Options', 'nosniff');
+        $headers->set('Content-Disposition', 'inline; filename="' . $fileName. '"');
 
         if ($cacheLifetime > 0) {
             Utils::removeSessionCacheHeaders();

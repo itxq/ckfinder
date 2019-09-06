@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -32,19 +32,40 @@ namespace MicrosoftAzure\Storage\Blob\Models;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class Blob
 {
+    /**
+     * @var string
+     */
     private $_name;
+    
+    /**
+     * @var string
+     */
     private $_url;
+    
+    /**
+     * @var string
+     */
     private $_snapshot;
+
+    /**
+     * @var array
+     */
     private $_metadata;
+    
+    /**
+     * @var BlobProperties
+     */
     private $_properties;
+
     /**
      * Gets blob name.
      *
-     * @return string
+     * @return string.
      */
     public function getName()
     {
@@ -55,8 +76,8 @@ class Blob
      * Sets blob name.
      *
      * @param string $name value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setName($name)
     {
@@ -66,7 +87,7 @@ class Blob
     /**
      * Gets blob snapshot.
      *
-     * @return string
+     * @return string.
      */
     public function getSnapshot()
     {
@@ -77,8 +98,8 @@ class Blob
      * Sets blob snapshot.
      *
      * @param string $snapshot value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setSnapshot($snapshot)
     {
@@ -88,7 +109,7 @@ class Blob
     /**
      * Gets blob url.
      *
-     * @return string
+     * @return string.
      */
     public function getUrl()
     {
@@ -99,8 +120,8 @@ class Blob
      * Sets blob url.
      *
      * @param string $url value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setUrl($url)
     {
@@ -110,7 +131,7 @@ class Blob
     /**
      * Gets blob metadata.
      *
-     * @return array
+     * @return array.
      */
     public function getMetadata()
     {
@@ -120,11 +141,11 @@ class Blob
     /**
      * Sets blob metadata.
      *
-     * @param array $metadata value.
-     *
-     * @return void
+     * @param string $metadata value.
+     * 
+     * @return none.
      */
-    public function setMetadata(array $metadata = null)
+    public function setMetadata($metadata)
     {
         $this->_metadata = $metadata;
     }
@@ -132,7 +153,7 @@ class Blob
     /**
      * Gets blob properties.
      *
-     * @return BlobProperties
+     * @return BlobProperties.
      */
     public function getProperties()
     {
@@ -143,11 +164,13 @@ class Blob
      * Sets blob properties.
      *
      * @param BlobProperties $properties value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setProperties($properties)
     {
         $this->_properties = $properties;
     }
 }
+
+

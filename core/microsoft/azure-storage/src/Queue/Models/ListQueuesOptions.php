@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,9 +23,8 @@
  */
  
 namespace MicrosoftAzure\Storage\Queue\Models;
-
-use MicrosoftAzure\Storage\Common\MarkerContinuationTokenTrait;
-use MicrosoftAzure\Storage\Common\Internal\Validate;
+use MicrosoftAzure\Storage\Queue\Models\QueueServiceOptions;
+use \MicrosoftAzure\Storage\Common\Internal\Validate;
 
 /**
  * Options for listQueues API.
@@ -35,20 +34,20 @@ use MicrosoftAzure\Storage\Common\Internal\Validate;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class ListQueuesOptions extends QueueServiceOptions
 {
-    use MarkerContinuationTokenTrait;
-
     private $_prefix;
+    private $_marker;
     private $_maxResults;
     private $_includeMetadata;
 
     /**
      * Gets prefix.
      *
-     * @return string
+     * @return string.
      */
     public function getPrefix()
     {
@@ -59,19 +58,42 @@ class ListQueuesOptions extends QueueServiceOptions
      * Sets prefix.
      *
      * @param string $prefix value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setPrefix($prefix)
     {
-        Validate::canCastAsString($prefix, 'prefix');
+        Validate::isString($prefix, 'prefix');
         $this->_prefix = $prefix;
     }
 
     /**
-     * Gets max results.
+     * Gets marker.
+     * 
+     * @return string.
+     */
+    public function getMarker()
+    {
+        return $this->_marker;
+    }
+
+    /**
+     * Sets marker.
      *
-     * @return string
+     * @param string $marker value.
+     * 
+     * @return none.
+     */
+    public function setMarker($marker)
+    {
+        Validate::isString($marker, 'marker');
+        $this->_marker = $marker;
+    }
+
+    /**
+     * Gets max results.
+     * 
+     * @return string.
      */
     public function getMaxResults()
     {
@@ -82,19 +104,19 @@ class ListQueuesOptions extends QueueServiceOptions
      * Sets max results.
      *
      * @param string $maxResults value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setMaxResults($maxResults)
     {
-        Validate::canCastAsString($maxResults, 'maxResults');
+        Validate::isString($maxResults, 'maxResults');
         $this->_maxResults = $maxResults;
     }
 
     /**
      * Indicates if metadata is included or not.
-     *
-     * @return boolean
+     * 
+     * @return boolean.
      */
     public function getIncludeMetadata()
     {
@@ -105,8 +127,8 @@ class ListQueuesOptions extends QueueServiceOptions
      * Sets the include metadata flag.
      *
      * @param bool $includeMetadata value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setIncludeMetadata($includeMetadata)
     {
@@ -114,3 +136,5 @@ class ListQueuesOptions extends QueueServiceOptions
         $this->_includeMetadata = $includeMetadata;
     }
 }
+
+

@@ -4,7 +4,7 @@
  * CKFinder
  * ========
  * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -19,7 +19,6 @@ use CKSource\CKFinder\Event\CKFinderEvent;
 use CKSource\CKFinder\Event\RenameFolderEvent;
 use CKSource\CKFinder\Exception\InvalidRequestException;
 use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
-use itxq\ckfinder\tools\AutoRename;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -37,10 +36,7 @@ class RenameFolder extends CommandAbstract
         }
 
         $newFolderName = (string) $request->query->get('newFolderName');
-        // ---------------------------------------------------------------------------------------
-        // 自动重命名 AutoRename
-        $newFolderName = AutoRename::ins()->config($this->app)->autoRename($newFolderName, '');
-        // ---------------------------------------------------------------------------------------
+
         $renameFolderEvent = new RenameFolderEvent($this->app, $workingFolder, $newFolderName);
 
         $dispatcher->dispatch(CKFinderEvent::RENAME_FOLDER, $renameFolderEvent);

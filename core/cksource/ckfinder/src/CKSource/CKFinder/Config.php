@@ -4,7 +4,7 @@
  * CKFinder
  * ========
  * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -21,8 +21,6 @@ use CKSource\CKFinder\Exception\InvalidResourceTypeException;
  * The Config class.
  *
  * Contains all configuration options and a set of config helper methods.
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 class Config
 {

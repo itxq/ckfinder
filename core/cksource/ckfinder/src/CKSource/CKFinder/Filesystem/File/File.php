@@ -4,7 +4,7 @@
  * CKFinder
  * ========
  * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -27,6 +27,11 @@ use CKSource\CKFinder\Filesystem\Path;
  */
 abstract class File
 {
+    /**
+     * Constant used to mark files without extension.
+     */
+    const NO_EXTENSION = 'NO_EXT';
+
     /**
      * File name.
      *
@@ -105,7 +110,7 @@ abstract class File
         $fileName = $newFileName ?: $this->fileName;
 
         if (strpos($fileName, '.') === false) {
-            return true;
+            return null;
         }
 
         $pieces = explode('.', $fileName);
@@ -144,10 +149,8 @@ abstract class File
         $i = 0;
         while (true) {
             $i++;
-            // ---------------------------------------------------------------------------------------
-            // 自动重命名 AutoRename
-            $this->fileName = "{$basename}-{$i}.{$extension}";
-            // ---------------------------------------------------------------------------------------
+            $this->fileName = "{$basename}({$i})" . (!empty($extension) ? ".{$extension}" : '');
+
             $filePath = Path::combine($path, $this->fileName);
 
             if (!$backend->has($filePath)) {

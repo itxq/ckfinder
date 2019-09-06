@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,7 +23,6 @@
  */
  
 namespace MicrosoftAzure\Storage\Common\Models;
-
 use MicrosoftAzure\Storage\Common\Internal\Utilities;
 
 /**
@@ -34,24 +33,45 @@ use MicrosoftAzure\Storage\Common\Internal\Utilities;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class Metrics
 {
+    /**
+     * The version of Storage Analytics to configure
+     * 
+     * @var string
+     */
     private $_version;
+    
+    /**
+     * Indicates whether metrics is enabled for the storage service
+     * 
+     * @var bool
+     */
     private $_enabled;
+    
+    /**
+     * Indicates whether a retention policy is enabled for the storage service
+     * 
+     * @var bool
+     */
     private $_includeAPIs;
+    
+    /**
+     * @var MicrosoftAzure\Storage\Common\Models\RetentionPolicy
+     */
     private $_retentionPolicy;
     
     /**
      * Creates object from $parsedResponse.
-     *
-     * @internal
+     * 
      * @param array $parsedResponse XML response parsed into array.
-     *
-     * @return Metrics
+     * 
+     * @return MicrosoftAzure\Storage\Common\Models\Metrics
      */
-    public static function create(array $parsedResponse)
+    public static function create($parsedResponse)
     {
         $result = new Metrics();
         $result->setVersion($parsedResponse['Version']);
@@ -70,9 +90,9 @@ class Metrics
     
     /**
      * Gets retention policy
-     *
-     * @return RetentionPolicy
-     *
+     * 
+     * @return MicrosoftAzure\Storage\Common\Models\RetentionPolicy
+     *  
      */
     public function getRetentionPolicy()
     {
@@ -81,20 +101,20 @@ class Metrics
     
     /**
      * Sets retention policy
-     *
+     * 
      * @param RetentionPolicy $policy object to use
-     *
-     * @return void
+     * 
+     * @return none.
      */
-    public function setRetentionPolicy(RetentionPolicy $policy)
+    public function setRetentionPolicy($policy)
     {
         $this->_retentionPolicy = $policy;
     }
     
     /**
      * Gets include APIs.
-     *
-     * @return bool
+     * 
+     * @return bool. 
      */
     public function getIncludeAPIs()
     {
@@ -103,10 +123,10 @@ class Metrics
     
     /**
      * Sets include APIs.
-     *
-     * @param bool $includeAPIs value to use.
-     *
-     * @return void
+     * 
+     * @param $bool $includeAPIs value to use.
+     * 
+     * @return none. 
      */
     public function setIncludeAPIs($includeAPIs)
     {
@@ -115,8 +135,8 @@ class Metrics
     
     /**
      * Gets enabled.
-     *
-     * @return bool
+     * 
+     * @return bool. 
      */
     public function getEnabled()
     {
@@ -125,10 +145,10 @@ class Metrics
     
     /**
      * Sets enabled.
-     *
+     * 
      * @param bool $enabled value to use.
-     *
-     * @return void
+     * 
+     * @return none. 
      */
     public function setEnabled($enabled)
     {
@@ -137,8 +157,8 @@ class Metrics
     
     /**
      * Gets version
-     *
-     * @return string
+     * 
+     * @return string.
      */
     public function getVersion()
     {
@@ -147,10 +167,10 @@ class Metrics
     
     /**
      * Sets version
-     *
+     * 
      * @param string $version new value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setVersion($version)
     {
@@ -159,9 +179,8 @@ class Metrics
     
     /**
      * Converts this object to array with XML tags
-     *
-     * @internal
-     * @return array
+     * 
+     * @return array. 
      */
     public function toArray()
     {
@@ -179,3 +198,5 @@ class Metrics
         return $array;
     }
 }
+
+

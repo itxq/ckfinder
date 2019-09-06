@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,7 +23,6 @@
  */
  
 namespace MicrosoftAzure\Storage\Table\Models;
-
 use MicrosoftAzure\Storage\Common\Internal\Validate;
 use MicrosoftAzure\Storage\Common\Internal\Resources;
 use MicrosoftAzure\Storage\Common\Internal\Utilities;
@@ -36,19 +35,27 @@ use MicrosoftAzure\Storage\Common\Internal\Utilities;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class BatchOperation
 {
+    /**
+     * @var string
+     */
     private $_type;
+    
+    /**
+     * @var array
+     */
     private $_params;
     
     /**
      * Sets operation type.
-     *
+     * 
      * @param string $type The operation type. Must be valid type.
-     *
-     * @return void
+     * 
+     * @return none
      */
     public function setType($type)
     {
@@ -62,7 +69,7 @@ class BatchOperation
     
     /**
      * Gets operation type.
-     *
+     * 
      * @return string
      */
     public function getType()
@@ -72,11 +79,11 @@ class BatchOperation
     
     /**
      * Adds or sets parameter for the operation.
-     *
+     * 
      * @param string $name  The param name. Must be valid name.
-     * @param mixed  $value The param value.
-     *
-     * @return void
+     * @param mix    $value The param value.
+     * 
+     * @return none
      */
     public function addParameter($name, $value)
     {
@@ -89,13 +96,15 @@ class BatchOperation
     
     /**
      * Gets parameter value and if the name doesn't exist, return null.
-     *
+     * 
      * @param string $name The parameter name.
-     *
-     * @return mixed
+     * 
+     * @return mix
      */
     public function getParameter($name)
     {
         return Utilities::tryGetValue($this->_params, $name);
     }
 }
+
+

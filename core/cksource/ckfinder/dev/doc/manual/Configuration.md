@@ -727,11 +727,9 @@ In order to upload an `.xsl` file that contains HTML code at the beginning of th
 $config['htmlExtensions'] = array('html', 'htm', 'xml', 'js', 'xsl');
 ~~~
 
-This setting secures your server against the Universal XSS / MIME Type detection attack.
+Please note that this feature performs only a very basic set of checks to detect HTML-like data in the first 1kB of the file contents to protect users e.g. against unintentional uploading of files with HTML content and with a wrong extension.
 
-**Note**: Malicious files that contain HTML-like data may use various UTF encodings. To validate all possible encodings please
-make sure that the `mbstring` PHP extension is enabled on your server.
-
+**Note**: Malicious files that contain HTML-like data may use various UTF encodings. To validate all possible encodings please make sure that the `mbstring` PHP extension is enabled on your server.
 
 @subsection configuration_options_images images
 
@@ -893,12 +891,11 @@ Option Name | Type | Description
 `backend` | String | The name of the @ref configuration_options_backends "backend" where this resource type should point to.
 `directory` @optional | String | The path to the backend subfolder where the resource type should point exactly.
 `maxSize` @optional | String | The maximum size of the uploaded image defined in bytes. A shorthand notation is also supported: G, M, K (case insensitive). `1M` equals 1048576 bytes (one Megabyte), `1K` equals 1024 bytes (one Kilobyte), `1G` equals 1 Gigabyte.
-`allowedExtensions` | String | The file extensions you wish to be allowed for upload with CKFinder.
-`deniedExtensions` @optional | String | The file extensions you do not wish to be uploaded with CKFinder. Shall only be set if `allowedExtensions` is left empty.
+`allowedExtensions` | String | The file extensions you wish to be allowed for upload with CKFinder. `NO_EXT` value can be used for files without extension.
+`deniedExtensions` @optional | String | The file extensions you do not wish to be uploaded with CKFinder. Shall only be set if `allowedExtensions` is left empty. `NO_EXT` value can be used for files without extension.
 `lazyLoad` @optional | Boolean | If set to `true`, the `Init` command will not check if the resource type contains child folders. This option is especially useful for remote backends, as the `Init` command will be executed faster, and therefore CKFinder will start faster, too. It is recommended to set it to `true` for remote backends.
 
 **Important**: It is recommended to always use the `allowedExtensions` setting, in favor of `deniedExtensions`. If you leave `allowedExtensions` empty and add an extension to the `deniedExtensions` list, for example `pdf`, the settings will allow the upload of all other files except the files with the `pdf` extension (e.g. `.php` or `.exe` files).
-
 
 <h4>Example 1</h4>
 
@@ -911,7 +908,7 @@ $config['resourceTypes'][] = array(
     'backend' => 'default',
     'directory' => '/files/',
     'maxSize' => '8M',
-    'allowedExtensions' => 'doc,gif,jpg,pdf,png,zip'
+    'allowedExtensions' => 'doc,gif,jpg,pdf,png,zip,NO_EXT'
 );
 ~~~
 
@@ -939,7 +936,7 @@ $config['resourceTypes'][] = array(
     'backend' => 'default',
     'directory' => '/files/',
     'maxSize' => '8M',
-    'allowedExtensions' => 'doc,gif,jpg,pdf,png,zip'
+    'allowedExtensions' => 'doc,gif,jpg,pdf,png,zip,NO_EXT'
 );
 
 ~~~

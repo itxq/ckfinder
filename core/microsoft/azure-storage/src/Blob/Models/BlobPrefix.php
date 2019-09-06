@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -32,16 +32,20 @@ namespace MicrosoftAzure\Storage\Blob\Models;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class BlobPrefix
 {
+    /**
+     * @var string
+     */
     private $_name;
     
     /**
      * Gets blob name.
      *
-     * @return string
+     * @return string.
      */
     public function getName()
     {
@@ -52,11 +56,13 @@ class BlobPrefix
      * Sets blob name.
      *
      * @param string $name value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setName($name)
     {
         $this->_name = $name;
     }
 }
+
+

@@ -17,7 +17,11 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise getReservationPurchaseRecommendationAsync(array $args = [])
  * @method \Aws\Result getReservationUtilization(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getReservationUtilizationAsync(array $args = [])
+ * @method \Aws\Result getRightsizingRecommendation(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getRightsizingRecommendationAsync(array $args = [])
  * @method \Aws\Result getTags(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getTagsAsync(array $args = [])
+ * @method \Aws\Result getUsageForecast(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise getUsageForecastAsync(array $args = [])
  */
 class CostExplorerClient extends AwsClient {}

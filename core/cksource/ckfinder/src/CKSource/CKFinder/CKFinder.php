@@ -4,7 +4,7 @@
  * CKFinder
  * ========
  * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -58,12 +58,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * It is based on <a href="http://pimple.sensiolabs.org/">Pimple</a>
  * so it also serves as a dependency injection container.
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 class CKFinder extends Container implements HttpKernelInterface
 {
-    const VERSION = '3.4.5';
+    const VERSION = '3.5.1';
 
     const COMMANDS_NAMESPACE = 'CKSource\\CKFinder\\Command\\';
     const PLUGINS_NAMESPACE = 'CKSource\\CKFinder\\Plugin\\';

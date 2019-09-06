@@ -4,7 +4,7 @@
  * CKFinder
  * ========
  * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -29,8 +29,6 @@ use Symfony\Component\HttpFoundation\Request;
  * The purpose of this class is to resolve which CKFinder command should be executed
  * for the current request. This process is based on a value passed in the
  * <code>$_GET['command']</code> request variable.
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 class CommandResolver implements ControllerResolverInterface
 {

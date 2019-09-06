@@ -141,8 +141,18 @@ function or_chain()
  */
 function load_compiled_json($path)
 {
-    if ($compiled = @include("$path.php")) {
-        return $compiled;
+    static $compiledList = [];
+
+    $compiledFilepath = "{$path}.php";
+
+    if (!isset($compiledList[$compiledFilepath])) {
+        if (is_readable($compiledFilepath)) {
+            $compiledList[$compiledFilepath] = include($compiledFilepath);
+        }
+    }
+
+    if (isset($compiledList[$compiledFilepath])) {
+        return $compiledList[$compiledFilepath];
     }
 
     if (!file_exists($path)) {
@@ -385,5 +395,26 @@ function is_valid_hostname($hostname)
         preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*\.?$/i", $hostname)
         && preg_match("/^.{1,253}$/", $hostname)
         && preg_match("/^[^\.]{1,63}(\.[^\.]{0,63})*$/", $hostname)
+    );
+}
+
+/**
+ * Ignores '#' full line comments, which parse_ini_file no longer does
+ * in PHP 7+.
+ *
+ * @param $filename
+ * @param bool $process_sections
+ * @param int $scanner_mode
+ * @return array|bool
+ */
+function parse_ini_file(
+    $filename,
+    $process_sections = false,
+    $scanner_mode = INI_SCANNER_NORMAL)
+{
+    return parse_ini_string(
+        preg_replace('/^#.*\\n/m', "", file_get_contents($filename)),
+        $process_sections,
+        $scanner_mode
     );
 }

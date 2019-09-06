@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,7 +23,6 @@
  */
  
 namespace MicrosoftAzure\Storage\Blob\Models;
-
 use MicrosoftAzure\Storage\Common\Internal\Resources;
 use MicrosoftAzure\Storage\Common\Internal\Validate;
 use MicrosoftAzure\Storage\Common\Internal\Utilities;
@@ -36,39 +35,43 @@ use MicrosoftAzure\Storage\Common\Internal\Utilities;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class SetBlobPropertiesResult
 {
+    /**
+     * @var \DateTime
+     */
     private $_lastModified;
+    
+    /**
+     * @var string
+     */
     private $_etag;
+    
+    /**
+     * @var integer
+     */
     private $_sequenceNumber;
     
     /**
      * Creates SetBlobPropertiesResult from response headers.
-     *
+     * 
      * @param array $headers response headers
-     *
-     * @internal
-     *
+     * 
      * @return SetBlobPropertiesResult
      */
-    public static function create(array $headers)
+    public static function create($headers)
     {
         $result = new SetBlobPropertiesResult();
-        $date   = Utilities::tryGetValueInsensitive(
-            Resources::LAST_MODIFIED,
-            $headers
-        );
+        $date   = $headers[Resources::LAST_MODIFIED];
         $result->setLastModified(Utilities::rfc1123ToDateTime($date));
-        $result->setETag(Utilities::tryGetValueInsensitive(
-            Resources::ETAG,
-            $headers
-        ));
-        $result->setSequenceNumber(Utilities::tryGetValueInsensitive(
-            Resources::X_MS_BLOB_SEQUENCE_NUMBER,
-            $headers
-        ));
+        $result->setETag($headers[Resources::ETAG]);
+        if (array_key_exists(Resources::X_MS_BLOB_SEQUENCE_NUMBER, $headers)) {
+            $sNumber = $headers[Resources::X_MS_BLOB_SEQUENCE_NUMBER];
+            $result->setSequenceNumber(intval($sNumber));
+        }
         
         return $result;
     }
@@ -76,7 +79,7 @@ class SetBlobPropertiesResult
     /**
      * Gets blob lastModified.
      *
-     * @return \DateTime
+     * @return \DateTime.
      */
     public function getLastModified()
     {
@@ -88,9 +91,9 @@ class SetBlobPropertiesResult
      *
      * @param \DateTime $lastModified value.
      *
-     * @return void
+     * @return none.
      */
-    protected function setLastModified(\DateTime $lastModified)
+    public function setLastModified($lastModified)
     {
         Validate::isDate($lastModified);
         $this->_lastModified = $lastModified;
@@ -99,7 +102,7 @@ class SetBlobPropertiesResult
     /**
      * Gets blob etag.
      *
-     * @return string
+     * @return string.
      */
     public function getETag()
     {
@@ -111,18 +114,18 @@ class SetBlobPropertiesResult
      *
      * @param string $etag value.
      *
-     * @return void
+     * @return none.
      */
-    protected function setETag($etag)
+    public function setETag($etag)
     {
-        Validate::canCastAsString($etag, 'etag');
+        Validate::isString($etag, 'etag');
         $this->_etag = $etag;
     }
     
     /**
      * Gets blob sequenceNumber.
      *
-     * @return int
+     * @return int.
      */
     public function getSequenceNumber()
     {
@@ -134,11 +137,13 @@ class SetBlobPropertiesResult
      *
      * @param int $sequenceNumber value.
      *
-     * @return void
+     * @return none.
      */
-    protected function setSequenceNumber($sequenceNumber)
+    public function setSequenceNumber($sequenceNumber)
     {
         Validate::isInteger($sequenceNumber, 'sequenceNumber');
         $this->_sequenceNumber = $sequenceNumber;
     }
 }
+
+

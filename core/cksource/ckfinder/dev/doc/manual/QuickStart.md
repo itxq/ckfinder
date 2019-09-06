@@ -77,6 +77,13 @@ Now in order to correctly setup the file permissions:
 
 With CKFinder up and running you can now focus on adjusting some @ref configuration_options "configuration options" to your needs.
 
+### Security
+
+In case when the files managed by CKFinder are served through the web server, it is recommended to perform some server configuration fine-tuning to make sure the files are served in a secure manner. To read more, please have a look at the following two articles:
+
+- @ref securing_public_folder
+- @ref howto_securing_userfiles
+
 @section quickstart_troubleshooting Troubleshooting
 
 If you have trouble installing and running CKFinder, check the following tips on how to adjust some server settings in order to resolve your issues. If CKFinder does not work as intended after the initial configuration and your server settings adjustments, please have a look at the @ref debugging section.

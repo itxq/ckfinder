@@ -4,7 +4,7 @@
  * CKFinder
  * ========
  * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -29,7 +29,6 @@ use CKSource\CKFinder\Filesystem\Path;
 use CKSource\CKFinder\Image;
 use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
 use CKSource\CKFinder\Thumbnail\ThumbnailRepository;
-use itxq\ckfinder\tools\AutoRename;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -92,11 +91,7 @@ class FileUpload extends CommandAbstract
         }
 
         $fileName = $uploadedFile->getFilename();
-        // ---------------------------------------------------------------------------------------
-        // 自动重命名 AutoRename
-        $fileName = AutoRename::ins()->config($this->app)->autoRename($fileName, $uploadedFile->getExtension());
-        $fileName = $uploadedFile->cm_autorename($fileName,1);
-        // ---------------------------------------------------------------------------------------
+
         if (!$uploadedFile->isAllowedHtmlFile() && $uploadedFile->containsHtml()) {
             throw new InvalidUploadException('HTML detected in disallowed file type', Error::UPLOADED_WRONG_HTML_FILE);
         }
