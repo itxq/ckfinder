@@ -12,13 +12,13 @@
 
 namespace itxq\ckfinder;
 
+use Exception;
+
 /**
  * Class CkFinderException
  * @package itxq\ckfinder
- * @author IT小强
- * @createTime 2019-03-08 15:55:52
  */
-class CkFinderException extends \Exception
+class CkFinderException extends Exception
 {
 
 }
