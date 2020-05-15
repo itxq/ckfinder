@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -17,24 +17,21 @@ namespace CKSource\CKFinder\Thumbnail;
 use CKSource\CKFinder\Exception\FileNotFoundException;
 use CKSource\CKFinder\Filesystem\Path;
 use CKSource\CKFinder\Image;
-use CKSource\CKFinder\ResourceType\ResourceType;
 use CKSource\CKFinder\ResizedImage\ResizedImage;
 use CKSource\CKFinder\ResizedImage\ResizedImageAbstract;
+use CKSource\CKFinder\ResourceType\ResourceType;
 
 /**
  * The Thumbnail class.
  *
  * A class representing a thumbnail.
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 class Thumbnail extends ResizedImageAbstract
 {
     /**
-     * @var ThumbnailRepository $thumbnailRepository
+     * @var ThumbnailRepository
      */
     protected $thumbnailRepository;
-
 
     /**
      * An array containing adjusted size info for this thumbnail.
@@ -47,17 +44,15 @@ class Thumbnail extends ResizedImageAbstract
      *
      *     array('width' => '150', 'height' => '150', 'quality' => 80)
      *
-     * @var array $adjustedSizeInfo
+     * @var array
      */
     protected $adjustedSizeInfo;
 
     /**
-     * @param ThumbnailRepository $thumbnailRepository
-     * @param ResourceType        $sourceFileResourceType
-     * @param string              $sourceFileDir
-     * @param string              $sourceFileName
-     * @param int                 $requestedWidth
-     * @param int                 $requestedHeight
+     * @param string $sourceFileDir
+     * @param string $sourceFileName
+     * @param int    $requestedWidth
+     * @param int    $requestedHeight
      */
     public function __construct(ThumbnailRepository $thumbnailRepository, ResourceType $sourceFileResourceType, $sourceFileDir, $sourceFileName, $requestedWidth, $requestedHeight)
     {
@@ -75,27 +70,6 @@ class Thumbnail extends ResizedImageAbstract
     }
 
     /**
-     * Adjusts thumbnail dimensions.
-     *
-     * Dimensions passed in `$requestedWidth` and `$requestedHeight`
-     * are adjusted to one of the allowed sizes. The smallest allowed
-     * thumbnail size that is bigger than the requested one is used.
-     */
-    protected function adjustDimensions()
-    {
-        $allowedSizes = $this->thumbnailRepository->getAllowedSizes();
-
-        $this->adjustedSizeInfo = end($allowedSizes);
-
-        foreach ($allowedSizes as $sizeInfo) {
-            if ($sizeInfo['width'] >= $this->requestedWidth && $sizeInfo['height'] >= $this->requestedHeight) {
-                $this->adjustedSizeInfo = $sizeInfo;
-                break;
-            }
-        }
-    }
-
-    /**
      * Returns backend-relative thumbnails directory.
      *
      * @return string
@@ -106,15 +80,16 @@ class Thumbnail extends ResizedImageAbstract
             $this->thumbnailRepository->getThumbnailsPath(),
             $this->sourceFileResourceType->getName(),
             $this->sourceFileDir,
-            $this->sourceFileName);
+            $this->sourceFileName
+        );
     }
 
     /**
      * Creates a thumbnail.
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function create()
     {
@@ -141,5 +116,27 @@ class Thumbnail extends ResizedImageAbstract
         $this->resizedImageMimeType = $image->getMimeType();
 
         unset($image);
+    }
+
+    /**
+     * Adjusts thumbnail dimensions.
+     *
+     * Dimensions passed in `$requestedWidth` and `$requestedHeight`
+     * are adjusted to one of the allowed sizes. The smallest allowed
+     * thumbnail size that is bigger than the requested one is used.
+     */
+    protected function adjustDimensions()
+    {
+        $allowedSizes = $this->thumbnailRepository->getAllowedSizes();
+
+        $this->adjustedSizeInfo = end($allowedSizes);
+
+        foreach ($allowedSizes as $sizeInfo) {
+            if ($sizeInfo['width'] >= $this->requestedWidth && $sizeInfo['height'] >= $this->requestedHeight) {
+                $this->adjustedSizeInfo = $sizeInfo;
+
+                break;
+            }
+        }
     }
 }

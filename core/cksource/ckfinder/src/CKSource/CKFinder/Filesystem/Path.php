@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -26,7 +26,7 @@ class Path
      *
      * @param string $path path to be validated
      *
-     * @return bool true if the path is valid.
+     * @return bool true if the path is valid
      */
     public static function isValid($path)
     {
@@ -42,10 +42,10 @@ class Path
      */
     public static function normalize($path)
     {
-        if (!strlen($path)) {
+        if (!\strlen($path)) {
             $path = '/';
-        } elseif ($path !== '/') {
-            $path = '/' . trim($path, '/') . '/';
+        } elseif ('/' !== $path) {
+            $path = '/'.trim($path, '/').'/';
         }
 
         return $path;
@@ -61,21 +61,21 @@ class Path
      */
     public static function combine()
     {
-        $args = func_get_args();
+        $args = \func_get_args();
 
-        if (!count($args)) {
+        if (!\count($args)) {
             return null;
         }
 
         $result = array_shift($args);
 
         $isDirSeparator = function ($char) {
-            return $char === '/' || $char === '\\';
+            return '/' === $char || '\\' === $char;
         };
 
-        $argsCount = count($args);
+        $argsCount = \count($args);
 
-        for ($i = 0; $i < $argsCount; $i++) {
+        for ($i = 0; $i < $argsCount; ++$i) {
             $path1 = $result;
             $path2 = $args[$i];
 
@@ -87,8 +87,8 @@ class Path
                 $path2 = '';
             }
 
-            if (!strlen($path2)) {
-                if (strlen($path1)) {
+            if (!\strlen($path2)) {
+                if (\strlen($path1)) {
                     $_lastCharP1 = substr($path1, -1, 1);
                     if (!$isDirSeparator($_lastCharP1)) {
                         $path1 .= '/';
@@ -96,9 +96,10 @@ class Path
                 }
             } else {
                 $_firstCharP2 = substr($path2, 0, 1);
-                if (strlen($path1)) {
-                    if (strpos($path2, $path1) === 0) {
+                if (\strlen($path1)) {
+                    if (0 === strpos($path2, $path1)) {
                         $result = $path2;
+
                         continue;
                     }
                     $_lastCharP1 = substr($path1, -1, 1);
@@ -109,13 +110,13 @@ class Path
                     }
                 } else {
                     $result = $path2;
+
                     continue;
                 }
             }
 
-            $result = $path1 . $path2;
+            $result = $path1.$path2;
         }
-
 
         return $result;
     }

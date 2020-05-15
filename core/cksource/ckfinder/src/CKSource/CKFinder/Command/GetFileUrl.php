@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class GetFileUrl extends CommandAbstract
 {
-    protected $requires = array(Permission::FILE_VIEW);
+    protected $requires = [Permission::FILE_VIEW];
 
     public function execute(WorkingFolder $workingFolder, Request $request)
     {
@@ -30,17 +30,17 @@ class GetFileUrl extends CommandAbstract
         $fileNames = (array) $request->get('fileNames');
 
         if (!empty($fileNames)) {
-            $urls = array();
+            $urls = [];
 
             foreach ($fileNames as $fileName) {
                 $urls[$fileName] = $workingFolder->getFileUrl($fileName);
             }
 
-            return array('urls' => $urls);
+            return ['urls' => $urls];
         }
 
-        return array(
-            'url' => $workingFolder->getFileUrl($fileName, $thumbnail)
-        );
+        return [
+            'url' => $workingFolder->getFileUrl($fileName, $thumbnail),
+        ];
     }
 }

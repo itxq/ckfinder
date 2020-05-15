@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -57,9 +57,8 @@ class EditedFile extends ExistingFile
     protected $newContents;
 
     /**
-     * @param string   $fileName
-     * @param CKFinder $app
-     * @param null     $newFileName
+     * @param string $fileName
+     * @param null   $newFileName
      */
     public function __construct($fileName, CKFinder $app, $newFileName = null)
     {
@@ -85,14 +84,14 @@ class EditedFile extends ExistingFile
     /**
      * Validates the file.
      *
-     * @return bool `true` if the file passed validation.
-     *
      * @throws AlreadyExistsException
      * @throws FileNotFoundException
      * @throws InvalidExtensionException
      * @throws InvalidNameException
      * @throws InvalidRequestException
      * @throws InvalidUploadException
+     *
+     * @return bool `true` if the file passed validation
      */
     public function isValid()
     {
@@ -140,34 +139,14 @@ class EditedFile extends ExistingFile
 
         if ($this->newContents) {
             if (Utils::containsHtml(substr($this->newContents, 0, 1024)) &&
-                !in_array(strtolower($this->newFileName ? $this->getNewExtension() : $this->getExtension()), $this->config->get('htmlExtensions'))) {
+                !\in_array(strtolower($this->newFileName ? $this->getNewExtension() : $this->getExtension()), $this->config->get('htmlExtensions'), true)) {
                 throw new InvalidUploadException('HTML detected in disallowed file type', Error::UPLOADED_WRONG_HTML_FILE);
             }
 
             $maxFileSize = $this->resourceType->getMaxSize();
 
-            if ($maxFileSize && strlen($this->newContents) > $maxFileSize) {
+            if ($maxFileSize && \strlen($this->newContents) > $maxFileSize) {
                 throw new InvalidUploadException('Uploaded file is too big', Error::UPLOADED_TOO_BIG);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Checks double extensions in a given file name.
-     *
-     * @param null|string $fileName file name or null if the current file name is checked.
-     *
-     * @return bool `true` if extensions are allowed for the current resource type.
-     */
-    protected function areValidDoubleExtensions($fileName = null)
-    {
-        $extensions = $this->getExtensions($fileName);
-
-        foreach ($extensions as $ext) {
-            if (!$this->resourceType->isAllowedExtension($ext)) {
-                return false;
             }
         }
 
@@ -177,7 +156,7 @@ class EditedFile extends ExistingFile
     /**
      * Returns the new file name of the edited file.
      *
-     * @return null|string the new file name of the edited file.
+     * @return null|string the new file name of the edited file
      */
     public function getNewFilename()
     {
@@ -206,7 +185,7 @@ class EditedFile extends ExistingFile
      * Sets new file contents.
      *
      * @param string      $contents new file contents
-     * @param string|null $filePath optional path if new contents should be saved in a new file.
+     * @param null|string $filePath optional path if new contents should be saved in a new file
      *
      * @return bool
      */
@@ -243,5 +222,25 @@ class EditedFile extends ExistingFile
     public function getWorkingFolder()
     {
         return $this->workingFolder;
+    }
+
+    /**
+     * Checks double extensions in a given file name.
+     *
+     * @param null|string $fileName file name or null if the current file name is checked
+     *
+     * @return bool `true` if extensions are allowed for the current resource type
+     */
+    protected function areValidDoubleExtensions($fileName = null)
+    {
+        $extensions = $this->getExtensions($fileName);
+
+        foreach ($extensions as $ext) {
+            if (!$this->resourceType->isAllowedExtension($ext)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

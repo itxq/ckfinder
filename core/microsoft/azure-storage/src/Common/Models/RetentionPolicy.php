@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,7 +23,6 @@
  */
  
 namespace MicrosoftAzure\Storage\Common\Models;
-
 use MicrosoftAzure\Storage\Common\Internal\Utilities;
 
 /**
@@ -34,23 +33,36 @@ use MicrosoftAzure\Storage\Common\Internal\Utilities;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class RetentionPolicy
 {
+    /**
+     * Indicates whether a retention policy is enabled for the storage service
+     * 
+     * @var bool.
+     */
     private $_enabled;
+    
+    /**
+     * If $_enabled is true then this field indicates the number of days that metrics
+     * or logging data should be retained. All data older than this value will be 
+     * deleted. The minimum value you can specify is 1; 
+     * the largest value is 365 (one year)
+     * 
+     * @var int
+     */
     private $_days;
     
     /**
      * Creates object from $parsedResponse.
-     *
+     * 
      * @param array $parsedResponse XML response parsed into array.
-     *
-     * @internal
-     *
+     * 
      * @return MicrosoftAzure\Storage\Common\Models\RetentionPolicy
      */
-    public static function create(array $parsedResponse = null)
+    public static function create($parsedResponse)
     {
         $result = new RetentionPolicy();
         $result->setEnabled(Utilities::toBoolean($parsedResponse['Enabled']));
@@ -63,8 +75,8 @@ class RetentionPolicy
     
     /**
      * Gets enabled.
-     *
-     * @return bool
+     * 
+     * @return bool. 
      */
     public function getEnabled()
     {
@@ -73,10 +85,10 @@ class RetentionPolicy
     
     /**
      * Sets enabled.
-     *
+     * 
      * @param bool $enabled value to use.
-     *
-     * @return void
+     * 
+     * @return none. 
      */
     public function setEnabled($enabled)
     {
@@ -85,7 +97,7 @@ class RetentionPolicy
     
     /**
      * Gets days field.
-     *
+     * 
      * @return int
      */
     public function getDays()
@@ -95,10 +107,10 @@ class RetentionPolicy
     
     /**
      * Sets days field.
-     *
+     * 
      * @param int $days value to use.
-     *
-     * @return void
+     * 
+     * @return none
      */
     public function setDays($days)
     {
@@ -107,10 +119,8 @@ class RetentionPolicy
     
     /**
      * Converts this object to array with XML tags
-     *
-     * @internal
-     *
-     * @return array
+     * 
+     * @return array. 
      */
     public function toArray()
     {
@@ -122,3 +132,5 @@ class RetentionPolicy
         return $array;
     }
 }
+
+

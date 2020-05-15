@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,9 +23,7 @@
  */
  
 namespace MicrosoftAzure\Storage\Blob\Models;
-
 use MicrosoftAzure\Storage\Common\Internal\Validate;
-use MicrosoftAzure\Storage\Common\Models\Range;
 
 /**
  * Optional parameters for getBlob wrapper
@@ -35,78 +33,175 @@ use MicrosoftAzure\Storage\Common\Models\Range;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class GetBlobOptions extends BlobServiceOptions
 {
-    private $snapshot;
-    private $range;
-    private $rangeGetContentMD5;
+    /**
+     * @var string
+     */
+    private $_leaseId;
+    
+    /**
+     * @var string
+     */
+    private $_snapshot;
+    
+    /**
+     * @var AccessCondition
+     */
+    private $_accessCondition;
+    
+    /**
+     * @var boolean
+     */
+    private $_computeRangeMD5;
+    
+    /**
+     * @var integer
+     */
+    private $_rangeStart;
+    
+    /**
+     * @var integer
+     */
+    private $_rangeEnd;
+    
+    /**
+     * Gets lease Id for the blob
+     * 
+     * @return string
+     */
+    public function getLeaseId()
+    {
+        return $this->_leaseId;
+    }
+    
+    /**
+     * Sets lease Id for the blob
+     * 
+     * @param string $leaseId the blob lease id.
+     * 
+     * @return none
+     */
+    public function setLeaseId($leaseId)
+    {
+        $this->_leaseId = $leaseId;
+    }
+    
+    /**
+     * Gets access condition
+     * 
+     * @return AccessCondition
+     */
+    public function getAccessCondition()
+    {
+        return $this->_accessCondition;
+    }
+    
+    /**
+     * Sets access condition
+     * 
+     * @param AccessCondition $accessCondition value to use.
+     * 
+     * @return none.
+     */
+    public function setAccessCondition($accessCondition)
+    {
+        $this->_accessCondition = $accessCondition;
+    }
     
     /**
      * Gets blob snapshot.
      *
-     * @return string
+     * @return string.
      */
     public function getSnapshot()
     {
-        return $this->snapshot;
+        return $this->_snapshot;
     }
 
     /**
      * Sets blob snapshot.
      *
      * @param string $snapshot value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setSnapshot($snapshot)
     {
-        $this->snapshot = $snapshot;
+        $this->_snapshot = $snapshot;
     }
-
+    
     /**
-     * Gets Blob range.
-     *
-     * @return Range
+     * Gets rangeStart
+     * 
+     * @return integer
      */
-    public function getRange()
+    public function getRangeStart()
     {
-        return $this->range;
+        return $this->_rangeStart;
     }
-
+    
     /**
-     * Sets Blob range.
-     *
-     * @param Range $range value.
-     *
-     * @return void
+     * Sets rangeStart
+     * 
+     * @param integer $rangeStart the blob lease id.
+     * 
+     * @return none
      */
-    public function setRange(Range $range)
+    public function setRangeStart($rangeStart)
     {
-        $this->range = $range;
+        Validate::isInteger($rangeStart, 'rangeStart');
+        $this->_rangeStart = $rangeStart;
     }
-
+    
     /**
-     * Gets rangeGetContentMD5
-     *
+     * Gets rangeEnd
+     * 
+     * @return integer
+     */
+    public function getRangeEnd()
+    {
+        return $this->_rangeEnd;
+    }
+    
+    /**
+     * Sets rangeEnd
+     * 
+     * @param integer $rangeEnd range end value in bytes
+     * 
+     * @return none
+     */
+    public function setRangeEnd($rangeEnd)
+    {
+        Validate::isInteger($rangeEnd, 'rangeEnd');
+        $this->_rangeEnd = $rangeEnd;
+    }
+    
+    /**
+     * Gets computeRangeMD5
+     * 
      * @return boolean
      */
-    public function getRangeGetContentMD5()
+    public function getComputeRangeMD5()
     {
-        return $this->rangeGetContentMD5;
+        return $this->_computeRangeMD5;
     }
-
+    
     /**
-     * Sets rangeGetContentMD5
-     *
-     * @param boolean $rangeGetContentMD5 value
-     *
-     * @return void
+     * Sets computeRangeMD5
+     * 
+     * @param boolean $computeRangeMD5 value
+     * 
+     * @return none
      */
-    public function setRangeGetContentMD5($rangeGetContentMD5)
+    public function setComputeRangeMD5($computeRangeMD5)
     {
-        Validate::isBoolean($rangeGetContentMD5);
-        $this->rangeGetContentMD5 = $rangeGetContentMD5;
+        Validate::isBoolean($computeRangeMD5);
+        $this->_computeRangeMD5 = $computeRangeMD5;
     }
 }
+
+

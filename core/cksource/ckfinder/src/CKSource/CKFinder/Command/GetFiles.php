@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -20,21 +20,21 @@ use CKSource\CKFinder\Utils;
 
 class GetFiles extends CommandAbstract
 {
-    protected $requires = array(Permission::FILE_VIEW);
+    protected $requires = [Permission::FILE_VIEW];
 
     public function execute(WorkingFolder $workingFolder)
     {
         $data = new \stdClass();
         $files = $workingFolder->listFiles();
 
-        $data->files = array();
+        $data->files = [];
 
         foreach ($files as $file) {
-            $fileObject = array(
+            $fileObject = [
                 'name' => $file['basename'],
                 'date' => Utils::formatDate($file['timestamp']),
-                'size' => Utils::formatSize($file['size'])
-            );
+                'size' => Utils::formatSize($file['size']),
+            ];
 
             $data->files[] = $fileObject;
         }

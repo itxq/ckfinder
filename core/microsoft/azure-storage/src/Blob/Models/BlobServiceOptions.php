@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -24,8 +24,6 @@
  
 namespace MicrosoftAzure\Storage\Blob\Models;
 
-use MicrosoftAzure\Storage\Common\Models\ServiceOptions;
-
 /**
  * Blob service options.
  *
@@ -34,59 +32,34 @@ use MicrosoftAzure\Storage\Common\Models\ServiceOptions;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
-class BlobServiceOptions extends ServiceOptions
+class BlobServiceOptions
 {
-    private $_leaseId;
-    private $_accessConditions;
-    
+    private $_timeout;
+
     /**
-     * Gets lease Id for the blob
+     * Gets timeout.
      *
-     * @return string
+     * @return string.
      */
-    public function getLeaseId()
+    public function getTimeout()
     {
-        return $this->_leaseId;
+        return $this->_timeout;
     }
-    
+
     /**
-     * Sets lease Id for the blob
+     * Sets timeout.
      *
-     * @param string $leaseId the blob lease id.
-     *
-     * @return void
+     * @param string $timeout value.
+     * 
+     * @return none.
      */
-    public function setLeaseId($leaseId)
+    public function setTimeout($timeout)
     {
-        $this->_leaseId = $leaseId;
-    }
-    
-    /**
-     * Gets access condition
-     *
-     * @return \MicrosoftAzure\Storage\Blob\Models\AccessCondition[]
-     */
-    public function getAccessConditions()
-    {
-        return $this->_accessConditions;
-    }
-    
-    /**
-     * Sets access condition
-     *
-     * @param mixed $accessConditions value to use.
-     *
-     * @return void
-     */
-    public function setAccessConditions($accessConditions)
-    {
-        if (!is_null($accessConditions) &&
-            is_array($accessConditions)) {
-            $this->_accessConditions = $accessConditions;
-        } else {
-            $this->_accessConditions = [$accessConditions];
-        }
+        $this->_timeout = $timeout;
     }
 }
+
+

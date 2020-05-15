@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="azure-storage-php" default="full-build">
- <!-- By default, we assume all tools to be on the $PATH
+ <!-- By default, we assume all tools to be on the $PATH 
  <property name="pdepend" value="pdepend.bat"/>
  <property name="phpcpd"  value="phpcpd.bat"/>
  <property name="phpcs"   value="phpcs.bat"/>
  <property name="phpdox"  value="phpdox.bat"/>
  <property name="phploc"  value="phploc.bat"/>
  <property name="phpmd"   value="phpmd.bat"/>
- <property name="phpunit" value="phpunit.bat"/>
- <property name="phpdoc"  value="phpdoc.bat"/> -->
+ <property name="phpunit" value="phpunit.bat"/> -->
 
  <!-- Use this when the tools are located as PHARs in ${basedir}/build/tools
  <property name="pdepend" value="${basedir}/build/tools/pdepend.phar"/>
@@ -17,27 +16,20 @@
  <property name="phpdox"  value="${basedir}/build/tools/phpdox.phar"/>
  <property name="phploc"  value="${basedir}/build/tools/phploc.phar"/>
  <property name="phpmd"   value="${basedir}/build/tools/phpmd.phar"/>
- <property name="phpunit" value="${basedir}/build/tools/phpunit.phar"/>
- <property name="phpdoc"  value="${basedir}/build/tools/phpDocumentator.phar"/>  -->
+ <property name="phpunit" value="${basedir}/build/tools/phpunit.phar"/>  -->
 
  <!-- Use this when the tools are managed by Composer in ${basedir}/vendor/bin -->
- <property name="pdepend"      value="${basedir}/vendor/bin/pdepend.bat"/>
- <property name="phpcpd"       value="${basedir}/vendor/bin/phpcpd.bat"/>
- <property name="phpcs"        value="${basedir}/vendor/bin/phpcs.bat"/>
- <property name="phpdox"       value="${basedir}/vendor/bin/phpdox.bat"/>
- <property name="phploc"       value="${basedir}/vendor/bin/phploc.bat"/>
- <property name="phpmd"        value="${basedir}/vendor/bin/phpmd.bat"/>
- <property name="phpunit"      value="${basedir}/vendor/bin/phpunit.bat"/>
- <property name="phpdoc"       value="${basedir}/vendor/bin/phpdoc.bat"/>
- <property name="php-cs-fixer" value="${basedir}/vendor/bin/php-cs-fixer.bat"/>
+ <property name="pdepend" value="${basedir}/vendor/bin/pdepend.bat"/>
+ <property name="phpcpd"  value="${basedir}/vendor/bin/phpcpd.bat"/>
+ <property name="phpcs"   value="${basedir}/vendor/bin/phpcs.bat"/>
+ <property name="phpdox"  value="${basedir}/vendor/bin/phpdox.bat"/>
+ <property name="phploc"  value="${basedir}/vendor/bin/phploc.bat"/>
+ <property name="phpmd"   value="${basedir}/vendor/bin/phpmd.bat"/>
+ <property name="phpunit" value="${basedir}/vendor/bin/phpunit.bat"/> 
 
  <target name="full-build"
          depends="prepare,static-analysis,phpunit,phpdox,-check-failure"
          description="Performs static analysis, runs the tests, and generates project documentation"/>
-
-<target name="full-build-large-scale"
-         depends="prepare,static-analysis,phpunit-large-scale,phpdox,-check-failure"
-         description="Performs static analysis, runs the tests (including large scale tests), and generates project documentation"/>
 
  <target name="full-build-parallel"
          depends="prepare,static-analysis-parallel,phpunit,phpdox,-check-failure"
@@ -210,26 +202,6 @@
   <property name="phpcs.done" value="true"/>
  </target>
 
- <target name = "php-cs-fixer"
-         unless="php-cs-fixer.done"
-         description="Fix coding standard violations using php-cs-fixer and print human readable output. Intended for usage on the command line before committing.">
-    <exec executable="${php-cs-fixer}" taskname="php-cs-fixer">
-        <arg value="fix" />
-        <arg value="src" />
-        <arg value="--rules=@PSR2" />
-        <arg value="--verbose" />
-        <arg value="--show-progress=estimating" />
-    </exec>
-     <exec executable="${php-cs-fixer}" taskname="php-cs-fixer">
-         <arg value="fix" />
-         <arg value="tests" />
-         <arg value="--rules=@PSR2" />
-         <arg value="--verbose" />
-         <arg value="--show-progress=estimating" />
-     </exec>
-    <property name="php-cs-fixer.done" value="true"/>
-</target>
-
  <target name="phpcpd"
          unless="phpcpd.done"
          description="Find duplicate code using PHPCPD and print human readable output. Intended for usage on the command line before committing.">
@@ -260,19 +232,6 @@
   <exec executable="${phpunit}" resultproperty="result.phpunit" taskname="phpunit">
    <arg value="--configuration"/>
    <arg path="${basedir}/phpunit.xml.dist"/>
-   <arg value="--exclude-group=large-scale"/>
-  </exec>
-
-  <property name="phpunit.done" value="true"/>
- </target>
-
-  <target name="phpunit-large-scale"
-         unless="phpunit.done"
-         depends="prepare"
-         description="Run unit tests with PHPUnit, including the large-scale tests">
-  <exec executable="${phpunit}" resultproperty="result.phpunit" taskname="phpunit">
-   <arg value="--configuration"/>
-   <arg path="${basedir}/phpunit.xml.dist"/>
   </exec>
 
   <property name="phpunit.done" value="true"/>
@@ -285,7 +244,6 @@
   <exec executable="${phpunit}" failonerror="true" taskname="phpunit">
    <arg value="--configuration"/>
    <arg path="${basedir}/phpunit.xml.dist"/>
-   <arg value="--exclude-group=large-scale"/>
    <arg value="--no-coverage"/>
   </exec>
 
@@ -299,12 +257,11 @@
   <exec executable="${phpunit}" resultproperty="result-ft.phpunit" taskname="phpunit">
    <arg value="--configuration"/>
    <arg path="${basedir}/phpunit.functional.xml.dist"/>
-   <arg value="--exclude-group=large-scale"/>
   </exec>
-
+  
   <property name="phpunit-ft.done" value="true"/>
  </target>
-
+ 
  <target name="phpdox"
          unless="phpdox.done"
          depends="phploc-ci,phpcs-ci,phpmd-ci"
@@ -322,18 +279,5 @@
     </not>
    </condition>
   </fail>
- </target>
-
- <target name="doc" description="Generate project documentation using phpDocumentator">
-   <exec executable="${phpdoc}" taskname="phpdoc">
-     <arg value="-t" />
-     <arg value=".\doc" />
-     <arg value="-d" />
-     <arg value=".\src" />
-     <arg value="--visibility" />
-     <arg value="public,protected" />
-     <arg value="--template" />
-     <arg value="zend" />
-   </exec>
  </target>
 </project>

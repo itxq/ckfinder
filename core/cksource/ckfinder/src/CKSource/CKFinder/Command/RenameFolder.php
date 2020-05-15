@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -19,7 +19,6 @@ use CKSource\CKFinder\Event\CKFinderEvent;
 use CKSource\CKFinder\Event\RenameFolderEvent;
 use CKSource\CKFinder\Exception\InvalidRequestException;
 use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
-use itxq\ckfinder\tools\AutoRename;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -27,23 +26,20 @@ class RenameFolder extends CommandAbstract
 {
     protected $requestMethod = Request::METHOD_POST;
 
-    protected $requires = array(Permission::FOLDER_RENAME);
+    protected $requires = [Permission::FOLDER_RENAME];
 
     public function execute(Request $request, WorkingFolder $workingFolder, EventDispatcher $dispatcher)
     {
         // The root folder cannot be renamed.
-        if ($workingFolder->getClientCurrentFolder() === '/') {
+        if ('/' === $workingFolder->getClientCurrentFolder()) {
             throw new InvalidRequestException('Cannot rename resource type root folder');
         }
 
         $newFolderName = (string) $request->query->get('newFolderName');
-        // ---------------------------------------------------------------------------------------
-        // 自动重命名 AutoRename
-        $newFolderName = AutoRename::ins()->config($this->app)->autoRename($newFolderName, '');
-        // ---------------------------------------------------------------------------------------
+
         $renameFolderEvent = new RenameFolderEvent($this->app, $workingFolder, $newFolderName);
 
-        $dispatcher->dispatch(CKFinderEvent::RENAME_FOLDER, $renameFolderEvent);
+        $dispatcher->dispatch($renameFolderEvent, CKFinderEvent::RENAME_FOLDER);
 
         if (!$renameFolderEvent->isPropagationStopped()) {
             $newFolderName = $renameFolderEvent->getNewFolderName();
@@ -51,6 +47,6 @@ class RenameFolder extends CommandAbstract
             return $workingFolder->rename($newFolderName);
         }
 
-        return array('renamed' => 0);
+        return ['renamed' => 0];
     }
 }

@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -32,16 +32,36 @@ namespace MicrosoftAzure\Storage\Queue\Models;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class CreateMessageOptions extends QueueServiceOptions
 {
+    /**
+     * If specified, the request must be made using an x-ms-version 
+     * of 2011-08-18 or newer. If not specified, the default value is 0. 
+     * Specifies the new visibility timeout value, in seconds, relative to server 
+     * time. The new value must be larger than or equal to 0, and cannot be 
+     * larger than 7 days. The visibility timeout of a message cannot be set to a 
+     * value later than the expiry time. visibilitytimeout should be set to a 
+     * value smaller than the time-to-live value.
+     * 
+     * @var integer
+     */
     private $_visibilityTimeoutInSeconds;
+    
+    /**
+     * Specifies the time-to-live interval for the message, in seconds. 
+     * The maximum time-to-live allowed is 7 days. If this parameter is omitted, 
+     * the default time-to-live is 7 days.
+     * 
+     * @var integer
+     */
     private $_timeToLiveInSeconds;
     
     /**
      * Gets visibilityTimeoutInSeconds field.
-     *
+     * 
      * @return integer
      */
     public function getVisibilityTimeoutInSeconds()
@@ -51,10 +71,10 @@ class CreateMessageOptions extends QueueServiceOptions
     
     /**
      * Sets visibilityTimeoutInSeconds field.
-     *
+     * 
      * @param integer $visibilityTimeoutInSeconds value to use.
-     *
-     * @return void
+     * 
+     * @return none
      */
     public function setVisibilityTimeoutInSeconds($visibilityTimeoutInSeconds)
     {
@@ -63,7 +83,7 @@ class CreateMessageOptions extends QueueServiceOptions
     
     /**
      * Gets timeToLiveInSeconds field.
-     *
+     * 
      * @return integer
      */
     public function getTimeToLiveInSeconds()
@@ -73,13 +93,15 @@ class CreateMessageOptions extends QueueServiceOptions
     
     /**
      * Sets timeToLiveInSeconds field.
-     *
+     * 
      * @param integer $timeToLiveInSeconds value to use.
-     *
-     * @return void
+     * 
+     * @return none
      */
     public function setTimeToLiveInSeconds($timeToLiveInSeconds)
     {
         $this->_timeToLiveInSeconds = $timeToLiveInSeconds;
     }
 }
+
+

@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -30,9 +30,9 @@ class DeleteFiles extends CommandAbstract
 {
     protected $requestMethod = Request::METHOD_POST;
 
-    protected $requires = array(
-        Permission::FILE_DELETE
-    );
+    protected $requires = [
+        Permission::FILE_DELETE,
+    ];
 
     public function execute(Request $request, ResourceTypeFactory $resourceTypeFactory, Acl $acl, EventDispatcher $dispatcher)
     {
@@ -40,7 +40,7 @@ class DeleteFiles extends CommandAbstract
 
         $deleted = 0;
 
-        $errors = array();
+        $errors = [];
 
         // Initial validation
         foreach ($deletedFiles as $arr) {
@@ -58,8 +58,8 @@ class DeleteFiles extends CommandAbstract
                 continue;
             }
 
-            $name   = $arr['name'];
-            $type   = $arr['type'];
+            $name = $arr['name'];
+            $type = $arr['type'];
             $folder = $arr['folder'];
 
             $resourceType = $resourceTypeFactory->getResourceType($type);
@@ -68,11 +68,11 @@ class DeleteFiles extends CommandAbstract
 
             if ($deletedFile->isValid()) {
                 $deleteFileEvent = new DeleteFileEvent($this->app, $deletedFile);
-                $dispatcher->dispatch(CKFinderEvent::DELETE_FILE, $deleteFileEvent);
+                $dispatcher->dispatch($deleteFileEvent, CKFinderEvent::DELETE_FILE);
 
                 if (!$deleteFileEvent->isPropagationStopped()) {
                     if ($deletedFile->doDelete()) {
-                        $deleted++;
+                        ++$deleted;
                     }
                 }
             }
@@ -80,13 +80,13 @@ class DeleteFiles extends CommandAbstract
             $errors = array_merge($errors, $deletedFile->getErrors());
         }
 
-        $data = array('deleted' => $deleted);
+        $data = ['deleted' => $deleted];
 
         if (!empty($errors)) {
-            $data['error'] = array(
+            $data['error'] = [
                 'number' => Error::DELETE_FAILED,
-                'errors' => $errors
-            );
+                'errors' => $errors,
+            ];
         }
 
         return $data;

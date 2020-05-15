@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -16,7 +16,6 @@ namespace CKSource\CKFinder\Backend;
 
 use CKSource\CKFinder\Acl\AclInterface;
 use CKSource\CKFinder\Acl\Permission;
-use CKSource\CKFinder\Backend\Adapter\AwsS3;
 use CKSource\CKFinder\Backend\Adapter\EmulateRenameDirectoryInterface;
 use CKSource\CKFinder\CKFinder;
 use CKSource\CKFinder\Config;
@@ -27,8 +26,8 @@ use CKSource\CKFinder\Utils;
 use League\Flysystem\Adapter\Ftp;
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\Cached\CachedAdapter;
-use League\Flysystem\Plugin\GetWithMetadata;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Plugin\GetWithMetadata;
 
 /**
  * The Backend file system class.
@@ -41,21 +40,21 @@ class Backend extends Filesystem
     /**
      * The CKFinder application container.
      *
-     * @var CKFinder $app
+     * @var CKFinder
      */
     protected $app;
 
     /**
      * Access Control Lists.
      *
-     * @var AclInterface $acl
+     * @var AclInterface
      */
     protected $acl;
 
     /**
      * Configuration.
      *
-     * @var Config $ckConfig
+     * @var Config
      */
     protected $ckConfig;
 
@@ -70,7 +69,7 @@ class Backend extends Filesystem
      * @param array            $backendConfig    the backend configuration node
      * @param CKFinder         $app              the CKFinder app container
      * @param AdapterInterface $adapter          the adapter
-     * @param array|null       $filesystemConfig the configuration
+     * @param null|array       $filesystemConfig the configuration
      */
     public function __construct(array $backendConfig, CKFinder $app, AdapterInterface $adapter, $filesystemConfig = null)
     {
@@ -101,7 +100,7 @@ class Backend extends Filesystem
      */
     public function getTrackedOperations()
     {
-        return isset($this->backendConfig['trackedOperations']) ? $this->backendConfig['trackedOperations'] : array();
+        return isset($this->backendConfig['trackedOperations']) ? $this->backendConfig['trackedOperations'] : [];
     }
 
     /**
@@ -110,7 +109,7 @@ class Backend extends Filesystem
      * @param ResourceType $resourceType the resource type
      * @param string       $path         the resource type relative path
      *
-     * @return string path to be used with the backend adapter.
+     * @return string path to be used with the backend adapter
      */
     public function buildPath(ResourceType $resourceType, $path)
     {
@@ -120,9 +119,8 @@ class Backend extends Filesystem
     /**
      * Returns a filtered list of directories for a given resource type and path.
      *
-     * @param ResourceType $resourceType
-     * @param string       $path
-     * @param bool         $recursive
+     * @param string $path
+     * @param bool   $recursive
      *
      * @return array
      */
@@ -137,7 +135,7 @@ class Backend extends Filesystem
 
         return array_filter($contents, function ($v) {
             return isset($v['type']) &&
-                   $v['type'] === 'dir' &&
+                   'dir' === $v['type'] &&
                    !$this->isHiddenFolder($v['basename']) &&
                    $v['acl'] & Permission::FOLDER_VIEW;
         });
@@ -146,9 +144,8 @@ class Backend extends Filesystem
     /**
      * Returns a filtered list of files for a given resource type and path.
      *
-     * @param ResourceType $resourceType
-     * @param string       $path
-     * @param bool         $recursive
+     * @param string $path
+     * @param bool   $recursive
      *
      * @return array
      */
@@ -159,7 +156,7 @@ class Backend extends Filesystem
 
         return array_filter($contents, function ($v) use ($resourceType) {
             return isset($v['type']) &&
-                   $v['type'] === 'file' &&
+                   'file' === $v['type'] &&
                    !$this->isHiddenFile($v['basename']) &&
                    $resourceType->isAllowedExtension(isset($v['extension']) ? $v['extension'] : '');
         });
@@ -168,10 +165,9 @@ class Backend extends Filesystem
     /**
      * Check if the directory for a given path contains subdirectories.
      *
-     * @param ResourceType $resourceType
-     * @param string       $path
+     * @param string $path
      *
-     * @return bool `true` if the directory contains subdirectories.
+     * @return bool `true` if the directory contains subdirectories
      */
     public function containsDirectories(ResourceType $resourceType, $path = '')
     {
@@ -192,7 +188,7 @@ class Backend extends Filesystem
         }
 
         foreach ($contents as $entry) {
-            if ($entry['type'] === 'dir' &&
+            if ('dir' === $entry['type'] &&
                 !$this->isHiddenFolder($entry['basename']) &&
                 $this->acl->isAllowed($resourceType->getName(), Path::combine($path, $entry['basename']), Permission::FOLDER_VIEW)
             ) {
@@ -208,7 +204,7 @@ class Backend extends Filesystem
      *
      * @param string $fileName
      *
-     * @return bool `true` if the file is hidden.
+     * @return bool `true` if the file is hidden
      */
     public function isHiddenFile($fileName)
     {
@@ -226,7 +222,7 @@ class Backend extends Filesystem
      *
      * @param string $folderName
      *
-     * @return bool `true` if the directory is hidden.
+     * @return bool `true` if the directory is hidden
      */
     public function isHiddenFolder($folderName)
     {
@@ -244,7 +240,7 @@ class Backend extends Filesystem
      *
      * @param string $path
      *
-     * @return bool `true` if the path is hidden.
+     * @return bool `true` if the path is hidden
      */
     public function isHiddenPath($path)
     {
@@ -289,7 +285,7 @@ class Backend extends Filesystem
         $contents = $this->listContents($dirname);
 
         foreach ($contents as $entry) {
-            if ($entry['type'] === 'dir') {
+            if ('dir' === $entry['type']) {
                 $this->deleteContents($entry['path']);
                 $this->deleteDir($entry['path']);
             } else {
@@ -321,7 +317,7 @@ class Backend extends Filesystem
         }
 
         foreach ($contents as $c) {
-            if (isset($c['type']) && isset($c['basename']) && $c['type'] === 'dir' && $c['basename'] === $dirName) {
+            if (isset($c['type'], $c['basename']) && 'dir' === $c['type'] && $c['basename'] === $dirName) {
                 return true;
             }
         }
@@ -336,21 +332,21 @@ class Backend extends Filesystem
      * @param ResourceType $resourceType      the file resource type
      * @param string       $folderPath        the resource-type relative folder path
      * @param string       $fileName          the file name
-     * @param string|null  $thumbnailFileName the thumbnail file name - if the file is a thumbnail
+     * @param null|string  $thumbnailFileName the thumbnail file name - if the file is a thumbnail
      *
-     * @return string|null URL to a file or `null` if the backend does not support it.
+     * @return null|string URL to a file or `null` if the backend does not support it
      */
     public function getFileUrl(ResourceType $resourceType, $folderPath, $fileName, $thumbnailFileName = null)
     {
         if ($this->usesProxyCommand()) {
             $connectorUrl = $this->app->getConnectorUrl();
 
-            $queryParameters = array(
+            $queryParameters = [
                 'command' => 'Proxy',
                 'type' => $resourceType->getName(),
                 'currentFolder' => $folderPath,
-                'fileName' => $fileName
-            );
+                'fileName' => $fileName,
+            ];
 
             if ($thumbnailFileName) {
                 $queryParameters['thumbnail'] = $thumbnailFileName;
@@ -362,7 +358,7 @@ class Backend extends Filesystem
                 $queryParameters['cache'] = $proxyCacheLifetime;
             }
 
-            return $connectorUrl . '?' . http_build_query($queryParameters, '', '&');
+            return $connectorUrl.'?'.http_build_query($queryParameters, '', '&');
         }
 
         $path = $thumbnailFileName
@@ -386,8 +382,8 @@ class Backend extends Filesystem
      * Returns the base URL used to build the direct URL to files stored
      * in this backend.
      *
-     * @return string|null base URL or `null` if the base URL for a backend
-     *                     was not defined.
+     * @return null|string base URL or `null` if the base URL for a backend
+     *                     was not defined
      */
     public function getBaseUrl()
     {
@@ -401,8 +397,8 @@ class Backend extends Filesystem
     /**
      * Returns the root directory defined for the backend.
      *
-     * @return string|null root directory or `null` if the root directory
-     *                     was not defined.
+     * @return null|string root directory or `null` if the root directory
+     *                     was not defined
      */
     public function getRootDirectory()
     {
@@ -428,8 +424,8 @@ class Backend extends Filesystem
      *
      * @param string $path file path
      *
-     * @return resource|null a stream to a file or `null` if the backend does not
-     *                       support writing streams.
+     * @return null|resource a stream to a file or `null` if the backend does not
+     *                       support writing streams
      */
     public function createWriteStream($path)
     {
@@ -448,7 +444,7 @@ class Backend extends Filesystem
      * @param string $path
      * @param string $newpath
      *
-     * @return bool `true` on success, `false` on failure.
+     * @return bool `true` on success, `false` on failure
      */
     public function rename($path, $newpath)
     {

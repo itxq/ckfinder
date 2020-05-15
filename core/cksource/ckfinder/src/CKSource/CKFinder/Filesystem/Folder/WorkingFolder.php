@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -26,15 +26,15 @@ use CKSource\CKFinder\Exception\InvalidRequestException;
 use CKSource\CKFinder\Filesystem\File\File;
 use CKSource\CKFinder\Filesystem\Path;
 use CKSource\CKFinder\Operation\OperationManager;
+use CKSource\CKFinder\ResizedImage\ResizedImageRepository;
 use CKSource\CKFinder\ResourceType\ResourceType;
 use CKSource\CKFinder\Response\JsonResponse;
-use CKSource\CKFinder\ResizedImage\ResizedImageRepository;
+use CKSource\CKFinder\Thumbnail\ThumbnailRepository;
 use CKSource\CKFinder\Utils;
 use League\Flysystem\Util\MimeType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use CKSource\CKFinder\Thumbnail\ThumbnailRepository;
 
 /**
  * The WorkingFolder class.
@@ -45,7 +45,7 @@ use CKSource\CKFinder\Thumbnail\ThumbnailRepository;
 class WorkingFolder extends Folder implements EventSubscriberInterface
 {
     /**
-     * @var CKFinder $app
+     * @var CKFinder
      */
     protected $app;
 
@@ -60,35 +60,33 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
     protected $thumbnailRepository;
 
     /**
-     * @var ResourceType $resourceType
+     * @var ResourceType
      */
     protected $resourceType;
 
     /**
      * Current folder path.
      *
-     * @var string $clientCurrentFolder
+     * @var string
      */
     protected $clientCurrentFolder;
 
     /**
      * Backend relative path (includes the backend directory prefix).
      *
-     * @var string $path
+     * @var string
      */
     protected $path;
 
     /**
      * Directory ACL mask computed for the current user.
      *
-     * @var int|null $aclMask
+     * @var null|int
      */
-    protected $aclMask = null;
+    protected $aclMask;
 
     /**
      * Constructor.
-     *
-     * @param CKFinder     $app
      *
      * @throws \Exception
      */
@@ -96,7 +94,7 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
     {
         $this->app = $app;
 
-        /* @var $request \Symfony\Component\HttpFoundation\Request */
+        /** @var \Symfony\Component\HttpFoundation\Request $request */
         $request = $app['request_stack']->getCurrentRequest();
 
         $resourceType = $app['resource_type_factory']->getResourceType((string) $request->get('type'));
@@ -123,12 +121,12 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
 
         // Check if resource type folder exists - if not then create it
         $currentCommand = (string) $request->query->get('command');
-        $omitForCommands = array('Thumbnail');
+        $omitForCommands = ['Thumbnail'];
 
-        if (!in_array($currentCommand, $omitForCommands) &&
+        if (!\in_array($currentCommand, $omitForCommands, true) &&
             !empty($resourceTypeDirectory) &&
             !$backend->hasDirectory($this->path)) {
-            if ($this->clientCurrentFolder === '/') {
+            if ('/' === $this->clientCurrentFolder) {
                 @$backend->createDir($resourceTypeDirectory);
 
                 if (!$backend->hasDirectory($resourceTypeDirectory)) {
@@ -239,11 +237,11 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
      *
      * @param string $dirname directory name
      *
-     * @return array [string, bool] [0] Created folder name, [1] `true` if the folder was created successfully.
-     *
      * @throws AccessDeniedException
      * @throws AlreadyExistsException
      * @throws InvalidNameException
+     *
+     * @return array [string, bool] [0] Created folder name, [1] `true` if the folder was created successfully
      */
     public function createDir($dirname)
     {
@@ -271,7 +269,7 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
             throw new AccessDeniedException("Couldn't create new folder. Please check permissions.");
         }
 
-        return array($dirname, $result);
+        return [$dirname, $result];
     }
 
     /**
@@ -280,7 +278,7 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
      * @param string $fileName file name
      * @param string $data     file data
      *
-     * @return bool `true` if created successfully.
+     * @return bool `true` if created successfully
      */
     public function write($fileName, $data)
     {
@@ -296,7 +294,7 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
      * @param string   $fileName file name
      * @param resource $resource file data stream
      *
-     * @return bool `true` if created successfully.
+     * @return bool `true` if created successfully
      */
     public function writeStream($fileName, $resource)
     {
@@ -313,7 +311,7 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
      * @param resource $resource file data stream
      * @param string   $mimeType file MIME type
      *
-     * @return bool `true` if updated successfully.
+     * @return bool `true` if updated successfully
      */
     public function putStream($fileName, $resource, $mimeType = null)
     {
@@ -321,11 +319,11 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
         $filePath = Path::combine($this->getPath(), $fileName);
 
         if (!$mimeType) {
-            $ext =  strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
             $mimeType = MimeType::detectByFileExtension($ext);
         }
 
-        $options = $mimeType ? array('mimetype' => $mimeType) : array();
+        $options = $mimeType ? ['mimetype' => $mimeType] : [];
 
         return $backend->putStream($filePath, $resource, $options);
     }
@@ -403,11 +401,11 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
      *
      * @param string $newName new folder name
      *
-     * @return array containing newName and newPath
-     *
      * @throws AccessDeniedException
      * @throws AlreadyExistsException
      * @throws InvalidNameException
+     *
+     * @return array containing newName and newPath
      */
     public function rename($newName)
     {
@@ -423,24 +421,24 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
             $newName = File::convertToAscii($newName);
         }
 
-        $newBackendPath = dirname($this->getPath()) . '/' . $newName;
+        $newBackendPath = \dirname($this->getPath()).'/'.$newName;
 
         if ($this->backend->has($newBackendPath)) {
             throw new AlreadyExistsException('File already exists');
         }
 
-        $newClientPath = Path::normalize(dirname($this->getClientCurrentFolder()) . '/' . $newName);
+        $newClientPath = Path::normalize(\dirname($this->getClientCurrentFolder()).'/'.$newName);
 
         if (!$this->getBackend()->rename($this->getPath(), $newBackendPath)) {
             throw new AccessDeniedException();
         }
 
-        /* @var OperationManager $currentRequestOperation */
+        /** @var OperationManager $currentRequestOperation */
         $currentRequestOperation = $this->app['operation'];
 
         if ($currentRequestOperation->isAborted()) {
             // Don't continue in this case, no need to touch thumbs and cache entries
-            return array('aborted' => true);
+            return ['aborted' => true];
         }
 
         // Delete related thumbs path
@@ -448,20 +446,21 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
 
         $this->app['cache']->changePrefix(
             Path::combine($this->resourceType->getName(), $this->getClientCurrentFolder()),
-            Path::combine($this->resourceType->getName(), $newClientPath));
+            Path::combine($this->resourceType->getName(), $newClientPath)
+        );
 
-        return array(
+        return [
             'newName' => $newName,
             'newPath' => $newClientPath,
-            'renamed' => 1
-        );
+            'renamed' => 1,
+        ];
     }
 
     /**
      * Returns the URL to a given file.
      *
      * @param string      $fileName
-     * @param string|null $thumbnailFileName
+     * @param null|string $thumbnailFileName
      *
      * @throws FileNotFoundException
      * @throws InvalidExtensionException
@@ -519,30 +518,28 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
 
     /**
      * Adds the current folder information to the response.
-     *
-     * @param FilterResponseEvent $event
      */
-    public function addCurrentFolderInfo(FilterResponseEvent $event)
+    public function addCurrentFolderInfo(ResponseEvent $event)
     {
-        /* @var JsonResponse $response */
+        /** @var JsonResponse $response */
         $response = $event->getResponse();
 
         if ($response instanceof JsonResponse) {
             $responseData = (array) $response->getData();
 
-            $responseData = array(
-                    'resourceType' => $this->getResourceTypeName(),
-                    'currentFolder' => array(
-                        'path' => $this->getClientCurrentFolder(),
-                        'acl' => $this->getAclMask()
-                    )
-                ) + $responseData;
+            $responseData = [
+                'resourceType' => $this->getResourceTypeName(),
+                'currentFolder' => [
+                    'path' => $this->getClientCurrentFolder(),
+                    'acl' => $this->getAclMask(),
+                ],
+            ] + $responseData;
 
             $baseUrl = $this->backend->getBaseUrl();
 
             if (null !== $baseUrl) {
                 $folderUrl = Path::combine($baseUrl, Utils::encodeURLParts(Path::combine($this->resourceType->getDirectory(), $this->getClientCurrentFolder())));
-                $responseData['currentFolder']['url'] = rtrim($folderUrl, '/') . '/';
+                $responseData['currentFolder']['url'] = rtrim($folderUrl, '/').'/';
             }
 
             $response->setData($responseData);
@@ -556,6 +553,6 @@ class WorkingFolder extends Folder implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(KernelEvents::RESPONSE => array('addCurrentFolderInfo', 512));
+        return [KernelEvents::RESPONSE => ['addCurrentFolderInfo', 512]];
     }
 }

@@ -23,66 +23,109 @@
  */
 
 namespace MicrosoftAzure\Storage\Blob\Models;
-
-use MicrosoftAzure\Storage\Common\Internal\ACLBase;
-use MicrosoftAzure\Storage\Common\Internal\Resources;
+use MicrosoftAzure\Storage\Common\Internal\Utilities;
 use MicrosoftAzure\Storage\Common\Internal\Validate;
+use MicrosoftAzure\Storage\Common\Internal\Resources;
+use MicrosoftAzure\Storage\Blob\Models\AccessPolicy;
+use MicrosoftAzure\Storage\Blob\Models\SignedIdentifier;
+use MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
+use MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer;
 
 /**
- * Holds container ACL members.
- *
+ * Holds conatiner ACL members.
+ * 
  * @category  Microsoft
  * @package   MicrosoftAzure\Storage\Blob\Models
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
-class ContainerACL extends ACLBase
+class ContainerAcl
 {
-    private $publicAccess;
-
     /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        //setting the resource type to a default value.
-        $this->setResourceType(Resources::RESOURCE_TYPE_CONTAINER);
-    }
-
-    /**
-     * Parses the given array into signed identifiers and create an instance of
-     * ContainerACL
+     * All available types can be found in PublicAccessType
      *
+     * @var string
+     */
+    private $_publicAccess;
+
+    /**
+     * @var array
+     */
+    private $_signedIdentifiers = array();
+    
+    /*
+     * The root name of XML elemenet representation.
+     * 
+     * @var string
+     */
+    public static $xmlRootName = 'SignedIdentifiers';
+
+
+    /**
+     * Parses the given array into signed identifiers.
+     * 
      * @param string $publicAccess The container public access.
      * @param array  $parsed       The parsed response into array representation.
-     *
-     * @internal
-     *
-     * @return ContainerACL
+     * 
+     * @return none
      */
-    public static function create($publicAccess, array $parsed = null)
+    public static function create($publicAccess, $parsed)
     {
-        Validate::isTrue(
-            PublicAccessType::isValid($publicAccess),
-            Resources::INVALID_BLOB_PAT_MSG
-        );
-        $result = new ContainerACL();
-        $result->fromXmlArray($parsed);
-        $result->setPublicAccess($publicAccess);
+        $result                     = new ContainerAcl();
+        $result->_publicAccess      = $publicAccess;
+        $result->_signedIdentifiers = array();
+        
+        if (!empty($parsed) && is_array($parsed['SignedIdentifier'])) {
+            $entries = $parsed['SignedIdentifier'];
+            $temp    = Utilities::getArray($entries);
+
+            foreach ($temp as $value) {
+                $startString  = urldecode($value['AccessPolicy']['Start']);
+                $expiryString = urldecode($value['AccessPolicy']['Expiry']);
+                $start        = Utilities::convertToDateTime($startString);
+                $expiry       = Utilities::convertToDateTime($expiryString);
+                $permission   = $value['AccessPolicy']['Permission'];
+                $id           = $value['Id'];
+                $result->addSignedIdentifier($id, $start, $expiry, $permission);
+            }
+        }
         
         return $result;
     }
 
     /**
+     * Gets container signed modifiers.
+     *
+     * @return array.
+     */
+    public function getSignedIdentifiers()
+    {
+        return $this->_signedIdentifiers;
+    }
+
+    /**
+     * Sets container signed modifiers.
+     *
+     * @param array $signedIdentifiers value.
+     *
+     * @return none.
+     */
+    public function setSignedIdentifiers($signedIdentifiers)
+    {
+        $this->_signedIdentifiers = $signedIdentifiers;
+    }
+
+    /**
      * Gets container publicAccess.
      *
-     * @return string
+     * @return string.
      */
     public function getPublicAccess()
     {
-        return $this->publicAccess;
+        return $this->_publicAccess;
     }
 
     /**
@@ -90,7 +133,7 @@ class ContainerACL extends ACLBase
      *
      * @param string $publicAccess value.
      *
-     * @return void
+     * @return none.
      */
     public function setPublicAccess($publicAccess)
     {
@@ -98,57 +141,79 @@ class ContainerACL extends ACLBase
             PublicAccessType::isValid($publicAccess),
             Resources::INVALID_BLOB_PAT_MSG
         );
-        $this->publicAccess = $publicAccess;
-        $this->setResourceType(
-            self::getResourceTypeByPublicAccess($publicAccess)
-        );
+        $this->_publicAccess = $publicAccess;
     }
 
     /**
-     * Gets the resource type according to the given public access. Default
-     * value is Resources::RESOURCE_TYPE_CONTAINER.
-     *
-     * @param  string $publicAccess The public access that determines the
-     *                              resource type.
-     *
-     * @return string
+     * Adds new signed modifier
+     * 
+     * @param string    $id         a unique id for this modifier
+     * @param \DateTime $start      The time at which the Shared Access Signature
+     * becomes valid. If omitted, start time for this call is assumed to be
+     * the time when the Blob service receives the request.
+     * @param \DateTime $expiry     The time at which the Shared Access Signature
+     * becomes invalid. This field may be omitted if it has been specified as
+     * part of a container-level access policy.
+     * @param string    $permission The permissions associated with the Shared
+     * Access Signature. The user is restricted to operations allowed by the
+     * permissions. Valid permissions values are read (r), write (w), delete (d) and
+     * list (l).
+     * 
+     * @return none.
+     * 
+     * @see http://msdn.microsoft.com/en-us/library/windowsazure/hh508996.aspx
      */
-    private static function getResourceTypeByPublicAccess($publicAccess)
+    public function addSignedIdentifier($id, $start, $expiry, $permission)
     {
-        $result = '';
-
-        switch ($publicAccess) {
-            case PublicAccessType::BLOBS_ONLY:
-                $result = Resources::RESOURCE_TYPE_BLOB;
-                break;
-            case PublicAccessType::CONTAINER_AND_BLOBS:
-                $result = Resources::RESOURCE_TYPE_CONTAINER;
-                break;
-            default:
-                $result = Resources::RESOURCE_TYPE_CONTAINER;
-                break;
+        Validate::isString($id, 'id');
+        Validate::isDate($start);
+        Validate::isDate($expiry);
+        Validate::isString($permission, 'permission');
+        
+        $accessPolicy = new AccessPolicy();
+        $accessPolicy->setStart($start);
+        $accessPolicy->setExpiry($expiry);
+        $accessPolicy->setPermission($permission);
+        
+        $signedIdentifier = new SignedIdentifier();
+        $signedIdentifier->setId($id);
+        $signedIdentifier->setAccessPolicy($accessPolicy);
+        
+        $this->_signedIdentifiers[] = $signedIdentifier;
+    }
+    
+    /**
+     * Converts this object to array representation for XML serialization 
+     * 
+     * @return array.
+     */
+    public function toArray()
+    {
+        $array = array();
+        
+        foreach ($this->_signedIdentifiers as $value) {
+            $array[] = $value->toArray();
         }
-
-        return $result;
+        
+        return $array;
     }
-
+    
     /**
-     * Validate if the resource type is for the class.
-     *
-     * @param  string $resourceType the resource type to be validated.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @internal
-     *
-     * @return void
+     * Converts this current object to XML representation.
+     * 
+     * @param XmlSerializer $xmlSerializer The XML serializer.
+     * 
+     * @return string.
      */
-    protected static function validateResourceType($resourceType)
+    public function toXml($xmlSerializer)
     {
-        Validate::isTrue(
-            $resourceType == Resources::RESOURCE_TYPE_BLOB ||
-            $resourceType == Resources::RESOURCE_TYPE_CONTAINER,
-            Resources::INVALID_RESOURCE_TYPE
+        $properties = array(
+            XmlSerializer::DEFAULT_TAG => 'SignedIdentifier',
+            XmlSerializer::ROOT_NAME   => self::$xmlRootName
         );
+        
+        return $xmlSerializer->serialize($this->toArray(), $properties);
     }
 }
+
+

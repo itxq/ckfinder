@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -30,11 +30,11 @@ class CopyFiles extends CommandAbstract
 {
     protected $requestMethod = Request::METHOD_POST;
 
-    protected $requires = array(
+    protected $requires = [
         Permission::FILE_RENAME,
         Permission::FILE_CREATE,
-        Permission::FILE_DELETE
-    );
+        Permission::FILE_DELETE,
+    ];
 
     public function execute(Request $request, ResourceTypeFactory $resourceTypeFactory, Acl $acl, EventDispatcher $dispatcher)
     {
@@ -42,7 +42,7 @@ class CopyFiles extends CommandAbstract
 
         $copied = 0;
 
-        $errors = array();
+        $errors = [];
 
         // Initial validation
         foreach ($copiedFiles as $arr) {
@@ -60,8 +60,8 @@ class CopyFiles extends CommandAbstract
                 continue;
             }
 
-            $name   = $arr['name'];
-            $type   = $arr['type'];
+            $name = $arr['name'];
+            $type = $arr['type'];
             $folder = $arr['folder'];
 
             $resourceType = $resourceTypeFactory->getResourceType($type);
@@ -72,14 +72,13 @@ class CopyFiles extends CommandAbstract
 
             $copiedFile->setCopyOptions($options);
 
-
             if ($copiedFile->isValid()) {
                 $copyFileEvent = new CopyFileEvent($this->app, $copiedFile);
-                $dispatcher->dispatch(CKFinderEvent::COPY_FILE, $copyFileEvent);
+                $dispatcher->dispatch($copyFileEvent, CKFinderEvent::COPY_FILE);
 
                 if (!$copyFileEvent->isPropagationStopped()) {
                     if ($copiedFile->doCopy()) {
-                        $copied++;
+                        ++$copied;
                     }
                 }
             }
@@ -87,13 +86,13 @@ class CopyFiles extends CommandAbstract
             $errors = array_merge($errors, $copiedFile->getErrors());
         }
 
-        $data = array('copied' => $copied);
+        $data = ['copied' => $copied];
 
         if (!empty($errors)) {
-            $data['error'] = array(
+            $data['error'] = [
                 'number' => Error::COPY_FAILED,
-                'errors' => $errors
-            );
+                'errors' => $errors,
+            ];
         }
 
         return $data;

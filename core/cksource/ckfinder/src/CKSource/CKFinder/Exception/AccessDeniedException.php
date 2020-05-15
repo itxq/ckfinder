@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -22,8 +22,6 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * Thrown when file system permissions do not allow to perform an operation
  * such as accessing a directory or writing a file.
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 class AccessDeniedException extends CKFinderException
 {
@@ -36,7 +34,7 @@ class AccessDeniedException extends CKFinderException
      * @param array      $parameters the parameters passed for translation
      * @param \Exception $previous   the previous exception
      */
-    public function __construct($message = 'Access denied', $parameters = array(), \Exception $previous = null)
+    public function __construct($message = 'Access denied', $parameters = [], \Exception $previous = null)
     {
         parent::__construct($message, Error::ACCESS_DENIED, $parameters, $previous);
     }

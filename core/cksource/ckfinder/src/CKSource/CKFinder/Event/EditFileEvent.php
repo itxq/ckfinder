@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -23,20 +23,17 @@ use CKSource\CKFinder\Filesystem\File\EditedFile;
 class EditFileEvent extends CKFinderEvent
 {
     /**
-     * @var EditedFile $uploadedFile
+     * @var EditedFile
      */
     protected $editedFile;
 
     /**
-     * @var string $newContents
+     * @var string
      */
     protected $newContents;
 
     /**
      * Constructor.
-     *
-     * @param CKFinder   $app
-     * @param EditedFile $editedFile
      */
     public function __construct(CKFinder $app, EditedFile $editedFile)
     {
@@ -50,7 +47,7 @@ class EditFileEvent extends CKFinderEvent
      *
      * @return EditedFile
      *
-     * @deprecated Please use getFile() instead.
+     * @deprecated please use getFile() instead
      */
     public function getEditedFile()
     {

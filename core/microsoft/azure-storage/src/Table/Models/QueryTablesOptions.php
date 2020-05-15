@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -24,8 +24,6 @@
  
 namespace MicrosoftAzure\Storage\Table\Models;
 
-use MicrosoftAzure\Storage\Table\Internal\AcceptOptionTrait;
-
 /**
  * Optional parameters for queryTables wrapper.
  *
@@ -34,77 +32,108 @@ use MicrosoftAzure\Storage\Table\Internal\AcceptOptionTrait;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class QueryTablesOptions extends TableServiceOptions
 {
-    use TableContinuationTokenTrait;
-    use AcceptOptionTrait;
-
-    private $query;
-    private $prefix;
-
+    /**
+     * @var string
+     */
+    private $_nextTableName;
+    
+    /**
+     * @var Query
+     */
+    private $_query;
+    
+    /**
+     * @var string
+     */
+    private $_prefix;
+    
     /**
      * Constructs new QueryTablesOptions object.
      */
     public function __construct()
     {
-        parent::__construct();
-        $this->query = new Query();
+        $this->_query = new Query();
+    }
+    
+    /**
+     * Gets nextTableName
+     * 
+     * @return string
+     */
+    public function getNextTableName()
+    {
+        return $this->_nextTableName;
+    }
+    
+    /**
+     * Sets nextTableName
+     * 
+     * @param string $nextTableName value
+     * 
+     * @return none
+     */
+    public function setNextTableName($nextTableName)
+    {
+        $this->_nextTableName = $nextTableName;
     }
     
     /**
      * Gets prefix
-     *
+     * 
      * @return string
      */
     public function getPrefix()
     {
-        return $this->prefix;
+        return $this->_prefix;
     }
     
     /**
      * Sets prefix
-     *
+     * 
      * @param string $prefix value
-     *
-     * @return void
+     * 
+     * @return none
      */
     public function setPrefix($prefix)
     {
-        $this->prefix = $prefix;
+        $this->_prefix = $prefix;
     }
     
     /**
      * Gets top.
      *
-     * @return integer
+     * @return integer.
      */
     public function getTop()
     {
-        return $this->query->getTop();
+        return $this->_query->getTop();
     }
 
     /**
      * Sets top.
      *
      * @param integer $top value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setTop($top)
     {
-        $this->query->setTop($top);
+        $this->_query->setTop($top);
     }
     
     /**
      * Gets query.
-     *
+     * 
      * @return Query
      */
     public function getQuery()
     {
-        return $this->query;
+        return $this->_query;
     }
     
     /**
@@ -114,33 +143,20 @@ class QueryTablesOptions extends TableServiceOptions
      */
     public function getFilter()
     {
-        return $this->query->getFilter();
+        return $this->_query->getFilter();
     }
 
     /**
      * Sets filter.
      *
      * @param Filters\Filter $filter value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
-    public function setFilter(Filters\Filter $filter)
+    public function setFilter($filter)
     {
-        $this->query->setFilter($filter);
-    }
-
-    /**
-     * Sets selectFields.
-     *
-     * You can either use this individual function or use setQuery to set the
-     * whole query object.
-     *
-     * @param array $selectFields value.
-     *
-     * @return void
-     */
-    public function setSelectFields(array $selectFields = null)
-    {
-        $this->query->setSelectFields($selectFields);
+        $this->_query->setFilter($filter);
     }
 }
+
+

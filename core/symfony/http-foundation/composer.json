@@ -16,15 +16,16 @@
         }
     ],
     "require": {
-        "php": ">=5.3.9",
+        "php": "^7.2.5",
+        "symfony/mime": "^4.4|^5.0",
         "symfony/polyfill-mbstring": "~1.1"
     },
     "require-dev": {
-        "symfony/expression-language": "~2.4"
+        "predis/predis": "~1.0",
+        "symfony/expression-language": "^4.4|^5.0"
     },
     "autoload": {
         "psr-4": { "Symfony\\Component\\HttpFoundation\\": "" },
-        "classmap": [ "Resources/stubs" ],
         "exclude-from-classmap": [
             "/Tests/"
         ]
@@ -32,7 +33,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "2.7-dev"
+            "dev-master": "5.0-dev"
         }
     }
 }

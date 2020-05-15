@@ -14,7 +14,6 @@
  *
  * PHP version 5
  *
- * @ignore
  * @category  Microsoft
  * @package   MicrosoftAzure\Storage\Common\Internal
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
@@ -24,17 +23,18 @@
  */
 
 namespace MicrosoftAzure\Storage\Common\Internal;
-
-use MicrosoftAzure\Storage\Common\Exceptions\InvalidArgumentTypeException;
+use MicrosoftAzure\Storage\Common\Internal\InvalidArgumentTypeException;
+use MicrosoftAzure\Storage\Common\Internal\Resources;
 
 /**
- * Validates against a condition and throws an exception in case of failure.
+ * Validates aganist a condition and throws an exception in case of failure.
  *
  * @category  Microsoft
  * @package   MicrosoftAzure\Storage\Common\Internal
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class Validate
@@ -42,12 +42,12 @@ class Validate
     /**
      * Throws exception if the provided variable type is not array.
      *
-     * @param mixed  $var  The variable to check.
+     * @param mix    $var  The variable to check.
      * @param string $name The parameter name.
      *
      * @throws InvalidArgumentTypeException.
      *
-     * @return void
+     * @return none
      */
     public static function isArray($var, $name)
     {
@@ -57,16 +57,16 @@ class Validate
     }
 
     /**
-     * Throws exception if the provided variable can not convert to a string.
+     * Throws exception if the provided variable type is not string.
      *
-     * @param mixed  $var  The variable to check.
+     * @param mix    $var  The variable to check.
      * @param string $name The parameter name.
      *
      * @throws InvalidArgumentTypeException
      *
-     * @return void
+     * @return none
      */
-    public static function canCastAsString($var, $name)
+    public static function isString($var, $name)
     {
         try {
             (string)$var;
@@ -78,11 +78,11 @@ class Validate
     /**
      * Throws exception if the provided variable type is not boolean.
      *
-     * @param mixed $var variable to check against.
+     * @param mix $var variable to check against.
      *
      * @throws InvalidArgumentTypeException
      *
-     * @return void
+     * @return none
      */
     public static function isBoolean($var)
     {
@@ -92,12 +92,12 @@ class Validate
     /**
      * Throws exception if the provided variable is set to null.
      *
-     * @param mixed  $var  The variable to check.
+     * @param mix    $var  The variable to check.
      * @param string $name The parameter name.
      *
      * @throws \InvalidArgumentException
      *
-     * @return void
+     * @return none
      */
     public static function notNullOrEmpty($var, $name)
     {
@@ -111,12 +111,12 @@ class Validate
     /**
      * Throws exception if the provided variable is not double.
      *
-     * @param mixed  $var  The variable to check.
+     * @param mix    $var  The variable to check.
      * @param string $name The parameter name.
      *
      * @throws \InvalidArgumentException
      *
-     * @return void
+     * @return none
      */
     public static function isDouble($var, $name)
     {
@@ -128,12 +128,12 @@ class Validate
     /**
      * Throws exception if the provided variable type is not integer.
      *
-     * @param mixed  $var  The variable to check.
+     * @param mix    $var  The variable to check.
      * @param string $name The parameter name.
      *
      * @throws InvalidArgumentTypeException
      *
-     * @return void
+     * @return none
      */
     public static function isInteger($var, $name)
     {
@@ -170,7 +170,7 @@ class Validate
      *
      * @throws \Exception
      *
-     * @return void
+     * @return none
      */
     public static function isTrue($isSatisfied, $failureMessage)
     {
@@ -182,11 +182,11 @@ class Validate
     /**
      * Throws exception if the provided $date is not of type \DateTime
      *
-     * @param mixed $date variable to check against.
+     * @param mix $date variable to check against.
      *
-     * @throws InvalidArgumentTypeException
+     * @throws MicrosoftAzure\Storage\Common\Internal\InvalidArgumentTypeException
      *
-     * @return void
+     * @return none
      */
     public static function isDate($date)
     {
@@ -198,12 +198,12 @@ class Validate
     /**
      * Throws exception if the provided variable is set to null.
      *
-     * @param mixed  $var  The variable to check.
+     * @param mix    $var  The variable to check.
      * @param string $name The parameter name.
      *
      * @throws \InvalidArgumentException
      *
-     * @return void
+     * @return none
      */
     public static function notNull($var, $name)
     {
@@ -222,7 +222,7 @@ class Validate
      *
      * @throws \InvalidArgumentException
      *
-     * @return void
+     * @return none
      */
     public static function isInstanceOf($objectInstance, $classInstance, $name)
     {
@@ -285,7 +285,7 @@ class Validate
     /**
      * Throws exception if the provided variable type is not object.
      *
-     * @param mixed  $var  The variable to check.
+     * @param mix    $var  The variable to check.
      * @param string $name The parameter name.
      *
      * @throws InvalidArgumentTypeException.
@@ -314,7 +314,7 @@ class Validate
      */
     public static function isA($objectInstance, $class, $name)
     {
-        Validate::canCastAsString($class, 'class');
+        Validate::isString($class, 'class');
         Validate::notNull($objectInstance, 'objectInstance');
         Validate::isObject($objectInstance, 'objectInstance');
 
@@ -346,7 +346,7 @@ class Validate
      */
     public static function methodExists($objectInstance, $method, $name)
     {
-        Validate::canCastAsString($method, 'method');
+        Validate::isString($method, 'method');
         Validate::notNull($objectInstance, 'objectInstance');
         Validate::isObject($objectInstance, 'objectInstance');
 
@@ -375,12 +375,13 @@ class Validate
      */
     public static function isDateString($value, $name)
     {
-        Validate::canCastAsString($value, 'value');
+        Validate::isString($value, 'value');
 
         try {
             new \DateTime($value);
             return true;
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             throw new \InvalidArgumentException(
                 sprintf(
                     Resources::ERROR_INVALID_DATE_STRING,
@@ -391,32 +392,6 @@ class Validate
         }
     }
 
-    /**
-     * Validate if the provided array has key, throw exception otherwise.
-     *
-     * @param  string  $key   The key to be searched.
-     * @param  string  $name  The name of the array.
-     * @param  array   $array The array to be validated.
-     *
-     * @throws \UnexpectedValueException
-     * @throws \InvalidArgumentException
-     *
-     * @return  boolean
-     */
-    public static function hasKey($key, $name, array $array)
-    {
-        Validate::isArray($array, $name);
-
-        if (!array_key_exists($key, $array)) {
-            throw new \UnexpectedValueException(
-                sprintf(
-                    Resources::INVALID_VALUE_MSG,
-                    $name,
-                    sprintf(Resources::ERROR_KEY_NOT_EXIST, $key)
-                )
-            );
-        }
-
-        return true;
-    }
 }
+
+

@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -32,6 +32,7 @@ namespace MicrosoftAzure\Storage\Table\Models;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class BatchOperationType
@@ -45,25 +46,26 @@ class BatchOperationType
     
     /**
      * Validates if $type is already defined.
-     *
+     * 
      * @param string $type The operation type.
-     *
-     * @internal
-     *
-     * @return boolean
+     * 
+     * @return boolean 
      */
     public static function isValid($type)
     {
         switch ($type) {
-            case self::INSERT_ENTITY_OPERATION:
-            case self::UPDATE_ENTITY_OPERATION:
-            case self::DELETE_ENTITY_OPERATION:
-            case self::MERGE_ENTITY_OPERATION:
-            case self::INSERT_REPLACE_ENTITY_OPERATION:
-            case self::INSERT_MERGE_ENTITY_OPERATION:
-                return true;
-            default:
-                return false;
+        case self::INSERT_ENTITY_OPERATION:
+        case self::UPDATE_ENTITY_OPERATION:
+        case self::DELETE_ENTITY_OPERATION:
+        case self::MERGE_ENTITY_OPERATION:
+        case self::INSERT_REPLACE_ENTITY_OPERATION:
+        case self::INSERT_MERGE_ENTITY_OPERATION:
+        return true;
+                
+        default:
+        return false;
         }
     }
 }
+
+

@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -32,17 +32,29 @@ namespace MicrosoftAzure\Storage\Table\Models\Filters;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class BinaryFilter extends Filter
 {
+    /**
+     * @var string 
+     */
     private $_operator;
+    
+    /**
+     * @var Filter
+     */
     private $_left;
+    
+    /**
+     * @var Filter
+     */
     private $_right;
     
     /**
      * Constructor.
-     *
+     * 
      * @param Filter $left     The left operand.
      * @param string $operator The operator.
      * @param Filter $right    The right operand.
@@ -56,18 +68,18 @@ class BinaryFilter extends Filter
     
     /**
      * Gets operator
-     *
-     * @return string
+     * 
+     * @return string 
      */
-    public function getOperator()
+    public function getOperator() 
     {
         return $this->_operator;
     }
 
     /**
      * Gets left
-     *
-     * @return Filter
+     * 
+     * @return Filter 
      */
     public function getLeft()
     {
@@ -76,11 +88,13 @@ class BinaryFilter extends Filter
 
     /**
      * Gets right
-     *
-     * @return Filter
+     * 
+     * @return Filter 
      */
     public function getRight()
     {
         return $this->_right;
     }
 }
+
+

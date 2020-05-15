@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -32,12 +32,10 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * This command produces a resized copy of the image that
  * fits requested maximum dimensions.
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 class ImagePreview extends CommandAbstract
 {
-    protected $requires = array(Permission::FILE_VIEW);
+    protected $requires = [Permission::FILE_VIEW];
 
     public function execute(Request $request, Config $config, WorkingFolder $workingFolder, ResizedImageRepository $resizedImageRepository, CacheManager $cache)
     {
@@ -55,7 +53,7 @@ class ImagePreview extends CommandAbstract
 
         $response = new Response();
         $response->setPublic();
-        $response->setEtag(dechex($downloadedFile->getTimestamp()) . "-" . dechex($downloadedFile->getSize()));
+        $response->setEtag(dechex($downloadedFile->getTimestamp()).'-'.dechex($downloadedFile->getSize()));
 
         $lastModificationDate = new \DateTime();
         $lastModificationDate->setTimestamp($downloadedFile->getTimestamp());
@@ -72,7 +70,7 @@ class ImagePreview extends CommandAbstract
             $response->setMaxAge($imagePreviewCacheExpires);
 
             $expireTime = new \DateTime();
-            $expireTime->modify('+' . $imagePreviewCacheExpires . 'seconds');
+            $expireTime->modify('+'.$imagePreviewCacheExpires.'seconds');
             $response->setExpires($expireTime);
         }
 
@@ -87,7 +85,7 @@ class ImagePreview extends CommandAbstract
         $resultImage = null;
 
         // Try to reuse existing resized image
-        if ($cachedInfo && isset($cachedInfo['width']) && isset($cachedInfo['height'])) {
+        if ($cachedInfo && isset($cachedInfo['width'], $cachedInfo['height'])) {
             // Fix received aspect ratio
             $size = Image::calculateAspectRatio($requestedWidth, $requestedHeight, $cachedInfo['width'], $cachedInfo['height']);
             $resizedImage = $resizedImageRepository->getResizedImageBySize(
@@ -111,11 +109,11 @@ class ImagePreview extends CommandAbstract
 
         $mimeType = $resultImage->getMimeType();
 
-        if (in_array($mimeType, array('image/bmp', 'image/x-ms-bmp'))) {
+        if (\in_array($mimeType, ['image/bmp', 'image/x-ms-bmp'], true)) {
             $mimeType = 'image/jpeg'; // Image::getData() by default converts resized images to JPG
         }
 
-        $response->headers->set('Content-Type', $mimeType. '; name="' . $downloadedFile->getFileName() . '"');
+        $response->headers->set('Content-Type', $mimeType.'; name="'.$downloadedFile->getFileName().'"');
         $response->setContent($resultImage->getData());
 
         return $response;

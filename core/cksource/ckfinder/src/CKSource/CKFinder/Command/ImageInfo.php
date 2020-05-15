@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -29,9 +29,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ImageInfo extends CommandAbstract
 {
-    protected $requires = array(
-        Permission::FILE_VIEW
-    );
+    protected $requires = [
+        Permission::FILE_VIEW,
+    ];
 
     public function execute(Request $request, WorkingFolder $workingFolder, Config $config, CacheManager $cache)
     {
@@ -55,11 +55,11 @@ class ImageInfo extends CommandAbstract
             $fileName
         );
 
-        $imageInfo = array();
+        $imageInfo = [];
 
         $cachedInfo = $cache->get($cachePath);
 
-        if ($cachedInfo && isset($cachedInfo['width']) && isset($cachedInfo['height'])) {
+        if ($cachedInfo && isset($cachedInfo['width'], $cachedInfo['height'])) {
             $imageInfo = $cachedInfo;
         } else {
             $file = new DownloadedFile($fileName, $this->app);

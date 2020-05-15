@@ -213,14 +213,13 @@ function unwrap($promises)
  * rejects, the returned promise is rejected with the rejection reason.
  *
  * @param mixed $promises Promises or values.
- * @param bool $recursive - If true, resolves new promises that might have been added to the stack during its own resolution.
  *
  * @return PromiseInterface
  */
-function all($promises, $recursive = false)
+function all($promises)
 {
     $results = [];
-    $promise = each(
+    return each(
         $promises,
         function ($value, $idx) use (&$results) {
             $results[$idx] = $value;
@@ -232,19 +231,6 @@ function all($promises, $recursive = false)
         ksort($results);
         return $results;
     });
-
-    if (true === $recursive) {
-        $promise = $promise->then(function ($results) use ($recursive, &$promises) {
-            foreach ($promises AS $promise) {
-                if (\GuzzleHttp\Promise\PromiseInterface::PENDING === $promise->getState()) {
-                    return all($promises, $recursive);
-                }
-            }
-            return $results;
-        });
-    }
-
-    return $promise;
 }
 
 /**
@@ -255,7 +241,7 @@ function all($promises, $recursive = false)
  * fulfilled with an array that contains the fulfillment values of the winners
  * in order of resolution.
  *
- * This promise is rejected with a {@see GuzzleHttp\Promise\AggregateException}
+ * This prommise is rejected with a {@see GuzzleHttp\Promise\AggregateException}
  * if the number of fulfilled promises is less than the desired $count.
  *
  * @param int   $count    Total number of promises.

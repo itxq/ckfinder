@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DownloadFile extends CommandAbstract
 {
-    protected $requires = array(Permission::FILE_VIEW);
+    protected $requires = [Permission::FILE_VIEW];
 
     public function execute(Request $request, WorkingFolder $workingFolder, EventDispatcher $dispatcher)
     {
@@ -38,7 +38,7 @@ class DownloadFile extends CommandAbstract
 
         $downloadedFileEvent = new DownloadFileEvent($this->app, $downloadedFile);
 
-        $dispatcher->dispatch(CKFinderEvent::DOWNLOAD_FILE, $downloadedFileEvent);
+        $dispatcher->dispatch($downloadedFileEvent, CKFinderEvent::DOWNLOAD_FILE);
 
         if ($downloadedFileEvent->isPropagationStopped()) {
             throw new AccessDeniedException();
@@ -50,16 +50,16 @@ class DownloadFile extends CommandAbstract
         $response->headers->set('Pragma', 'public');
         $response->headers->set('Expires', '0');
 
-        if ($request->get('format') === 'text') {
+        if ('text' === $request->get('format')) {
             $response->headers->set('Content-Type', 'text/plain; charset=utf-8');
         } else {
             $userAgent = !empty($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-            $encodedName = str_replace("\"", "\\\"", $fileName);
-            if (strpos($userAgent, 'MSIE') !== false) {
-                $encodedName = str_replace(array("+", "%2E"), array(" ", "."), urlencode($encodedName));
+            $encodedName = str_replace('"', '\\"', $fileName);
+            if (false !== strpos($userAgent, 'MSIE')) {
+                $encodedName = str_replace(['+', '%2E'], [' ', '.'], urlencode($encodedName));
             }
-            $response->headers->set('Content-Type', 'application/octet-stream; name="' . $fileName . '"');
-            $response->headers->set('Content-Disposition', 'attachment; filename="' . $encodedName. '"');
+            $response->headers->set('Content-Type', 'application/octet-stream; name="'.$fileName.'"');
+            $response->headers->set('Content-Disposition', 'attachment; filename="'.$encodedName.'"');
         }
 
         $response->headers->set('Content-Length', $downloadedFile->getSize());
@@ -68,7 +68,7 @@ class DownloadFile extends CommandAbstract
         $chunkSize = 1024 * 100; // how many bytes per chunk
 
         $response->setCallback(function () use ($fileStream, $chunkSize) {
-            if ($fileStream === false) {
+            if (false === $fileStream) {
                 return false;
             }
             while (!feof($fileStream)) {

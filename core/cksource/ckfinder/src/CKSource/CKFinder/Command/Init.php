@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -29,7 +29,7 @@ class Init extends CommandAbstract
     {
         $data = new \stdClass();
 
-        /**
+        /*
          * The connector is always enabled here.
          *
          * @see CKFinder::checkAuth()
@@ -37,15 +37,15 @@ class Init extends CommandAbstract
         $data->enabled = true;
 
         $ln = '';
-        $lc = str_replace('-', '', ($config->get('licenseKey') ?: $config->get('LicenseKey')) . '                                  ');
+        $lc = str_replace('-', '', ($config->get('licenseKey') ?: $config->get('LicenseKey')).'                                  ');
         $pos = strpos(CKFinder::CHARS, $lc[2]) % 5;
 
-        if ($pos == 1 || $pos == 2) {
+        if (1 === $pos || 2 === $pos) {
             $ln = $config->get('licenseName') ?: $config->get('LicenseName');
         }
 
         $data->s = $ln;
-        $data->c = trim($lc[1] . $lc[8] . $lc[17] . $lc[22] . $lc[3] . $lc[13] . $lc[11] . $lc[20] . $lc[5] . $lc[24] . $lc[27]);
+        $data->c = trim($lc[1].$lc[8].$lc[17].$lc[22].$lc[3].$lc[13].$lc[11].$lc[20].$lc[5].$lc[24].$lc[27]);
 
         // Thumbnails
         $thumbnailsConfig = $config->get('thumbnails');
@@ -53,9 +53,9 @@ class Init extends CommandAbstract
         $thumbnailsEnabled = (bool) $thumbnailsConfig['enabled'];
 
         if ($thumbnailsEnabled) {
-            $sizes = array();
+            $sizes = [];
             foreach ($thumbnailsConfig['sizes'] as $sizeInfo) {
-                $sizes[] = sprintf("%dx%d", $sizeInfo['width'], $sizeInfo['height']);
+                $sizes[] = sprintf('%dx%d', $sizeInfo['width'], $sizeInfo['height']);
             }
 
             $data->thumbs = $sizes;
@@ -64,15 +64,15 @@ class Init extends CommandAbstract
         // Images
         $imagesConfig = $config->get('images');
 
-        $images = array(
-            'max' => $imagesConfig['maxWidth'] . 'x' . $imagesConfig['maxHeight']
-        );
+        $images = [
+            'max' => $imagesConfig['maxWidth'].'x'.$imagesConfig['maxHeight'],
+        ];
 
         if (isset($imagesConfig['sizes'])) {
-            $resize = array();
+            $resize = [];
 
             foreach ($imagesConfig['sizes'] as $name => $sizeInfo) {
-                $resize[$name] = $sizeInfo['width'] . 'x' . $sizeInfo['height'];
+                $resize[$name] = $sizeInfo['width'].'x'.$sizeInfo['height'];
             }
 
             $images['sizes'] = $resize;
@@ -80,9 +80,9 @@ class Init extends CommandAbstract
 
         $data->images = $images;
 
-        $resourceTypesNames = $config->getDefaultResourceTypes() ? : $config->getResourceTypes();
+        $resourceTypesNames = $config->getDefaultResourceTypes() ?: $config->getResourceTypes();
 
-        $data->resourceTypes = array();
+        $data->resourceTypes = [];
 
         if (!empty($resourceTypesNames)) {
             $phpMaxSize = 0;
@@ -99,7 +99,7 @@ class Init extends CommandAbstract
 
             //ini_get('memory_limit') only works if compiled with "--enable-memory-limit"
             $memoryLimit = Utils::returnBytes(@ini_get('memory_limit'));
-            if ($memoryLimit && $memoryLimit != -1) {
+            if ($memoryLimit && -1 !== $memoryLimit) {
                 $phpMaxSize = $phpMaxSize ? min($phpMaxSize, $memoryLimit) : $memoryLimit;
             }
 
@@ -121,14 +121,14 @@ class Init extends CommandAbstract
 
                 $resourceType = $resourceTypeFactory->getResourceType($resourceTypeName);
 
-                $resourceTypeObject = array(
-                    'name'              => $resourceTypeName,
-                    'allowedExtensions' => implode(",", $resourceType->getAllowedExtensions()),
-                    'deniedExtensions'  => implode(",", $resourceType->getDeniedExtensions()),
-                    'hash'              => $resourceType->getHash(),
-                    'acl'               => $aclMask,
-                    'maxSize'           => $resourceType->getMaxSize() ? min($resourceType->getMaxSize(), $phpMaxSize) : $phpMaxSize
-                );
+                $resourceTypeObject = [
+                    'name' => $resourceTypeName,
+                    'allowedExtensions' => implode(',', $resourceType->getAllowedExtensions()),
+                    'deniedExtensions' => implode(',', $resourceType->getDeniedExtensions()),
+                    'hash' => $resourceType->getHash(),
+                    'acl' => $aclMask,
+                    'maxSize' => $resourceType->getMaxSize() ? min($resourceType->getMaxSize(), $phpMaxSize) : $phpMaxSize,
+                ];
 
                 $resourceTypeBackend = $resourceType->getBackend();
 
@@ -151,10 +151,9 @@ class Init extends CommandAbstract
                     $baseUrl = $resourceTypeBackend->getBaseUrl();
 
                     if ($baseUrl) {
-                        $resourceTypeObject['url'] = rtrim(Path::combine($baseUrl, $resourceType->getDirectory()), '/') . '/';
+                        $resourceTypeObject['url'] = rtrim(Path::combine($baseUrl, $resourceType->getDirectory()), '/').'/';
                     }
                 }
-
 
                 $trackedOperations = $resourceTypeBackend->getTrackedOperations();
 

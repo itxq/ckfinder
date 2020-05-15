@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -29,8 +29,6 @@ class CallableAuthentication implements AuthenticationInterface
 
     /**
      * Constructor.
-     *
-     * @param callable $authCallable
      */
     public function __construct(callable $authCallable)
     {
@@ -38,10 +36,10 @@ class CallableAuthentication implements AuthenticationInterface
     }
 
     /**
-     * @return bool `true` if the current user was successfully authenticated within CKFinder.
+     * @return bool `true` if the current user was successfully authenticated within CKFinder
      */
     public function authenticate()
     {
-        return call_user_func($this->authCallable);
+        return \call_user_func($this->authCallable);
     }
 }

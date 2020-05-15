@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,8 +23,9 @@
  */
  
 namespace MicrosoftAzure\Storage\Common\Models;
-
-use MicrosoftAzure\Storage\Common\Internal\Resources;
+use MicrosoftAzure\Storage\Common\Internal\Utilities;
+use MicrosoftAzure\Storage\Common\Models\Logging;
+use MicrosoftAzure\Storage\Common\Models\Metrics;
 use MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer;
 
 /**
@@ -35,245 +36,101 @@ use MicrosoftAzure\Storage\Common\Internal\Serialization\XmlSerializer;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class ServiceProperties
 {
-    private $logging;
-    private $hourMetrics;
-    private $minuteMetrics;
-    private $corses;
-    private $defaultServiceVersion;
-    
-    private static $xmlRootName = 'StorageServiceProperties';
+    private $_logging;
+    private $_metrics;
+    public static $xmlRootName = 'StorageServiceProperties';
     
     /**
      * Creates ServiceProperties object from parsed XML response.
      *
-     * @internal
      * @param array $parsedResponse XML response parsed into array.
-     *
-     * @return ServiceProperties.
+     * 
+     * @return MicrosoftAzure\Storage\Common\Models\ServiceProperties.
      */
-    public static function create(array $parsedResponse)
+    public static function create($parsedResponse)
     {
         $result = new ServiceProperties();
-
-        if (array_key_exists(Resources::XTAG_DEFAULT_SERVICE_VERSION, $parsedResponse) &&
-            $parsedResponse[Resources::XTAG_DEFAULT_SERVICE_VERSION] != null) {
-            $result->setDefaultServiceVersion($parsedResponse[Resources::XTAG_DEFAULT_SERVICE_VERSION]);
-        }
-
-        if (array_key_exists(Resources::XTAG_LOGGING, $parsedResponse)) {
-            $result->setLogging(Logging::create($parsedResponse[Resources::XTAG_LOGGING]));
-        }
-        $result->setHourMetrics(Metrics::create($parsedResponse[Resources::XTAG_HOUR_METRICS]));
-        if (array_key_exists(Resources::XTAG_MINUTE_METRICS, $parsedResponse)) {
-            $result->setMinuteMetrics(Metrics::create($parsedResponse[Resources::XTAG_MINUTE_METRICS]));
-        }
-        if (array_key_exists(Resources::XTAG_CORS, $parsedResponse) &&
-            $parsedResponse[Resources::XTAG_CORS] != null) {
-            //There could be multiple CORS rules, so need to extract them all.
-            $corses = array();
-            $corsArray =
-                $parsedResponse[Resources::XTAG_CORS][Resources::XTAG_CORS_RULE];
-            if (count(array_filter(array_keys($corsArray), 'is_string')) > 0) {
-                //single cors rule
-                $corses[] = CORS::create($corsArray);
-            } else {
-                //multiple cors rule
-                foreach ($corsArray as $cors) {
-                    $corses[] = CORS::create($cors);
-                }
-            }
-            
-            $result->setCorses($corses);
-        } else {
-            $result->setCorses(array());
-        }
-
+        $result->setLogging(Logging::create($parsedResponse['Logging']));
+        $result->setMetrics(Metrics::create($parsedResponse['HourMetrics']));
+        
         return $result;
     }
     
     /**
      * Gets logging element.
      *
-     * @return Logging
+     * @return MicrosoftAzure\Storage\Common\Models\Logging.
      */
     public function getLogging()
     {
-        return $this->logging;
+        return $this->_logging;
     }
     
     /**
      * Sets logging element.
      *
-     * @param Logging $logging new element.
-     *
-     * @return void
+     * @param MicrosoftAzure\Storage\Common\Models\Logging $logging new element.
+     * 
+     * @return none.
      */
-    public function setLogging(Logging $logging)
+    public function setLogging($logging)
     {
-        $this->logging = clone $logging;
+        $this->_logging = clone $logging;
     }
     
     /**
-     * Gets hour metrics element.
+     * Gets metrics element.
      *
-     * @return Metrics
+     * @return MicrosoftAzure\Storage\Common\Models\Metrics.
      */
-    public function getHourMetrics()
+    public function getMetrics()
     {
-        return $this->hourMetrics;
+        return $this->_metrics;
     }
     
     /**
-     * Sets hour metrics element.
+     * Sets metrics element.
      *
-     * @param Metrics $metrics new element.
-     *
-     * @return void
+     * @param MicrosoftAzure\Storage\Common\Models\Metrics $metrics new element.
+     * 
+     * @return none.
      */
-    public function setHourMetrics(Metrics $hourMetrics)
+    public function setMetrics($metrics)
     {
-        $this->hourMetrics = clone $hourMetrics;
-    }
-    
-    /**
-     * Gets minute metrics element.
-     *
-     * @return Metrics
-     */
-    public function getMinuteMetrics()
-    {
-        return $this->minuteMetrics;
-    }
-    
-    /**
-     * Sets minute metrics element.
-     *
-     * @param Metrics $metrics new element.
-     *
-     * @return void
-     */
-    public function setMinuteMetrics(Metrics $minuteMetrics)
-    {
-        $this->minuteMetrics = clone $minuteMetrics;
-    }
-
-    /**
-     * Gets corses element.
-     *
-     * @return CORS[]
-     */
-    public function getCorses()
-    {
-        return $this->corses;
-    }
-    
-    /**
-     * Sets corses element.
-     *
-     * @param CORS[] $corses new elements.
-     *
-     * @return void
-     */
-    public function setCorses(array $corses)
-    {
-        $this->corses = $corses;
-    }
-
-    /**
-     * Gets the default service version.
-     *
-     * @return string
-     */
-    public function getDefaultServiceVersion()
-    {
-        return $this->defaultServiceVersion;
-    }
-
-    /**
-     * Sets the default service version. This can obly be set for the blob service.
-     *
-     * @param string $defaultServiceVersion the default service version
-     *
-     * @return void
-     */
-    public function setDefaultServiceVersion($defaultServiceVersion)
-    {
-        return $this->defaultServiceVersion = $defaultServiceVersion;
+        $this->_metrics = clone $metrics;
     }
     
     /**
      * Converts this object to array with XML tags
-     *
-     * @internal
-     * @return array
+     * 
+     * @return array. 
      */
     public function toArray()
     {
-        $result = array();
-
-        if (!empty($this->getLogging())) {
-            $result[Resources::XTAG_LOGGING] =
-                    $this->getLogging()->toArray();
-        }
-
-        if (!empty($this->getHourMetrics())) {
-            $result[Resources::XTAG_HOUR_METRICS] =
-                    $this->getHourMetrics()->toArray();
-        }
-
-        if (!empty($this->getMinuteMetrics())) {
-            $result[Resources::XTAG_MINUTE_METRICS] =
-                    $this->getMinuteMetrics()->toArray();
-        }
-
-        $corsesArray = $this->getCorsesArray();
-        if (!empty($corsesArray)) {
-            $result[Resources::XTAG_CORS] =$corsesArray;
-        }
-
-        if ($this->defaultServiceVersion != null) {
-            $result[Resources::XTAG_DEFAULT_SERVICE_VERSION] = $this->defaultServiceVersion;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Gets the array that contains all the CORSes.
-     *
-     * @return array
-     */
-    private function getCorsesArray()
-    {
-        $corsesArray = array();
-        if (count($this->getCorses()) == 1) {
-            $corsesArray = array(
-                Resources::XTAG_CORS_RULE => $this->getCorses()[0]->toArray()
-            );
-        } elseif ($this->getCorses() != array()) {
-            foreach ($this->getCorses() as $cors) {
-                $corsesArray[] = [Resources::XTAG_CORS_RULE => $cors->toArray()];
-            }
-        }
-        
-        return $corsesArray;
+        return array(
+            'Logging' => !empty($this->_logging) ? $this->_logging->toArray() : null,
+            'HourMetrics' => !empty($this->_metrics) ? $this->_metrics->toArray() : null
+        );
     }
     
     /**
      * Converts this current object to XML representation.
-     *
-     * @internal
+     * 
      * @param XmlSerializer $xmlSerializer The XML serializer.
-     *
+     * 
      * @return string
      */
-    public function toXml(XmlSerializer $xmlSerializer)
+    public function toXml($xmlSerializer)
     {
         $properties = array(XmlSerializer::ROOT_NAME => self::$xmlRootName);
+        
         return $xmlSerializer->serialize($this->toArray(), $properties);
     }
 }
+
+

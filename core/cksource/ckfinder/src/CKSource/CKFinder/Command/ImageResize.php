@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -15,13 +15,13 @@
 namespace CKSource\CKFinder\Command;
 
 use CKSource\CKFinder\Acl\Permission;
+use CKSource\CKFinder\Config;
 use CKSource\CKFinder\Exception\FileNotFoundException;
 use CKSource\CKFinder\Exception\InvalidNameException;
 use CKSource\CKFinder\Exception\InvalidRequestException;
 use CKSource\CKFinder\Filesystem\File\File;
 use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
 use CKSource\CKFinder\Image;
-use CKSource\CKFinder\Config;
 use CKSource\CKFinder\ResizedImage\ResizedImageRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -29,7 +29,7 @@ class ImageResize extends CommandAbstract
 {
     protected $requestMethod = Request::METHOD_POST;
 
-    protected $requires = array(Permission::FILE_VIEW, Permission::IMAGE_RESIZE);
+    protected $requires = [Permission::FILE_VIEW, Permission::IMAGE_RESIZE];
 
     public function execute(Request $request, WorkingFolder $workingFolder, Config $config, ResizedImageRepository $resizedImageRepository)
     {
@@ -59,6 +59,6 @@ class ImageResize extends CommandAbstract
             $requestedHeight
         );
 
-        return array('url' => $resizedImage->getUrl());
+        return ['url' => $resizedImage->getUrl()];
     }
 }

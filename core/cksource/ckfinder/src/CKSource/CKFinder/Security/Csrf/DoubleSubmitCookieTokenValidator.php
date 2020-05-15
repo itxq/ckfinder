@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -34,6 +34,7 @@ class DoubleSubmitCookieTokenValidator implements TokenValidatorInterface
 
     /**
      * The name of the cookie key that should contain the token.
+     *
      * @var string
      */
     protected $tokenCookieName;
@@ -62,16 +63,14 @@ class DoubleSubmitCookieTokenValidator implements TokenValidatorInterface
     /**
      * Checks if the request contains a valid CSRF token.
      *
-     * @param Request $request
-     *
-     * @return bool `true` if the token is valid, `false` otherwise.
+     * @return bool `true` if the token is valid, `false` otherwise
      */
     public function validate(Request $request)
     {
         $paramToken = trim((string) $request->get($this->tokenParamName));
         $cookieToken = trim((string) $request->cookies->get($this->tokenCookieName));
 
-        if (strlen($paramToken) >= $this->minTokenLength && strlen($cookieToken) >= $this->minTokenLength) {
+        if (\strlen($paramToken) >= $this->minTokenLength && \strlen($cookieToken) >= $this->minTokenLength) {
             return $paramToken === $cookieToken;
         }
 
