@@ -25,6 +25,11 @@
   "extra"      : {
     "itxq-kelove-statics": [
       "static"
-    ]
+    ],
+    "think"              : {
+      "config": {
+        "ckfinder": "config/config.php"
+      }
+    }
   }
 }

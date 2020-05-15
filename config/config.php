@@ -4,9 +4,11 @@
 // | 默认配置
 // +----------------------------------------------------------------------
 
+use itxq\ckfinder\CkFinder;
+
 return [
     'debug'                    => false,
-    'authentication'           => function () {
+    'authentication'           => static function () {
         return true;
     },
     'images'                   => [
@@ -27,7 +29,7 @@ return [
     'sessionWriteClose'        => true,
     'csrfProtection'           => true,
     'headers'                  => [],
-    'pluginsDirectory'         => __DIR__ . '/../plugins',
+    'pluginsDirectory'         => CkFinder::PLUGINS_DIRECTORY,
     'plugins'                  => ['Upy'],
     'overwriteOnUpload'        => false,
     'checkDoubleExtension'     => true,
@@ -45,17 +47,17 @@ return [
             'role'         => '*',
             'resourceType' => '*',
             'folder'       => '/',
-            
+
             'FOLDER_VIEW'   => true,
             'FOLDER_CREATE' => true,
             'FOLDER_RENAME' => true,
             'FOLDER_DELETE' => true,
-            
+
             'FILE_VIEW'   => true,
             'FILE_CREATE' => true,
             'FILE_RENAME' => true,
             'FILE_DELETE' => true,
-            
+
             'IMAGE_RESIZE'        => true,
             'IMAGE_RESIZE_CUSTOM' => true
         ]

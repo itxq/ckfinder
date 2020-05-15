@@ -24,6 +24,11 @@ class CkFinder
     use SingletonPattern;
 
     /**
+     * 插件目录
+     */
+    public const PLUGINS_DIRECTORY = __DIR__ . '/../plugins';
+
+    /**
      * 常量 公开存储空间名称
      */
     public const PUBLIC_BACKEND = 'public';
@@ -128,9 +133,14 @@ class CkFinder
      */
     protected function config(): void
     {
-        $sysTempDir                    = sys_get_temp_dir();
-        $config                        = include dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
-        $this->config                  = array_merge($config, $this->config);
+        $sysTempDir = sys_get_temp_dir();
+        $config     = include dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        if (function_exists('app')) {
+            $tpConfig = app()->config->get('ckfinder', []);
+        } else {
+            $tpConfig = [];
+        }
+        $this->config                  = array_merge($config, $tpConfig, $this->config);
         $this->config['tempDirectory'] = !is_writable($sysTempDir) ? __DIR__ : $sysTempDir;
         // 存储空间设置
         if (!isset($this->config['backends'])) {
