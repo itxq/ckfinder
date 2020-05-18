@@ -148,8 +148,13 @@ abstract class File
         $i = 0;
         while (true) {
             ++$i;
-            $this->fileName = "{$basename}({$i})".(!empty($extension) ? ".{$extension}" : '');
+            // $this->fileName = "{$basename}({$i})".(!empty($extension) ? ".{$extension}" : '');
 
+            // ---------------------------------------------------------------------------------------
+            // 自动重命名 AutoRename
+            $this->fileName = "{$basename}-{$i}".(!empty($extension) ? ".{$extension}" : '');
+            // ---------------------------------------------------------------------------------------
+            
             $filePath = Path::combine($path, $this->fileName);
 
             if (!$backend->has($filePath)) {

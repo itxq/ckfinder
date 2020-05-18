@@ -19,6 +19,7 @@ use CKSource\CKFinder\Event\CKFinderEvent;
 use CKSource\CKFinder\Event\RenameFolderEvent;
 use CKSource\CKFinder\Exception\InvalidRequestException;
 use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
+use itxq\ckfinder\tools\AutoRename;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -35,7 +36,12 @@ class RenameFolder extends CommandAbstract
             throw new InvalidRequestException('Cannot rename resource type root folder');
         }
 
-        $newFolderName = (string) $request->query->get('newFolderName');
+        $newFolderName = (string)$request->query->get('newFolderName');
+
+        // ---------------------------------------------------------------------------------------
+        // 自动重命名 AutoRename
+        $newFolderName = AutoRename::make()->config($this->app)->autoRename($newFolderName, '');
+        // ---------------------------------------------------------------------------------------
 
         $renameFolderEvent = new RenameFolderEvent($this->app, $workingFolder, $newFolderName);
 

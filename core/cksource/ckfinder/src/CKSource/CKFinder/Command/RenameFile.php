@@ -20,6 +20,7 @@ use CKSource\CKFinder\Event\RenameFileEvent;
 use CKSource\CKFinder\Exception\InvalidNameException;
 use CKSource\CKFinder\Filesystem\File\RenamedFile;
 use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
+use itxq\ckfinder\tools\AutoRename;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -31,8 +32,8 @@ class RenameFile extends CommandAbstract
 
     public function execute(Request $request, WorkingFolder $workingFolder, EventDispatcher $dispatcher)
     {
-        $fileName = (string) $request->query->get('fileName');
-        $newFileName = (string) $request->query->get('newFileName');
+        $fileName    = (string)$request->query->get('fileName');
+        $newFileName = (string)$request->query->get('newFileName');
 
         if (null === $fileName || null === $newFileName) {
             throw new InvalidNameException('Invalid file name');
@@ -45,6 +46,12 @@ class RenameFile extends CommandAbstract
             $workingFolder->getResourceType(),
             $this->app
         );
+
+        // ---------------------------------------------------------------------------------------
+        // 自动重命名 AutoRename
+        $newFileName = AutoRename::make()->config($this->app)->autoRename($newFileName, $renamedFile->getExtension());
+        $renamedFile->setNewFileName($newFileName);
+        // ---------------------------------------------------------------------------------------
 
         $renamed = false;
 
@@ -59,9 +66,9 @@ class RenameFile extends CommandAbstract
         }
 
         return [
-            'name' => $fileName,
+            'name'    => $fileName,
             'newName' => $renamedFile->getNewFileName(),
-            'renamed' => (int) $renamed,
+            'renamed' => (int)$renamed,
         ];
     }
 }

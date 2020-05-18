@@ -20,6 +20,7 @@ use CKSource\CKFinder\Error;
 use CKSource\CKFinder\Exception\AccessDeniedException;
 use CKSource\CKFinder\Exception\InvalidUploadException;
 use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
+use CKSource\CKFinder\Filesystem\Path;
 use CKSource\CKFinder\Utils;
 use Symfony\Component\HttpFoundation\File\UploadedFile as UploadedFileBase;
 use Symfony\Component\Mime\MimeTypes;
@@ -61,11 +62,11 @@ class UploadedFile extends File
     {
         parent::__construct($uploadedFile->getClientOriginalName(), $app);
 
-        $this->uploadedFile = $uploadedFile;
+        $this->uploadedFile  = $uploadedFile;
         $this->workingFolder = $app['working_folder'];
 
         $this->tempFilePath = tempnam($this->config->get('tempDirectory'), 'ckf');
-        $pathinfo = pathinfo($this->tempFilePath);
+        $pathinfo           = pathinfo($this->tempFilePath);
 
         if (!is_writable($this->tempFilePath)) {
             throw new InvalidUploadException('The temporary folder is not writable for CKFinder');
@@ -152,6 +153,29 @@ class UploadedFile extends File
     {
         return parent::autorename($this->workingFolder->getBackend(), $this->workingFolder->getPath());
     }
+
+    // ---------------------------------------------------------------------------------------
+    // 自动重命名 AutoRename
+    public function cm_autorename($name, $i = 1)
+    {
+        $backend  = $this->workingFolder->getBackend();
+        $path     = $this->workingFolder->getPath();
+        $filePath = Path::combine($path, $name);
+        if (!$backend->has($filePath)) {
+            return $name;
+        }
+        $pieces      = explode('.', $name);
+        $basename    = array_shift($pieces);
+        $extension   = implode('.', $pieces);
+        $newName     = "{$basename}-{$i}.{$extension}";
+        $newFilePath = Path::combine($path, $newName);
+        if (!$backend->has($newFilePath)) {
+            return $newName;
+        }
+        ++$i;
+        return $this->cm_autorename($name, $i);
+    }
+    // ---------------------------------------------------------------------------------------
 
     /**
      * Checks if the file was renamed.
@@ -247,7 +271,7 @@ class UploadedFile extends File
      */
     public function containsHtml()
     {
-        $fp = fopen($this->tempFilePath, 'r');
+        $fp    = fopen($this->tempFilePath, 'r');
         $chunk = fread($fp, 1024);
         fclose($fp);
 
