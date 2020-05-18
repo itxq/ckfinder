@@ -14,7 +14,8 @@
     "php"                       : ">=7.1.0",
     "upyun/sdk"                 : "^3.4",
     "ext-iconv"                 : ">=1.0",
-    "itxq/singleton-pattern-php": "^1.0"
+    "itxq/singleton-pattern-php": "^1.0",
+    "itxq/pinyin"               : "^1.0"
   },
   "require-dev": {},
   "autoload"   : {
