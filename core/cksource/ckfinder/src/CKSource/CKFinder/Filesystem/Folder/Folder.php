@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -26,14 +26,14 @@ use CKSource\CKFinder\ResourceType\ResourceType;
 class Folder
 {
     /**
-     * @var ResourceType $resourceType
+     * @var ResourceType
      */
     protected $resourceType;
 
     /**
      * Backend relative path (includes the resource type directory).
      *
-     * @var string $path
+     * @var string
      */
     protected $path;
 
@@ -53,12 +53,12 @@ class Folder
      * @param string $folderName
      * @param bool   $disallowUnsafeCharacters
      *
-     * @return boolean
+     * @return bool
      */
     public static function isValidName($folderName, $disallowUnsafeCharacters)
     {
         if ($disallowUnsafeCharacters) {
-            if (strpos($folderName, ".") !== false) {
+            if (false !== strpos($folderName, '.')) {
                 return false;
             }
         }

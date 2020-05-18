@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -26,30 +26,29 @@ use CKSource\CKFinder\ResourceType\ResourceType;
  *
  * Represents a file that already exists in CKFinder and can be
  * pointed using the resource type, path and file name.
- *
  */
 abstract class ExistingFile extends File
 {
     /**
      * File resource type.
      *
-     * @var ResourceType $resourceType
+     * @var ResourceType
      */
     protected $resourceType;
 
     /**
      * Resource type relative folder.
      *
-     * @var string $folder
+     * @var string
      */
     protected $folder;
 
     /**
      * Array for errors that may occur during file processing.
      *
-     * @var array $errors
+     * @var array
      */
-    protected $errors = array();
+    protected $errors = [];
 
     /**
      * File metadata.
@@ -61,10 +60,8 @@ abstract class ExistingFile extends File
     /**
      * Constructor.
      *
-     * @param string       $fileName
-     * @param string       $folder
-     * @param ResourceType $resourceType
-     * @param CKFinder     $app
+     * @param string $fileName
+     * @param string $folder
      */
     public function __construct($fileName, $folder, ResourceType $resourceType, CKFinder $app)
     {
@@ -97,7 +94,7 @@ abstract class ExistingFile extends File
     /**
      * Checks if the current file folder path is valid.
      *
-     * @return bool `true` if the path is valid.
+     * @return bool `true` if the path is valid
      */
     public function hasValidPath()
     {
@@ -117,14 +114,10 @@ abstract class ExistingFile extends File
     /**
      * Checks if the current file has an extension allowed in its resource type.
      *
-     * @return bool `true` if the file has an allowed exception.
+     * @return bool `true` if the file has an allowed exception
      */
     public function hasAllowedExtension()
     {
-        if (strpos($this->getFilename(), '.') === false) {
-            return true;
-        }
-
         $extension = $this->getExtension();
 
         return $this->resourceType->isAllowedExtension($extension);
@@ -133,7 +126,7 @@ abstract class ExistingFile extends File
     /**
      * Checks if the current file is hidden.
      *
-     * @return bool `true` if the file is hidden.
+     * @return bool `true` if the file is hidden
      */
     public function isHidden()
     {
@@ -143,7 +136,7 @@ abstract class ExistingFile extends File
     /**
      * Checks if the current file has a hidden path (i.e. if any of the parent folders is hidden).
      *
-     * @return bool `true` if the path is hidden.
+     * @return bool `true` if the path is hidden
      */
     public function hasHiddenPath()
     {
@@ -153,7 +146,7 @@ abstract class ExistingFile extends File
     /**
      * Checks if the current file exists.
      *
-     * @return bool `true` if the file exists.
+     * @return bool `true` if the file exists
      */
     public function exists()
     {
@@ -166,7 +159,7 @@ abstract class ExistingFile extends File
 
         $fileMetadata = $backend->getMetadata($filePath);
 
-        return isset($fileMetadata['type']) && $fileMetadata['type'] === 'file';
+        return isset($fileMetadata['type']) && 'file' === $fileMetadata['type'];
     }
 
     /**
@@ -199,9 +192,9 @@ abstract class ExistingFile extends File
      * @param string $contents file contents
      * @param string $filePath path to save the file
      *
-     * @return bool `true` if saved successfully.
+     * @throws \Exception if content size is too big
      *
-     * @throws \Exception if content size is too big.
+     * @return bool `true` if saved successfully
      */
     public function save($contents, $filePath = null)
     {
@@ -209,7 +202,7 @@ abstract class ExistingFile extends File
 
         $maxSize = $this->resourceType->getMaxSize();
 
-        $contentsSize = strlen($contents);
+        $contentsSize = \strlen($contents);
 
         if ($maxSize && $contentsSize > $maxSize) {
             throw new InvalidUploadException('New file contents is too big for resource type limit', Error::UPLOADED_TOO_BIG);
@@ -233,12 +226,12 @@ abstract class ExistingFile extends File
      */
     public function addError($number)
     {
-        $this->errors[] = array(
+        $this->errors[] = [
             'number' => $number,
-            'name'   => $this->getFilename(),
-            'type'   => $this->resourceType->getName(),
-            'folder' => $this->folder
-        );
+            'name' => $this->getFilename(),
+            'type' => $this->resourceType->getName(),
+            'folder' => $this->folder,
+        ];
     }
 
     /**
@@ -254,13 +247,13 @@ abstract class ExistingFile extends File
     /**
      * Removes the thumbnail generated for the current file.
      *
-     * @return `true` if the thumbnail was found and deleted.
+     * @return `true` if the thumbnail was found and deleted
      */
     public function deleteThumbnails()
     {
         $extension = $this->getExtension();
 
-        if (Image::isSupportedExtension($extension) || ($extension === 'bmp' && $this->config->get('thumbnails.bmpSupported'))) {
+        if (Image::isSupportedExtension($extension) || ('bmp' === $extension && $this->config->get('thumbnails.bmpSupported'))) {
             $thumbsRepository = $this->resourceType->getThumbnailRepository();
 
             return $thumbsRepository->deleteThumbnails($this->resourceType, $this->folder, $this->getFilename());
@@ -272,7 +265,7 @@ abstract class ExistingFile extends File
     /**
      * Removes resized images generated for the current file.
      *
-     * @return `true` if resized images were found and deleted.
+     * @return `true` if resized images were found and deleted
      */
     public function deleteResizedImages()
     {
@@ -299,11 +292,10 @@ abstract class ExistingFile extends File
         return $metadata['timestamp'];
     }
 
-
     /**
      * Returns file MIME type.
      *
-     * @return string file MIME type.
+     * @return string file MIME type
      */
     public function getMimeType()
     {
@@ -315,7 +307,7 @@ abstract class ExistingFile extends File
     /**
      * Returns file size.
      *
-     * @return int size in bytes.
+     * @return int size in bytes
      */
     public function getSize()
     {
@@ -334,7 +326,7 @@ abstract class ExistingFile extends File
         if (null === $this->metadata) {
             $filePath = $this->getFilePath();
 
-            $this->metadata = $this->resourceType->getBackend()->getWithMetadata($filePath, array('mimetype', 'timestamp'));
+            $this->metadata = $this->resourceType->getBackend()->getWithMetadata($filePath, ['mimetype', 'timestamp']);
         }
 
         return $this->metadata;

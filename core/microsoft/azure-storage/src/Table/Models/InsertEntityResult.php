@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,10 +23,8 @@
  */
  
 namespace MicrosoftAzure\Storage\Table\Models;
-
 use MicrosoftAzure\Storage\Common\Internal\Utilities;
 use MicrosoftAzure\Storage\Common\Internal\Resources;
-use MicrosoftAzure\Storage\Table\Internal\IODataReaderWriter;
 
 /**
  * Holds result of calling insertEntity wrapper
@@ -36,27 +34,31 @@ use MicrosoftAzure\Storage\Table\Internal\IODataReaderWriter;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class InsertEntityResult
 {
-    private $entity;
+    /**
+     * @var Entity
+     */
+    private $_entity;
     
     /**
      * Create InsertEntityResult object from HTTP response parts.
-     *
-     * @param string              $body            The HTTP response body.
-     * @param array               $headers         The HTTP response headers.
-     * @param IODataReaderWriter  $odataSerializer The OData reader and writer.
-     *
-     * @internal
-     *
-     * @return InsertEntityResult
+     * 
+     * @param string            $body           The HTTP response body.
+     * @param array             $headers        The HTTP response headers.
+     * @param IAtomReaderWriter $atomSerializer The atom reader and writer.
+     * 
+     * @return \MicrosoftAzure\Storage\Table\Models\InsertEntityResult
+     * 
+     * @static
      */
-    public static function create($body, $headers, $odataSerializer)
+    public static function create($body, $headers, $atomSerializer)
     {
         $result = new InsertEntityResult();
-        $entity = $odataSerializer->parseEntity($body);
+        $entity = $atomSerializer->parseEntity($body);
         $entity->setETag(Utilities::tryGetValue($headers, Resources::ETAG));
         $result->setEntity($entity);
         
@@ -65,23 +67,25 @@ class InsertEntityResult
     
     /**
      * Gets table entity.
-     *
+     * 
      * @return Entity
      */
     public function getEntity()
     {
-        return $this->entity;
+        return $this->_entity;
     }
     
     /**
      * Sets table entity.
-     *
+     * 
      * @param Entity $entity The table entity instance.
-     *
-     * @return void
+     * 
+     * @return none
      */
-    protected function setEntity($entity)
+    public function setEntity($entity)
     {
-        $this->entity = $entity;
+        $this->_entity = $entity;
     }
 }
+
+

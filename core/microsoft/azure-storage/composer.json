@@ -18,12 +18,10 @@
         "mikey179/vfsStream": "~1.6",
         "pdepend/pdepend" : "~2.2",
         "sebastian/phpcpd": "~2.0",
-        "squizlabs/php_codesniffer": "@stable",
-        "friendsofphp/php-cs-fixer": "@stable",
+        "squizlabs/php_codesniffer": "2.*",
         "phploc/phploc": "~2.1",
         "phpmd/phpmd": "@stable",
-        "theseer/phpdox": "~0.8",
-        "phpdocumentor/phpdocumentor": "dev-master"
+        "theseer/phpdox": "~0.8" 
     },
     "autoload": {
         "psr-4": {
@@ -34,9 +32,6 @@
     	"psr-4": {
     	    "MicrosoftAzure\\Storage\\Tests\\": "tests/"
     	}
-    },
-    "archive": {
-        "exclude": ["/tests"]
     },
 	"extra": {
 	    "branch-alias": {

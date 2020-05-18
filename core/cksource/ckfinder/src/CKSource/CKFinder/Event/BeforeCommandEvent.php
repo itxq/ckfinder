@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -25,23 +25,21 @@ class BeforeCommandEvent extends CKFinderEvent
     /**
      * The command name.
      *
-     * @var string $commandObject
+     * @var string
      */
     protected $commandName;
 
     /**
      * The object of the command to be executed.
      *
-     * @var CommandAbstract $commandObject
+     * @var CommandAbstract
      */
     protected $commandObject;
 
     /**
      * Constructor.
      *
-     * @param CKFinder        $app
-     * @param string          $commandName
-     * @param CommandAbstract $commandObject
+     * @param string $commandName
      */
     public function __construct(CKFinder $app, $commandName, CommandAbstract $commandObject)
     {
@@ -63,8 +61,6 @@ class BeforeCommandEvent extends CKFinderEvent
 
     /**
      * Sets the object of the command to be executed.
-     *
-     * @param CommandAbstract $commandObject
      */
     public function setCommandObject(CommandAbstract $commandObject)
     {

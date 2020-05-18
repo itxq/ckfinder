@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -26,9 +26,9 @@ use CKSource\CKFinder\Exception\InvalidExtensionException;
 use CKSource\CKFinder\Exception\InvalidUploadException;
 use CKSource\CKFinder\Exception\UnauthorizedException;
 use CKSource\CKFinder\Filesystem\File\EditedImage;
+use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
 use CKSource\CKFinder\Filesystem\Path;
 use CKSource\CKFinder\Image;
-use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
 use CKSource\CKFinder\ResizedImage\ResizedImageRepository;
 use CKSource\CKFinder\Thumbnail\ThumbnailRepository;
 use CKSource\CKFinder\Utils;
@@ -39,7 +39,7 @@ class SaveImage extends CommandAbstract
 {
     protected $requestMethod = Request::METHOD_POST;
 
-    protected $requires = array(Permission::FILE_CREATE);
+    protected $requires = [Permission::FILE_CREATE];
 
     public function execute(Request $request, WorkingFolder $workingFolder, EventDispatcher $dispatcher, CacheManager $cache, ResizedImageRepository $resizedImageRepository, ThumbnailRepository $thumbnailRepository, Acl $acl, Config $config)
     {
@@ -70,12 +70,12 @@ class SaveImage extends CommandAbstract
 
         $uploadedData = (string) $request->request->get('content');
 
-        if (null === $uploadedData || strpos($uploadedData, 'data:image/png;base64,') !== 0) {
+        if (null === $uploadedData || 0 !== strpos($uploadedData, 'data:image/png;base64,')) {
             throw new InvalidUploadException('Invalid upload. Expected base64 encoded PNG image.');
         }
 
         $data = explode(',', $uploadedData);
-        $data = isset($data[1]) ? base64_decode($data[1]) : false;
+        $data = isset($data[1]) ? base64_decode($data[1], true) : false;
 
         if (!$data) {
             throw new InvalidUploadException();
@@ -85,7 +85,7 @@ class SaveImage extends CommandAbstract
             $uploadedImage = Image::create($data);
         } catch (\Exception $e) {
             // No need to check if secureImageUploads is enabled - image must be valid here
-            throw new InvalidUploadException('Invalid upload: corrupted image', Error::UPLOADED_CORRUPT, array(), $e);
+            throw new InvalidUploadException('Invalid upload: corrupted image', Error::UPLOADED_CORRUPT, [], $e);
         }
 
         $imagesConfig = $config->get('images');
@@ -110,11 +110,12 @@ class SaveImage extends CommandAbstract
             Path::combine(
                 $workingFolder->getResourceType()->getName(),
                 $workingFolder->getClientCurrentFolder(),
-                $fileName),
+                $fileName
+            ),
             $uploadedImage->getInfo()
         );
 
-        $dispatcher->dispatch(CKFinderEvent::SAVE_IMAGE, $editFileEvent);
+        $dispatcher->dispatch($editFileEvent, CKFinderEvent::SAVE_IMAGE);
 
         $saved = false;
 
@@ -133,10 +134,10 @@ class SaveImage extends CommandAbstract
             }
         }
 
-        return array(
+        return [
             'saved' => (int) $saved,
-            'date'  => Utils::formatDate(time()),
-            'size'  => Utils::formatSize($imageInfo['size'])
-        );
+            'date' => Utils::formatDate(time()),
+            'size' => Utils::formatSize($imageInfo['size']),
+        ];
     }
 }

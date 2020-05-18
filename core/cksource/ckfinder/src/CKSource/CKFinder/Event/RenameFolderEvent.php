@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -25,7 +25,7 @@ class RenameFolderEvent extends CKFinderEvent
     /**
      * Working folder where the new folder is going to be renamed.
      *
-     * @var WorkingFolder $workingFolder
+     * @var WorkingFolder
      */
     protected $workingFolder;
 
@@ -39,9 +39,7 @@ class RenameFolderEvent extends CKFinderEvent
     /**
      * Constructor.
      *
-     * @param CKFinder      $app
-     * @param WorkingFolder $workingFolder
-     * @param string        $newFolderName
+     * @param string $newFolderName
      */
     public function __construct(CKFinder $app, WorkingFolder $workingFolder, $newFolderName)
     {

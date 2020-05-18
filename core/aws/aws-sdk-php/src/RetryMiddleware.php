@@ -2,16 +2,21 @@
 namespace Aws;
 
 use Aws\Exception\AwsException;
+use Aws\Retry\RetryHelperTrait;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\RequestInterface;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Promise;
 
 /**
- * @internal Middleware that retries failures.
+ * Middleware that retries failures. V1 implemention that supports 'legacy' mode.
+ *
+ * @internal
  */
 class RetryMiddleware
 {
+    use RetryHelperTrait;
+
     private static $retryStatusCodes = [
         500 => true,
         502 => true,
@@ -29,6 +34,9 @@ class RetryMiddleware
         'RequestThrottled'                       => true,
         'BandwidthLimitExceeded'                 => true,
         'RequestThrottledException'              => true,
+        'TooManyRequestsException'               => true,
+        'IDPCommunicationError'                  => true,
+        'EC2ThrottledException'                  => true,
     ];
 
     private $decider;
@@ -51,12 +59,25 @@ class RetryMiddleware
     /**
      * Creates a default AWS retry decider function.
      *
-     * @param int $maxRetries
+     * The optional $extraConfig parameter is an associative array
+     * that specifies additional retry conditions on top of the ones specified
+     * by default by the Aws\RetryMiddleware class, with the following keys:
      *
+     * - errorCodes: (string[]) An indexed array of AWS exception codes to retry.
+     *   Optional.
+     * - statusCodes: (int[]) An indexed array of HTTP status codes to retry.
+     *   Optional.
+     * - curlErrors: (int[]) An indexed array of Curl error codes to retry. Note
+     *   these should be valid Curl constants. Optional.
+     *
+     * @param int $maxRetries
+     * @param array $extraConfig
      * @return callable
      */
-    public static function createDefaultDecider($maxRetries = 3)
-    {
+    public static function createDefaultDecider(
+        $maxRetries = 3,
+        $extraConfig = []
+    ) {
         $retryCurlErrors = [];
         if (extension_loaded('curl')) {
             $retryCurlErrors[CURLE_RECV_ERROR] = true;
@@ -68,13 +89,18 @@ class RetryMiddleware
             RequestInterface $request,
             ResultInterface $result = null,
             $error = null
-        ) use ($maxRetries, $retryCurlErrors) {
+        ) use ($maxRetries, $retryCurlErrors, $extraConfig) {
             // Allow command-level options to override this value
             $maxRetries = null !== $command['@retries'] ?
                 $command['@retries']
                 : $maxRetries;
 
-            $isRetryable = self::isRetryable($result, $error, $retryCurlErrors);
+            $isRetryable = self::isRetryable(
+                $result,
+                $error,
+                $retryCurlErrors,
+                $extraConfig
+            );
 
             if ($retries >= $maxRetries) {
                 if (!empty($error)
@@ -90,10 +116,43 @@ class RetryMiddleware
         };
     }
 
-    private static function isRetryable($result, $error, $retryCurlErrors)
-    {
+    private static function isRetryable(
+        $result,
+        $error,
+        $retryCurlErrors,
+        $extraConfig = []
+    ) {
+        $errorCodes = self::$retryCodes;
+        if (!empty($extraConfig['error_codes'])
+            && is_array($extraConfig['error_codes'])
+        ) {
+            foreach($extraConfig['error_codes'] as $code) {
+                $errorCodes[$code] = true;
+            }
+        }
+
+        $statusCodes = self::$retryStatusCodes;
+        if (!empty($extraConfig['status_codes'])
+            && is_array($extraConfig['status_codes'])
+        ) {
+            foreach($extraConfig['status_codes'] as $code) {
+                $statusCodes[$code] = true;
+            }
+        }
+
+        if (!empty($extraConfig['curl_errors'])
+            && is_array($extraConfig['curl_errors'])
+        ) {
+            foreach($extraConfig['curl_errors'] as $code) {
+                $retryCurlErrors[$code] = true;
+            }
+        }
+
         if (!$error) {
-            return isset(self::$retryStatusCodes[$result['@metadata']['statusCode']]);
+            if (!isset($result['@metadata']['statusCode'])) {
+                return false;
+            }
+            return isset($statusCodes[$result['@metadata']['statusCode']]);
         }
 
         if (!($error instanceof AwsException)) {
@@ -104,11 +163,11 @@ class RetryMiddleware
             return true;
         }
 
-        if (isset(self::$retryCodes[$error->getAwsErrorCode()])) {
+        if (isset($errorCodes[$error->getAwsErrorCode()])) {
             return true;
         }
 
-        if (isset(self::$retryStatusCodes[$error->getStatusCode()])) {
+        if (isset($statusCodes[$error->getStatusCode()])) {
             return true;
         }
 
@@ -214,54 +273,5 @@ class RetryMiddleware
         };
 
         return $handler($command, $request)->then($g, $g);
-    }
-
-    private function addRetryHeader($request, $retries, $delayBy)
-    {
-        return $request->withHeader('aws-sdk-retry', "{$retries}/{$delayBy}");
-    }
-
-    private function updateStats($retries, $delay, array &$stats)
-    {
-        if (!isset($stats['total_retry_delay'])) {
-            $stats['total_retry_delay'] = 0;
-        }
-
-        $stats['total_retry_delay'] += $delay;
-        $stats['retries_attempted'] = $retries;
-    }
-
-    private function updateHttpStats($value, array &$stats)
-    {
-        if (empty($stats['http'])) {
-            $stats['http'] = [];
-        }
-
-        if ($value instanceof AwsException) {
-            $resultStats = isset($value->getTransferInfo('http')[0])
-                ? $value->getTransferInfo('http')[0]
-                : [];
-            $stats['http'] []= $resultStats;
-        } elseif ($value instanceof ResultInterface) {
-            $resultStats = isset($value['@metadata']['transferStats']['http'][0])
-                ? $value['@metadata']['transferStats']['http'][0]
-                : [];
-            $stats['http'] []= $resultStats;
-        }
-    }
-
-    private function bindStatsToReturn($return, array $stats)
-    {
-        if ($return instanceof ResultInterface) {
-            if (!isset($return['@metadata'])) {
-                $return['@metadata'] = [];
-            }
-
-            $return['@metadata']['transferStats'] = $stats;
-        } elseif ($return instanceof AwsException) {
-            $return->setTransferInfo($stats);
-        }
-
-        return $return;
     }
 }

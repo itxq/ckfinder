@@ -13,6 +13,7 @@
 namespace itxq\ckfinder\tools;
 
 use CKSource\CKFinder\CKFinder;
+use itxq\traits\SingletonPattern;
 
 /**
  * 自动重命名（用于过滤汉字以及其他特殊符号）
@@ -21,17 +22,17 @@ use CKSource\CKFinder\CKFinder;
  */
 class AutoRename
 {
-    use SingleModelTrait;
-    
+    use SingletonPattern;
+
     public const FILE = 'file';
-    
+
     public const FOLDER = 'folder';
-    
+
     /**
      * @var - CKFinder 配置
      */
     protected $defaultConfig = ['folder' => false, 'file' => false];
-    
+
     /**
      * 获取 CKFinder 配置
      * @param CKFinder $app
@@ -43,10 +44,10 @@ class AutoRename
         $this->iniConfig($config);
         return $this;
     }
-    
+
     /**
      * 自动重命名重命名
-     * @param string $name - 原名称
+     * @param string $name      - 原名称
      * @param string $extension - 扩展名
      * @return mixed|string
      */
@@ -58,7 +59,7 @@ class AutoRename
         if (!empty($extension) && $this->config[self::FILE] === false) {
             return $name;
         }
-        $name = PinYin::ins()->turn($name, false, '', 'utf-8');
+        $name = PinYin::make()->turn($name, false, '', 'utf-8');
         // uuid 用于名称为空时
         $name = empty($name) ? $this->uuid() : strtolower($name);
         if ($name === '.' . $extension) {
@@ -66,7 +67,7 @@ class AutoRename
         }
         return $name;
     }
-    
+
     /**
      * 生成uuid
      * @return string
@@ -74,14 +75,14 @@ class AutoRename
     private function uuid(): string
     {
         $charId = md5(uniqid(mt_rand(), true));
-        $uuid = substr($charId, 0, 8)
+        $uuid   = substr($charId, 0, 8)
             . substr($charId, 8, 4)
             . substr($charId, 12, 4)
             . substr($charId, 16, 4)
             . substr($charId, 20, 12);
         return strtolower($uuid);
     }
-    
+
     /**
      * 初始化配置信息
      * @param array $config - CKFinder 配置
@@ -90,10 +91,10 @@ class AutoRename
     {
         $this->config = $this->defaultConfig;
         if (is_array($config) && isset($config['file'], $config['folder'])) {
-            $this->config['file'] = (bool)$config['file'];
+            $this->config['file']   = (bool)$config['file'];
             $this->config['folder'] = (bool)$config['folder'];
         } else if ($config === true || $config === false) {
-            $this->config['file'] = $config;
+            $this->config['file']   = $config;
             $this->config['folder'] = $config;
         }
     }

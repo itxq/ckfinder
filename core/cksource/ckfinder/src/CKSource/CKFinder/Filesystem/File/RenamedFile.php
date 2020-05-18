@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -34,7 +34,7 @@ class RenamedFile extends ExistingFile
     /**
      * New file name.
      *
-     * @var string $newFileName
+     * @var string
      */
     protected $newFileName;
 
@@ -95,9 +95,9 @@ class RenamedFile extends ExistingFile
     /**
      * Renames the current file.
      *
-     * @return bool `true` if the file was renamed successfully.
-     *
      * @throws \Exception
+     *
+     * @return bool `true` if the file was renamed successfully
      */
     public function doRename()
     {
@@ -120,7 +120,8 @@ class RenamedFile extends ExistingFile
 
         $this->getCache()->move(
             Path::combine($this->resourceType->getName(), $this->folder, $this->getFilename()),
-            Path::combine($this->resourceType->getName(), $this->folder, $this->newFileName));
+            Path::combine($this->resourceType->getName(), $this->folder, $this->newFileName)
+        );
 
         return $backend->rename($oldPath, $newPath);
     }
@@ -128,9 +129,9 @@ class RenamedFile extends ExistingFile
     /**
      * Validates the renamed file.
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function isValid()
     {

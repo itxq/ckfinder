@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -17,7 +17,6 @@ namespace CKSource\CKFinder\Command;
 use CKSource\CKFinder\Acl\Permission;
 use CKSource\CKFinder\Event\CKFinderEvent;
 use CKSource\CKFinder\Event\RenameFileEvent;
-use CKSource\CKFinder\Exception\AccessDeniedException;
 use CKSource\CKFinder\Exception\InvalidNameException;
 use CKSource\CKFinder\Filesystem\File\RenamedFile;
 use CKSource\CKFinder\Filesystem\Folder\WorkingFolder;
@@ -29,12 +28,12 @@ class RenameFile extends CommandAbstract
 {
     protected $requestMethod = Request::METHOD_POST;
 
-    protected $requires = array(Permission::FILE_RENAME);
+    protected $requires = [Permission::FILE_RENAME];
 
     public function execute(Request $request, WorkingFolder $workingFolder, EventDispatcher $dispatcher)
     {
-        $fileName = (string) $request->query->get('fileName');
-        $newFileName = (string) $request->query->get('newFileName');
+        $fileName    = (string)$request->query->get('fileName');
+        $newFileName = (string)$request->query->get('newFileName');
 
         if (null === $fileName || null === $newFileName) {
             throw new InvalidNameException('Invalid file name');
@@ -47,27 +46,29 @@ class RenameFile extends CommandAbstract
             $workingFolder->getResourceType(),
             $this->app
         );
+
         // ---------------------------------------------------------------------------------------
         // 自动重命名 AutoRename
-        $newFileName = AutoRename::ins()->config($this->app)->autoRename($newFileName, $renamedFile->getExtension());
+        $newFileName = AutoRename::make()->config($this->app)->autoRename($newFileName, $renamedFile->getExtension());
         $renamedFile->setNewFileName($newFileName);
         // ---------------------------------------------------------------------------------------
+
         $renamed = false;
 
         if ($renamedFile->isValid()) {
             $renamedFileEvent = new RenameFileEvent($this->app, $renamedFile);
 
-            $dispatcher->dispatch(CKFinderEvent::RENAME_FILE, $renamedFileEvent);
+            $dispatcher->dispatch($renamedFileEvent, CKFinderEvent::RENAME_FILE);
 
             if (!$renamedFileEvent->isPropagationStopped()) {
                 $renamed = $renamedFile->doRename();
             }
         }
 
-        return array(
+        return [
             'name'    => $fileName,
             'newName' => $renamedFile->getNewFileName(),
-            'renamed' => (int) $renamed
-        );
+            'renamed' => (int)$renamed,
+        ];
     }
 }

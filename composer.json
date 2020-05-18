@@ -11,23 +11,25 @@
     }
   ],
   "require"    : {
-    "php"      : ">=7.1.0",
-    "upyun/sdk": "^3.3",
-    "ext-iconv": ">=1.0"
+    "php"                       : ">=7.1.0",
+    "upyun/sdk"                 : "^3.4",
+    "ext-iconv"                 : ">=1.0",
+    "itxq/singleton-pattern-php": "^1.0"
   },
-  "require-dev": {
-    "itxq/builder-assets": "dev-master"
-  },
+  "require-dev": {},
   "autoload"   : {
     "psr-4": {
       "itxq\\ckfinder\\": "src"
     }
   },
   "extra"      : {
-    "installer-paths": {
-      "test/assets": [
-        "itxq/builder-assets"
-      ]
+    "itxq-kelove-statics": [
+      "static"
+    ],
+    "think"              : {
+      "config": {
+        "ckfinder": "config/config.php"
+      }
     }
   }
 }

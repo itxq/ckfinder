@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -15,8 +15,8 @@
 namespace CKSource\CKFinder\Command;
 
 use CKSource\CKFinder\Acl\Permission;
-use CKSource\CKFinder\Error;
 use CKSource\CKFinder\Config;
+use CKSource\CKFinder\Error;
 use CKSource\CKFinder\Exception\CKFinderException;
 use CKSource\CKFinder\Exception\FileNotFoundException;
 use CKSource\CKFinder\Exception\InvalidNameException;
@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Thumbnail extends CommandAbstract
 {
-    protected $requires = array(Permission::FILE_VIEW);
+    protected $requires = [Permission::FILE_VIEW];
 
     public function execute(Request $request, WorkingFolder $workingFolder, Config $config, ThumbnailRepository $thumbnailRepository)
     {
@@ -57,14 +57,19 @@ class Thumbnail extends CommandAbstract
 
         list($requestedWidth, $requestedHeight) = Image::parseSize((string) $request->get('size'));
 
-        $thumbnail = $thumbnailRepository->getThumbnail($workingFolder->getResourceType(),
-            $workingFolder->getClientCurrentFolder(), $fileName, $requestedWidth, $requestedHeight);
+        $thumbnail = $thumbnailRepository->getThumbnail(
+            $workingFolder->getResourceType(),
+            $workingFolder->getClientCurrentFolder(),
+            $fileName,
+            $requestedWidth,
+            $requestedHeight
+        );
 
         Utils::removeSessionCacheHeaders();
 
         $response = new Response();
         $response->setPublic();
-        $response->setEtag(dechex($thumbnail->getTimestamp()) . "-" . dechex($thumbnail->getSize()));
+        $response->setEtag(dechex($thumbnail->getTimestamp()).'-'.dechex($thumbnail->getSize()));
 
         $lastModificationDate = new \DateTime();
         $lastModificationDate->setTimestamp($thumbnail->getTimestamp());
@@ -81,11 +86,11 @@ class Thumbnail extends CommandAbstract
             $response->setMaxAge($thumbnailsCacheExpires);
 
             $expireTime = new \DateTime();
-            $expireTime->modify('+' . $thumbnailsCacheExpires . 'seconds');
+            $expireTime->modify('+'.$thumbnailsCacheExpires.'seconds');
             $response->setExpires($expireTime);
         }
 
-        $response->headers->set('Content-Type', $thumbnail->getMimeType() . '; name="' . $thumbnail->getFileName() . '"');
+        $response->headers->set('Content-Type', $thumbnail->getMimeType().'; name="'.$thumbnail->getFileName().'"');
         $response->setContent($thumbnail->getImageData());
 
         return $response;

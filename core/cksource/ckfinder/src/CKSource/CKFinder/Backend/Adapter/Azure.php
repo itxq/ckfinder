@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -29,16 +29,16 @@ class Azure extends AzureAdapterBase implements EmulateRenameDirectoryInterface
      */
     public function renameDirectory($path, $newPath)
     {
-        $sourcePath = $this->applyPathPrefix(rtrim($path, '/') . '/');
+        $sourcePath = $this->applyPathPrefix(rtrim($path, '/').'/');
 
         $options = new ListBlobsOptions();
         $options->setPrefix($sourcePath);
 
-        /** @var \MicrosoftAzure\Storage\Blob\Models\\ListBlobsResult $listResults */
+        /** @var \MicrosoftAzure\Storage\Blob\Models\ListBlobsResult $listResults */
         $listResults = $this->client->listBlobs($this->container, $options);
 
         foreach ($listResults->getBlobs() as $blob) {
-            /** @var \MicrosoftAzure\Storage\Blob\Models\Blob $blob */
+            // @var \MicrosoftAzure\Storage\Blob\Models\Blob $blob
             $this->client->copyBlob(
                 $this->container,
                 $this->replacePath($blob->getName(), $path, $newPath),
@@ -49,6 +49,18 @@ class Azure extends AzureAdapterBase implements EmulateRenameDirectoryInterface
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function has($path)
+    {
+        try {
+            return parent::has($path);
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -63,21 +75,9 @@ class Azure extends AzureAdapterBase implements EmulateRenameDirectoryInterface
     protected function replacePath($objectPath, $path, $newPath)
     {
         $objectPath = $this->removePathPrefix($objectPath);
-        $newPath = trim($newPath, '/') . '/';
-        $path = trim($path, '/') . '/';
+        $newPath = trim($newPath, '/').'/';
+        $path = trim($path, '/').'/';
 
-        return $this->applyPathPrefix($newPath . substr($objectPath, strlen($path)));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function has($path)
-    {
-        try {
-            return parent::has($path);
-        } catch (\Exception $e) {
-            return false;
-        }
+        return $this->applyPathPrefix($newPath.substr($objectPath, \strlen($path)));
     }
 }

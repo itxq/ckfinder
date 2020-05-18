@@ -24,29 +24,37 @@
 
 namespace MicrosoftAzure\Storage\Common\Internal\Authentication;
 
-use GuzzleHttp\Psr7\Request;
-
 /**
  * Interface for azure authentication schemes.
  *
- * @ignore
  * @category  Microsoft
  * @package   MicrosoftAzure\Storage\Common\Internal\Authentication
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 interface IAuthScheme
 {
     /**
-     * Signs a request.
+     * Returns authorization header to be included in the request.
      *
-     * @param  \GuzzleHttp\Psr7\Request $request HTTP request object.
+     * @param array  $headers     request headers.
+     * @param string $url         reuqest url.
+     * @param array  $queryParams query variables.
+     * @param string $httpMethod  request http method.
+     *
+     * @see Specifying the Authorization Header section at
+     *      http://msdn.microsoft.com/en-us/library/windowsazure/dd179428.aspx
      *
      * @abstract
      *
-     * @return \GuzzleHttp\Psr7\Request
+     * @return string
      */
-    public function signRequest(Request $request);
+    public function getAuthorizationHeader($headers, $url, $queryParams,
+        $httpMethod
+    );
 }
+
+

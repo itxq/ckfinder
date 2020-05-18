@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -32,17 +32,47 @@ namespace MicrosoftAzure\Storage\Blob\Models;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class CreateBlobBlockOptions extends BlobServiceOptions
 {
+    /**
+     * @var string
+     */
     private $_contentMD5;
-    private $_numberOfConcurrency;
+    
+    /**
+     * @var string
+     */
+    private $_leaseId;
+    
+    /**
+     * Gets lease Id for the blob
+     * 
+     * @return string
+     */
+    public function getLeaseId()
+    {
+        return $this->_leaseId;
+    }
+    
+    /**
+     * Sets lease Id for the blob
+     * 
+     * @param string $leaseId the blob lease id.
+     * 
+     * @return none
+     */
+    public function setLeaseId($leaseId)
+    {
+        $this->_leaseId = $leaseId;
+    }
     
     /**
      * Gets blob contentMD5.
      *
-     * @return string
+     * @return string.
      */
     public function getContentMD5()
     {
@@ -54,49 +84,12 @@ class CreateBlobBlockOptions extends BlobServiceOptions
      *
      * @param string $contentMD5 value.
      *
-     * @return void
+     * @return none.
      */
     public function setContentMD5($contentMD5)
     {
         $this->_contentMD5 = $contentMD5;
     }
-
-    /**
-     * Gets number of concurrency for sending a blob.
-     *
-     * @return int
-     */
-    public function getNumberOfConcurrency()
-    {
-        return $this->_numberOfConcurrency;
-    }
-
-    /**
-     * Sets number of concurrency for sending a blob.
-     *
-     * @param int $numberOfConcurrency the number of concurrent requests.
-     */
-    public function setNumberOfConcurrency($numberOfConcurrency)
-    {
-        $this->_numberOfConcurrency = $numberOfConcurrency;
-    }
-
-    /**
-     * Construct a CreateBlobBlockOptions object from a createBlobOptions.
-     *
-     * @param  CreateBlobOptions $createBlobOptions
-     *
-     * @return CreateBlobBlockOptions
-     */
-    public static function create(CreateBlobOptions $createBlobOptions)
-    {
-        $result = new CreateBlobBlockOptions();
-        $result->setTimeout($createBlobOptions->getTimeout());
-        $result->setContentMD5($createBlobOptions->getContentMD5());
-        $result->setLeaseId($createBlobOptions->getLeaseId());
-        $result->setNumberOfConcurrency(
-            $createBlobOptions->getNumberOfConcurrency()
-        );
-        return $result;
-    }
 }
+
+

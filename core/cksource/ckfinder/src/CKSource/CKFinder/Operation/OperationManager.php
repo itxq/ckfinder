@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -18,7 +18,7 @@ use CKSource\CKFinder\CKFinder;
 use CKSource\CKFinder\Filesystem\Path;
 use CKSource\CKFinder\Response\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -78,8 +78,6 @@ class OperationManager
 
     /**
      * Constructor.
-     *
-     * @param CKFinder $app
      */
     public function __construct(CKFinder $app)
     {
@@ -88,21 +86,34 @@ class OperationManager
     }
 
     /**
-     * Validates the operation ID.
-     *
-     * @param string $operationId
-     *
-     * @return bool `true` if the operation ID format is valid.
+     * Destructor to remove temporary files if the operation was started for the current request.
      */
-    protected function isValidOperationId($operationId)
+    public function __destruct()
     {
-        return (bool) preg_match('/^[a-z0-9]{16}$/', $operationId);
+        if ($this->startedOperationId) {
+            $directoryPath = $this->getFilePath($this->startedOperationId, null);
+            $toRemove = [
+                $statusFilePath = Path::combine($directoryPath, 'status'),
+                $abortFilePath = Path::combine($directoryPath, 'abort'),
+            ];
+
+            foreach ($toRemove as $filePath) {
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            }
+
+            if (is_dir($directoryPath)) {
+                rmdir($directoryPath);
+            }
+        }
     }
 
     /**
      * Starts a time consuming operation in the current request.
-
-     * @return bool `true` if operation tracking was started.
+     *
+     *
+     * @return bool `true` if operation tracking was started
      */
     public function start()
     {
@@ -133,7 +144,7 @@ class OperationManager
      *
      * @param string $operationId
      *
-     * @return bool `true` if the operation was aborted.
+     * @return bool `true` if the operation was aborted
      */
     public function abort($operationId)
     {
@@ -149,7 +160,7 @@ class OperationManager
     /**
      * Checks if the operation started in the current request was aborted.
      *
-     * @return bool `true` if the operation was aborted.
+     * @return bool `true` if the operation was aborted
      */
     public function isAborted()
     {
@@ -166,7 +177,7 @@ class OperationManager
     /**
      * Updates the status of the current operation.
      *
-     * @param array $status data describing the operation status.
+     * @param array $status data describing the operation status
      */
     public function updateStatus(array $status)
     {
@@ -179,29 +190,6 @@ class OperationManager
                 $this->lastUpdateTime = $currentTime;
 
                 file_put_contents($this->getFilePath($this->startedOperationId), serialize($status));
-            }
-        }
-    }
-
-    /**
-     * Extends the execution time of the script.
-     *
-     * @param int $currentTime current timestamp
-     */
-    protected function extendExecutionTime($currentTime)
-    {
-        if ($currentTime - $this->lastExtendExecutionTime >= self::EXTEND_EXECUTION_INTERVAL) {
-            set_time_limit(30);
-
-            $this->lastExtendExecutionTime = $currentTime;
-
-            // Emit some whitespaces for Nginx + FPM configuration to avoid 504 Gateway Timeout error
-            if (function_exists('fastcgi_finish_request')) {
-                // Clear the buffer to remove any garbage before flushing
-                Response::closeOutputBuffers(0, false);
-                echo ' ';
-                @ob_end_flush();
-                @flush();
             }
         }
     }
@@ -226,6 +214,57 @@ class OperationManager
     }
 
     /**
+     * Adds information about aborting to the long running request response.
+     */
+    public function addInfoToResponse()
+    {
+        $this->app->on(KernelEvents::RESPONSE, function (ResponseEvent $event) {
+            $response = $event->getResponse();
+
+            if ($response instanceof JsonResponse) {
+                $responseData = (array) $response->getData();
+                $responseData = ['aborted' => $this->isAborted()] + $responseData;
+                $response->setData($responseData);
+            }
+        }, 512);
+    }
+
+    /**
+     * Validates the operation ID.
+     *
+     * @param string $operationId
+     *
+     * @return bool `true` if the operation ID format is valid
+     */
+    protected function isValidOperationId($operationId)
+    {
+        return (bool) preg_match('/^[a-z0-9]{16}$/', $operationId);
+    }
+
+    /**
+     * Extends the execution time of the script.
+     *
+     * @param int $currentTime current timestamp
+     */
+    protected function extendExecutionTime($currentTime)
+    {
+        if ($currentTime - $this->lastExtendExecutionTime >= self::EXTEND_EXECUTION_INTERVAL) {
+            set_time_limit(30);
+
+            $this->lastExtendExecutionTime = $currentTime;
+
+            // Emit some whitespaces for Nginx + FPM configuration to avoid 504 Gateway Timeout error
+            if (\function_exists('fastcgi_finish_request')) {
+                // Clear the buffer to remove any garbage before flushing
+                Response::closeOutputBuffers(0, false);
+                echo ' ';
+                @ob_end_flush();
+                @flush();
+            }
+        }
+    }
+
+    /**
      * Returns a path for a file located in the current operation temporary directory.
      *
      * @param string $operationId
@@ -235,7 +274,7 @@ class OperationManager
      */
     protected function getFilePath($operationId, $file = 'status')
     {
-        return Path::combine($this->tempDirectory, 'ckf-operation-' . $operationId, $file);
+        return Path::combine($this->tempDirectory, 'ckf-operation-'.$operationId, $file);
     }
 
     /**
@@ -243,52 +282,12 @@ class OperationManager
      *
      * @param string $operationId
      *
-     * @return bool `true` if the directory exists - the operation was started.
+     * @return bool `true` if the directory exists - the operation was started
      */
     protected function operationStarted($operationId)
     {
         $directoryPath = $this->getFilePath($operationId, null);
 
         return is_dir($directoryPath);
-    }
-
-    /**
-     * Adds information about aborting to the long running request response.
-     */
-    public function addInfoToResponse()
-    {
-        $this->app->on(KernelEvents::RESPONSE, function (FilterResponseEvent $event) {
-            $response = $event->getResponse();
-
-            if ($response instanceof JsonResponse) {
-                $responseData = (array) $response->getData();
-                $responseData = array('aborted' => $this->isAborted()) + $responseData;
-                $response->setData($responseData);
-            }
-        }, 512);
-    }
-
-    /**
-     * Destructor to remove temporary files if the operation was started for the current request.
-     */
-    public function __destruct()
-    {
-        if ($this->startedOperationId) {
-            $directoryPath = $this->getFilePath($this->startedOperationId, null);
-            $toRemove = array(
-                $statusFilePath = Path::combine($directoryPath, 'status'),
-                $abortFilePath = Path::combine($directoryPath, 'abort')
-            );
-
-            foreach ($toRemove as $filePath) {
-                if (file_exists($filePath)) {
-                    unlink($filePath);
-                }
-            }
-
-            if (is_dir($directoryPath)) {
-                rmdir($directoryPath);
-            }
-        }
     }
 }

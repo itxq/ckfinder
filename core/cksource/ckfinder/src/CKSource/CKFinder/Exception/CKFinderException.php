@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -18,20 +18,19 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The base CKFinder exception class.
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 class CKFinderException extends \Exception
 {
     /**
      * An array of parameters passed for replacements used in translation.
      *
-     * @var array $parameters
+     * @var array
      */
     protected $parameters;
 
     /**
      * HTTP response status code.
+     *
      * @var int
      */
     protected $httpStatusCode = Response::HTTP_BAD_REQUEST;
@@ -44,7 +43,7 @@ class CKFinderException extends \Exception
      * @param array      $parameters the parameters passed for translation
      * @param \Exception $previous   the previous exception
      */
-    public function __construct($message = null, $code = 0, $parameters = array(), \Exception $previous = null)
+    public function __construct($message = null, $code = 0, $parameters = [], \Exception $previous = null)
     {
         $this->parameters = $parameters;
 

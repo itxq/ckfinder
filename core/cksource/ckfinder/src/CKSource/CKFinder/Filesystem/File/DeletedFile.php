@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -29,9 +29,9 @@ class DeletedFile extends ExistingFile
     /**
      * Deletes the current file.
      *
-     * @return bool `true` if the file was deleted successfully.
-     *
      * @throws \Exception
+     *
+     * @return bool `true` if the file was deleted successfully
      */
     public function doDelete()
     {
@@ -41,11 +41,10 @@ class DeletedFile extends ExistingFile
             $this->getCache()->delete(Path::combine($this->resourceType->getName(), $this->folder, $this->getFilename()));
 
             return true;
-        } else {
-            $this->addError(Error::ACCESS_DENIED);
-
-            return false;
         }
+        $this->addError(Error::ACCESS_DENIED);
+
+        return false;
     }
 
     public function isValid()

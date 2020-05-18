@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -19,22 +19,20 @@ namespace CKSource\CKFinder\Acl;
  *
  * A class used to build access control masks for folder access management.
  * Two masks are used to handle access rule inheritance from parent directories.
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 class MaskBuilder
 {
     /**
      * A mask for allowed permissions.
      *
-     * @var int $maskAllowed
+     * @var int
      */
     protected $maskAllowed = 0;
 
     /**
      * @brief A mask for disallowed permissions.
      *
-     * @var int $maskDisallowed
+     * @var int
      */
     protected $maskDisallowed = 0;
 

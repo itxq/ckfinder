@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+	<meta name="robots" content="noindex,follow">
+	<title>文件浏览</title>
+	<style rel="stylesheet" type="text/css">* {margin: 0;padding: 0;}</style>
+</head>
+<body>
+<script src="ckfinder.js"></script>
+<script type="text/javascript">
+	document.title = decodeURIComponent(getQueryString('ck_finder_api_title', '文件浏览'));
+	CKFinder.start({
+		connectorPath: getQueryString('ck_finder_api_url', ''),
+		skin: getQueryString('ck_finder_api_skin', 'jquery-mobile'),
+		swatch: getQueryString('ck_finder_api_swatch', 'b'),
+	});
+	
+	function getQueryString(name, value) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+		var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+		if (r) {
+			value = r[2];
+		}
+		return value;
+	}
+</script>
+</body>
+</html>

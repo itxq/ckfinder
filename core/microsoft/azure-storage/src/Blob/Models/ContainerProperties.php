@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -24,9 +24,6 @@
  
 namespace MicrosoftAzure\Storage\Blob\Models;
 
-use MicrosoftAzure\Storage\Common\Internal\Resources;
-use MicrosoftAzure\Storage\Common\Internal\Validate;
-
 /**
  * Holds container properties fields
  *
@@ -35,150 +32,64 @@ use MicrosoftAzure\Storage\Common\Internal\Validate;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class ContainerProperties
 {
-    private $etag;
-    private $lastModified;
-    private $leaseDuration;
-    private $leaseStatus;
-    private $leaseState;
-    private $publicAccess;
-
+    /**
+     * @var \DateTime
+     */
+    private $_lastModified;
+    
+    /**
+     * @var string
+     */
+    private $_etag;
+    
     /**
      * Gets container lastModified.
      *
-     * @return \DateTime
+     * @return \DateTime.
      */
     public function getLastModified()
     {
-        return $this->lastModified;
+        return $this->_lastModified;
     }
 
     /**
      * Sets container lastModified.
      *
      * @param \DateTime $lastModified value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
-    public function setLastModified(\DateTime $lastModified)
+    public function setLastModified($lastModified)
     {
-        $this->lastModified = $lastModified;
+        $this->_lastModified = $lastModified;
     }
     
     /**
      * Gets container etag.
      *
-     * @return string
+     * @return string.
      */
     public function getETag()
     {
-        return $this->etag;
+        return $this->_etag;
     }
 
     /**
      * Sets container etag.
      *
      * @param string $etag value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setETag($etag)
     {
-        $this->etag = $etag;
-    }
-    
-    /**
-     * Gets blob leaseStatus.
-     *
-     * @return string
-     */
-    public function getLeaseStatus()
-    {
-        return $this->leaseStatus;
-    }
-
-    /**
-     * Sets blob leaseStatus.
-     *
-     * @param string $leaseStatus value.
-     *
-     * @return void
-     */
-    public function setLeaseStatus($leaseStatus)
-    {
-        $this->leaseStatus = $leaseStatus;
-    }
-    
-    /**
-     * Gets blob lease state.
-     *
-     * @return string
-     */
-    public function getLeaseState()
-    {
-        return $this->leaseState;
-    }
-
-    /**
-     * Sets blob lease state.
-     *
-     * @param string $leaseState value.
-     *
-     * @return void
-     */
-    public function setLeaseState($leaseState)
-    {
-        $this->leaseState = $leaseState;
-    }
-    
-    /**
-     * Gets blob lease duration.
-     *
-     * @return string
-     */
-    public function getLeaseDuration()
-    {
-        return $this->leaseDuration;
-    }
-
-    /**
-     * Sets blob leaseStatus.
-     *
-     * @param string $leaseDuration value.
-     *
-     * @return void
-     */
-    public function setLeaseDuration($leaseDuration)
-    {
-        $this->leaseDuration = $leaseDuration;
-    }
-
-    /**
-     * Gets container publicAccess.
-     *
-     * @return string
-     */
-    public function getPublicAccess()
-    {
-        return $this->publicAccess;
-    }
-
-    /**
-     * Sets container publicAccess.
-     *
-     * @param string $publicAccess value.
-     *
-     * @return void
-     */
-    public function setPublicAccess($publicAccess)
-    {
-        Validate::isTrue(
-            PublicAccessType::isValid($publicAccess),
-            Resources::INVALID_BLOB_PAT_MSG
-        );
-        $this->publicAccess = $publicAccess;
+        $this->_etag = $etag;
     }
 }
+
+

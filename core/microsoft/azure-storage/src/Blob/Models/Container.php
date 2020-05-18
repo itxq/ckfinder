@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,6 +23,8 @@
  */
  
 namespace MicrosoftAzure\Storage\Blob\Models;
+use MicrosoftAzure\Storage\Common\Internal\Resources;
+use MicrosoftAzure\Storage\Common\Internal\Utilities;
 
 /**
  * WindowsAzure container object.
@@ -32,19 +34,35 @@ namespace MicrosoftAzure\Storage\Blob\Models;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class Container
 {
+    /**
+     * @var string
+     */
     private $_name;
+    
+    /**
+     * @var string
+     */
     private $_url;
+    
+    /**
+     * @var array
+     */
     private $_metadata;
+    
+    /**
+     * @var ContainerProperties
+     */
     private $_properties;
 
     /**
      * Gets container name.
      *
-     * @return string
+     * @return string.
      */
     public function getName()
     {
@@ -55,8 +73,8 @@ class Container
      * Sets container name.
      *
      * @param string $name value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setName($name)
     {
@@ -66,7 +84,7 @@ class Container
     /**
      * Gets container url.
      *
-     * @return string
+     * @return string.
      */
     public function getUrl()
     {
@@ -77,8 +95,8 @@ class Container
      * Sets container url.
      *
      * @param string $url value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function setUrl($url)
     {
@@ -88,7 +106,7 @@ class Container
     /**
      * Gets container metadata.
      *
-     * @return array
+     * @return array.
      */
     public function getMetadata()
     {
@@ -99,17 +117,17 @@ class Container
      * Sets container metadata.
      *
      * @param array $metadata value.
-     *
-     * @return void
+     * 
+     * @return none.
      */
-    public function setMetadata(array $metadata = null)
+    public function setMetadata($metadata)
     {
         $this->_metadata = $metadata;
     }
     
     /**
      * Gets container properties
-     *
+     * 
      * @return ContainerProperties
      */
     public function getProperties()
@@ -119,13 +137,14 @@ class Container
     
     /**
      * Sets container properties
-     *
+     * 
      * @param ContainerProperties $properties container properties
-     *
-     * @return void
+     * 
+     * @return none.
      */
-    public function setProperties(ContainerProperties $properties)
+    public function setProperties($properties)
     {
         $this->_properties = $properties;
     }
 }
+

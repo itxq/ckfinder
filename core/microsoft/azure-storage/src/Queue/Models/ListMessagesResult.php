@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,7 +23,7 @@
  */
 
 namespace MicrosoftAzure\Storage\Queue\Models;
-
+use MicrosoftAzure\Storage\Queue\Models\MicrosoftAzureQueueMessage;
 use MicrosoftAzure\Storage\Common\Internal\Utilities;
 
 /**
@@ -34,22 +34,26 @@ use MicrosoftAzure\Storage\Common\Internal\Utilities;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class ListMessagesResult
 {
+    /**
+     * Holds all message entries.
+     * 
+     * @var array.
+     */
     private $_queueMessages;
     
     /**
      * Creates ListMessagesResult object from parsed XML response.
      *
      * @param array $parsedResponse XML response parsed into array.
-     *
-     * @internal
-     *
-     * @return ListMessagesResult
+     * 
+     * @return MicrosoftAzure\Storage\Queue\Models\ListMessagesResult.
      */
-    public static function create(array $parsedResponse = null)
+    public static function create($parsedResponse)
     {
         $result        = new ListMessagesResult();
         $queueMessages = array();
@@ -57,7 +61,7 @@ class ListMessagesResult
         if (!empty($parsedResponse)) {
             $rawMessages = Utilities::getArray($parsedResponse['QueueMessage']);
             foreach ($rawMessages as $value) {
-                $message = QueueMessage::createFromListMessages($value);
+                $message = MicrosoftAzureQueueMessage::createFromListMessages($value);
                 
                 $queueMessages[] = $message;
             }
@@ -69,7 +73,7 @@ class ListMessagesResult
     
     /**
      * Gets queueMessages field.
-     *
+     * 
      * @return array
      */
     public function getQueueMessages()
@@ -79,14 +83,12 @@ class ListMessagesResult
     
     /**
      * Sets queueMessages field.
-     *
+     * 
      * @param integer $queueMessages value to use.
-     *
-     * @internal
-     *
-     * @return void
+     * 
+     * @return none
      */
-    protected function setQueueMessages($queueMessages)
+    public function setQueueMessages($queueMessages)
     {
         $this->_queueMessages = array();
         
@@ -95,3 +97,5 @@ class ListMessagesResult
         }
     }
 }
+
+

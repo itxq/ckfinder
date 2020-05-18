@@ -1,4 +1,4 @@
-CkFinder3.4.5 for PHP 优化版 （添加又拍云存储）
+CkFinder3.5.1 for PHP 优化版 （添加又拍云存储）
 ===============
 
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D7.1-8892BF.svg)](http://www.php.net/)
@@ -31,45 +31,101 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 ### 使用示例：
 
-```php
+```
+<?php
+
 use itxq\ckfinder\CkFinder;
 
-try {
-    CkFinder::ins()
-        // 配置缓存目录
-        ->setConfig('runtime_path', __DIR__ . '/../runtime')
-        // 授权信息
-        ->setConfig('licenseName', 'licenseName')
-        ->setConfig('licenseKey', 'licenseKey')
-        // 是否自动重命名（用于过滤用户提交包含中文以及特殊字符，中文会自动转为拼音）
-        ->setConfig('auto_rename', ['folder' => true, 'file' => true])
-        // 设置PrivateDirKey （可用于区分不同用户的缓存目录，建议使用用户ID）
-        ->setPrivateDirKey('')
-        // 添加一个又拍云存储空间（添加多个存储空间时，name不可重复）
-        ->addBackend('my_upy', CkFinder::ADAPTER_UPY, [
-            // 又拍云操作员相关设置
-            'service'  => 'service',
-            'operator' => 'operator',
-            'password' => 'password',
-            // 以下根路径和URL前缀需根据自己项目进行调整
-            'root'     => 'my_upy/',
-            'baseUrl'  => 'http://test.upy.com/my_upy'
-        ])
-        // 为又拍云存储空间添加一个资源目录（可添加多个）
-        ->addResource('云端存储', '01', 'my_upy')
-        // 添加一个本地存储空间（添加多个存储空间时，name不可重复）
-        ->addBackend('my_local', CkFinder::ADAPTER_LOCAL, [
-            // 以下根路径和URL前缀需根据自己项目进行调整
-            'root'    => __DIR__ . '/uploads/my_local',
-            'baseUrl' => '/uploads/my_local'
-        ])
-        // 为本地存储空间添加一个资源目录（可添加多个）
-        ->addResource('本地存储', '01', 'my_local')
-        ->run();
-} catch (\Exception$exception) {
-    var_dump($exception->getMessage());
-}
+require __DIR__ . '/vendor/autoload.php';
 
+if (isset($_GET['command'])) {
+
+    try {
+        CkFinder::make()
+            // 配置缓存目录
+            ->setConfig('runtime_path', __DIR__ . '/runtime')
+            // 授权信息
+            ->setConfig('licenseName', 'licenseName')
+            ->setConfig('licenseKey', 'licenseKey')
+            // 是否自动重命名（用于过滤用户提交包含中文以及特殊字符，中文会自动转为拼音）
+            ->setConfig('auto_rename', ['folder' => true, 'file' => true])
+            // 设置PrivateDirKey （可用于区分不同用户的缓存目录，建议使用用户ID）
+            ->setPrivateDirKey('')
+            // 添加一个又拍云存储空间（添加多个存储空间时，name不可重复）
+            ->addBackend('my_upy', CkFinder::ADAPTER_UPY, [
+                // 又拍云操作员相关设置
+                'service'  => 'service',
+                'operator' => 'operator',
+                'password' => 'password',
+                // 以下根路径和URL前缀需根据自己项目进行调整
+                'root'     => 'my_upy/',
+                'baseUrl'  => 'http://test.upy.com/my_upy'
+            ])
+            // 为又拍云存储空间添加一个资源目录（可添加多个）
+            ->addResource('云端存储', '01', 'my_upy')
+            // 添加一个本地存储空间（添加多个存储空间时，name不可重复）
+            ->addBackend('my_local', CkFinder::ADAPTER_LOCAL, [
+                // 以下根路径和URL前缀需根据自己项目进行调整
+                'root'    => __DIR__ . '/uploads/my_local',
+                'baseUrl' => '/uploads/my_local'
+            ])
+            // 为本地存储空间添加一个资源目录（可添加多个）
+            ->addResource('本地存储', '01', 'my_local')
+            ->run();
+    } catch (Exception$exception) {
+        var_dump($exception->getMessage());
+    }
+    exit();
+}
+?>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div class="input-group">
+    <input type="text" id="demo" name="demo" placeholder="demo">
+    <span class="input-group-append input-group-btn add-on">
+          <button type="button" class="btn btn-primary" onclick="selectFileWithCKFinder('demo');">
+              选择
+          </button>
+    </span>
+</div>
+<script type="text/javascript" src="static/ckfinder.js"></script>
+<script type="text/javascript">
+    function selectFileWithCKFinder(elementId) {
+        CKFinder.modal({
+            displayFoldersPanel: false,
+            //  readOnly: true,
+            skin: 'neko',
+            // skin: 'jquery-mobile',
+            swatch: 'b',
+            connectorPath: 'index.php',
+            chooseFiles: true,
+            width: 800,
+            height: 600,
+            lugins: [],
+            onInit: function (finder) {
+                finder.on('files:choose', function (evt) {
+                    var file = evt.data.files.first();
+                    var output = document.getElementById(elementId);
+                    output.value = file.getUrl();
+                });
+
+                finder.on('file:choose:resizedImage', function (evt) {
+                    var output = document.getElementById(elementId);
+                    output.value = evt.data.resizedUrl;
+                });
+            }
+        });
+    }
+</script>
+</body>
+</html>
 ```
 
 ### 修改文件：

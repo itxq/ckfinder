@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -26,27 +26,29 @@ class CreateFolder extends CommandAbstract
 {
     protected $requestMethod = Request::METHOD_POST;
 
-    protected $requires = array(Permission::FOLDER_CREATE);
+    protected $requires = [Permission::FOLDER_CREATE];
 
     public function execute(Request $request, WorkingFolder $workingFolder, EventDispatcher $dispatcher)
     {
         $newFolderName = (string) $request->query->get('newFolderName', '');
+
         // ---------------------------------------------------------------------------------------
         // 自动重命名 AutoRename
-        $newFolderName = AutoRename::ins()->config($this->app)->autoRename($newFolderName, '');
+        $newFolderName = AutoRename::make()->config($this->app)->autoRename($newFolderName, '');
         // ---------------------------------------------------------------------------------------
+
         $createFolderEvent = new CreateFolderEvent($this->app, $workingFolder, $newFolderName);
 
-        $dispatcher->dispatch(CKFinderEvent::CREATE_FOLDER, $createFolderEvent);
+        $dispatcher->dispatch($createFolderEvent, CKFinderEvent::CREATE_FOLDER);
 
         $created = false;
         $createdFolderName = null;
 
         if (!$createFolderEvent->isPropagationStopped()) {
             $newFolderName = $createFolderEvent->getNewFolderName();
-            list($createdFolderName, $created) = $workingFolder->createDir($newFolderName);
+            [$createdFolderName, $created] = $workingFolder->createDir($newFolderName);
         }
 
-        return array('newFolder' => $createdFolderName, 'created' => (int) $created);
+        return ['newFolder' => $createdFolderName, 'created' => (int) $created];
     }
 }

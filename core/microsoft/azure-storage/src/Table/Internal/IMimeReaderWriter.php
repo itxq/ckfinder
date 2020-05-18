@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -27,34 +27,36 @@ namespace MicrosoftAzure\Storage\Table\Internal;
 /**
  * Interface for MIME reading and writing.
  *
- * @ignore
  * @category  Microsoft
  * @package   MicrosoftAzure\Storage\Table\Internal
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 interface IMimeReaderWriter
 {
     /**
      * Given array of MIME parts in raw string, this function converts them into MIME
-     * representation.
-     *
+     * representation. 
+     * 
      * @param array $bodyPartContents The MIME body parts.
-     *
+     * 
      * @return array Returns array with two elements 'headers' and 'body' which
      * represents the MIME message.
      */
-    public function encodeMimeMultipart(array $bodyPartContents);
+    public function encodeMimeMultipart($bodyPartContents);
     
     /**
-     * Parses given mime HTTP response body into array. Each array element
+     * Parses given mime HTTP response body into array. Each array element 
      * represents a change set result.
-     *
+     * 
      * @param string $mimeBody The raw MIME body result.
-     *
+     * 
      * @return array
      */
     public function decodeMimeMultipart($mimeBody);
 }
+
+

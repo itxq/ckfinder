@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -24,8 +24,6 @@
  
 namespace MicrosoftAzure\Storage\Table\Models;
 
-use MicrosoftAzure\Storage\Table\Internal\IODataReaderWriter;
-
 /**
  * Holds result of calling getEntity wrapper.
  *
@@ -34,15 +32,19 @@ use MicrosoftAzure\Storage\Table\Internal\IODataReaderWriter;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class GetEntityResult
 {
+    /**
+     * @var Entity
+     */
     private $_entity;
     
     /**
      * Gets table entity.
-     *
+     * 
      * @return Entity
      */
     public function getEntity()
@@ -52,31 +54,15 @@ class GetEntityResult
     
     /**
      * Sets table entity.
-     *
+     * 
      * @param Entity $entity The table entity instance.
-     *
-     * @return void
+     * 
+     * @return none
      */
-    protected function setEntity($entity)
+    public function setEntity($entity)
     {
         $this->_entity = $entity;
     }
-
-    /**
-     * Create GetEntityResult object from HTTP response parts.
-     *
-     * @param string             $body            The HTTP response body.
-     * @param IODataReaderWriter $odataSerializer The OData reader and writer.
-     *
-     * @internal
-     *
-     * @return GetEntityResult
-     */
-    public static function create($body, IODataReaderWriter $serializer)
-    {
-        $result = new GetEntityResult();
-        $result->setEntity($serializer->parseEntity($body));
-
-        return $result;
-    }
 }
+
+

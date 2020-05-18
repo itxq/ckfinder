@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -24,14 +24,13 @@ use CKSource\CKFinder\ResizedImage\ResizedImage;
 class ProxyDownloadEvent extends CKFinderEvent
 {
     /**
-     * @var DownloadedFile|ResizedImage $downloadedFile
+     * @var DownloadedFile|ResizedImage
      */
     protected $downloadedFile;
 
     /**
      * Constructor.
      *
-     * @param CKFinder                    $app
      * @param DownloadedFile|ResizedImage $downloadedFile
      */
     public function __construct(CKFinder $app, $downloadedFile)

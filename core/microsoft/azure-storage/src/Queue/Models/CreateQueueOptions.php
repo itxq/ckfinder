@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -32,6 +32,7 @@ namespace MicrosoftAzure\Storage\Queue\Models;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class CreateQueueOptions extends QueueServiceOptions
@@ -40,8 +41,8 @@ class CreateQueueOptions extends QueueServiceOptions
     
     /**
      * Gets user defined metadata.
-     *
-     * @return array
+     * 
+     * @return array.
      */
     public function getMetadata()
     {
@@ -51,12 +52,12 @@ class CreateQueueOptions extends QueueServiceOptions
     /**
      * Sets user defined metadata. This metadata should be added without the header
      * prefix (x-ms-meta-*).
-     *
+     * 
      * @param array $metadata user defined metadata object in array form.
-     *
-     * @return void
+     * 
+     * @return none.
      */
-    public function setMetadata(array $metadata)
+    public function setMetadata($metadata)
     {
         $this->_metadata = $metadata;
     }
@@ -64,14 +65,16 @@ class CreateQueueOptions extends QueueServiceOptions
     /**
      * Adds new metadata element. This element should be added without the header
      * prefix (x-ms-meta-*).
-     *
+     * 
      * @param string $key   metadata key element.
      * @param string $value metadata value element.
-     *
-     * @return void
+     * 
+     * @return none.
      */
     public function addMetadata($key, $value)
     {
         $this->_metadata[$key] = $value;
     }
 }
+
+

@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -17,7 +17,6 @@ namespace CKSource\CKFinder\Command;
 use CKSource\CKFinder\Acl\Permission;
 use CKSource\CKFinder\Config;
 use CKSource\CKFinder\Event\CKFinderEvent;
-use CKSource\CKFinder\Event\DownloadFileEvent;
 use CKSource\CKFinder\Event\ProxyDownloadEvent;
 use CKSource\CKFinder\Exception\AccessDeniedException;
 use CKSource\CKFinder\Exception\FileNotFoundException;
@@ -33,7 +32,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Proxy extends CommandAbstract
 {
-    protected $requires = array(Permission::FILE_VIEW);
+    protected $requires = [Permission::FILE_VIEW];
 
     public function execute(Request $request, WorkingFolder $workingFolder, EventDispatcher $dispatcher, Config $config)
     {
@@ -75,22 +74,24 @@ class Proxy extends CommandAbstract
 
         $proxyDownload = new ProxyDownloadEvent($this->app, $file);
 
-        $dispatcher->dispatch(CKFinderEvent::PROXY_DOWNLOAD, $proxyDownload);
+        $dispatcher->dispatch($proxyDownload, CKFinderEvent::PROXY_DOWNLOAD);
 
         if ($proxyDownload->isPropagationStopped()) {
             throw new AccessDeniedException();
         }
 
         $response = new StreamedResponse();
-        $response->headers->set('Content-Type', $file->getMimeType());
-        $response->headers->set('Content-Length', $file->getSize());
-        $response->headers->set('Content-Disposition', 'inline; filename="' . $fileName. '"');
+        $headers = $response->headers;
+        $headers->set('Content-Type', $file->getMimeType());
+        $headers->set('Content-Length', $file->getSize());
+        $headers->set('X-Content-Type-Options', 'nosniff');
+        $headers->set('Content-Disposition', 'inline; filename="'.$fileName.'"');
 
         if ($cacheLifetime > 0) {
             Utils::removeSessionCacheHeaders();
 
             $response->setPublic();
-            $response->setEtag(dechex($file->getTimestamp()) . "-" . dechex($file->getSize()));
+            $response->setEtag(dechex($file->getTimestamp()).'-'.dechex($file->getSize()));
 
             $lastModificationDate = new \DateTime();
             $lastModificationDate->setTimestamp($file->getTimestamp());
@@ -104,14 +105,14 @@ class Proxy extends CommandAbstract
             $response->setMaxAge($cacheLifetime);
 
             $expireTime = new \DateTime();
-            $expireTime->modify('+' . $cacheLifetime . 'seconds');
+            $expireTime->modify('+'.$cacheLifetime.'seconds');
             $response->setExpires($expireTime);
         }
 
         $chunkSize = 1024 * 100;
 
         $response->setCallback(function () use ($dataStream, $chunkSize) {
-            if ($dataStream === false) {
+            if (false === $dataStream) {
                 return false;
             }
             while (!feof($dataStream)) {

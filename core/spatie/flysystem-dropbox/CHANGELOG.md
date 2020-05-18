@@ -2,6 +2,22 @@
 
 All notable changes to `flysystem-dropbox` will be documented in this file
 
+## 1.2.2 - 2019-12-04
+
+- fix `createSharedLinkWithSettings`
+
+## 1.2.1 - 2019-09-14
+
+- fix minimum dep
+
+## 1.2.0 - 2019-09-13
+
+- add `getUrl` method
+
+## 1.1.0 - 2019-05-31
+
+- add `createSharedLinkWithSettings`
+
 ## 1.0.6 - 2017-11-18
 
 - determine mimetype from filename

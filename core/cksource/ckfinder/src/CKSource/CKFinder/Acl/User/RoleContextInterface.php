@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -20,15 +20,13 @@ namespace CKSource\CKFinder\Acl\User;
  * You can implement this interface to get the current user role in your application.
  * By default Access Control Lists use SessionRoleContext to get the user role from the
  * defined $_SESSION field.
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 interface RoleContextInterface
 {
     /**
      * Returns the name of the current user role.
      *
-     * @return string|null the current user role name or `null`
+     * @return null|string the current user role name or `null`
      */
     public function getRole();
 }

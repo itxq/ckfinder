@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -39,18 +39,16 @@ use Symfony\Component\HttpFoundation\Request;
  * - crop
  * - rotate
  * - resize
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 class ImageEdit extends CommandAbstract
 {
-    const OPERATION_CROP   = 'crop';
+    const OPERATION_CROP = 'crop';
     const OPERATION_ROTATE = 'rotate';
     const OPERATION_RESIZE = 'resize';
 
     protected $requestMethod = Request::METHOD_POST;
 
-    protected $requires = array(Permission::FILE_CREATE);
+    protected $requires = [Permission::FILE_CREATE];
 
     public function execute(Request $request, WorkingFolder $workingFolder, EventDispatcher $dispatcher, Acl $acl, ResizedImageRepository $resizedImageRepository, ThumbnailRepository $thumbnailRepository, Config $config)
     {
@@ -89,7 +87,7 @@ class ImageEdit extends CommandAbstract
 
             switch ($actionInfo['action']) {
                 case self::OPERATION_CROP:
-                    if (!Utils::arrayContainsKeys($actionInfo, array('x', 'y', 'width', 'height'))) {
+                    if (!Utils::arrayContainsKeys($actionInfo, ['x', 'y', 'width', 'height'])) {
                         throw new InvalidRequestException();
                     }
                     $x = $actionInfo['x'];
@@ -97,8 +95,8 @@ class ImageEdit extends CommandAbstract
                     $width = $actionInfo['width'];
                     $height = $actionInfo['height'];
                     $image->crop($x, $y, $width, $height);
-                    break;
 
+                    break;
                 case self::OPERATION_ROTATE:
                     if (!isset($actionInfo['angle'])) {
                         throw new InvalidRequestException();
@@ -106,10 +104,10 @@ class ImageEdit extends CommandAbstract
                     $degrees = $actionInfo['angle'];
                     $bgcolor = isset($actionInfo['bgcolor']) ? $actionInfo['bgcolor'] : 0;
                     $image->rotate($degrees, $bgcolor);
-                    break;
 
+                    break;
                 case self::OPERATION_RESIZE:
-                    if (!Utils::arrayContainsKeys($actionInfo, array('width', 'height'))) {
+                    if (!Utils::arrayContainsKeys($actionInfo, ['width', 'height'])) {
                         throw new InvalidRequestException();
                     }
 
@@ -118,6 +116,7 @@ class ImageEdit extends CommandAbstract
                     $width = $imagesConfig['maxWidth'] && $actionInfo['width'] > $imagesConfig['maxWidth'] ? $imagesConfig['maxWidth'] : $actionInfo['width'];
                     $height = $imagesConfig['maxHeight'] && $actionInfo['height'] > $imagesConfig['maxHeight'] ? $imagesConfig['maxHeight'] : $actionInfo['height'];
                     $image->resize((int) $width, (int) $height, $imagesConfig['quality']);
+
                     break;
             }
         }
@@ -131,7 +130,7 @@ class ImageEdit extends CommandAbstract
             throw new InvalidUploadException('Invalid file provided');
         }
 
-        $dispatcher->dispatch(CKFinderEvent::EDIT_IMAGE, $editFileEvent);
+        $dispatcher->dispatch($editFileEvent, CKFinderEvent::EDIT_IMAGE);
 
         $saved = false;
 
@@ -139,15 +138,15 @@ class ImageEdit extends CommandAbstract
             $saved = $editedImage->save($editFileEvent->getNewContents());
 
             //Remove thumbnails and resized images in case if file is overwritten
-            if ($newFileName === null && $saved) {
+            if (null === $newFileName && $saved) {
                 $thumbnailRepository->deleteThumbnails($resourceType, $workingFolder->getClientCurrentFolder(), $fileName);
                 $resizedImageRepository->deleteResizedImages($resourceType, $workingFolder->getClientCurrentFolder(), $fileName);
             }
         }
 
-        return array(
+        return [
             'saved' => (int) $saved,
-            'date'  => Utils::formatDate(time())
-        );
+            'date' => Utils::formatDate(time()),
+        ];
     }
 }

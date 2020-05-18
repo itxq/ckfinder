@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -20,59 +20,57 @@ use CKSource\CKFinder\Exception\CKFinderException;
  * The Image class.
  *
  * The class used for image processing.
- *
- * @copyright 2016 CKSource - Frederico Knabben
  */
 class Image
 {
-    protected static $supportedExtensions = array('jpg', 'jpeg', 'gif', 'png');
+    protected static $supportedExtensions = ['jpg', 'jpeg', 'gif', 'png'];
 
     /**
      * Image width.
      *
-     * @var int $witdh
+     * @var int
      */
     protected $width;
 
     /**
      * Image height.
      *
-     * @var int $height
+     * @var int
      */
     protected $height;
 
     /**
      * Image MIME type.
      *
-     * @var string $mime
+     * @var string
      */
     protected $mime;
 
     /**
      * Number of bits for each color.
      *
-     * @var string $mime
+     * @var string
      */
     protected $bits;
 
     /**
      * Number of color channels (i.e. 3 for RGB pictures and 4 for CMYK pictures).
      *
-     * @var int $channels
+     * @var int
      */
     protected $channels;
 
     /**
      * GD image.
      *
-     * @var resource $gdImage
+     * @var resource
      */
     protected $gdImage;
 
     /**
      * The size of the image produced by the `getData()` method.
      *
-     * @var int $dataSize
+     * @var int
      */
     protected $dataSize;
 
@@ -84,6 +82,74 @@ class Image
     protected $resizeQuality;
 
     /**
+     * Constructor.
+     *
+     * @param string $imageData  image data
+     * @param bool   $bmpSupport `true` if bitmaps are supported (be aware of poor efficiency!)
+     *
+     * @throws CKFinderException in case the image could not be initialized properly
+     */
+    public function __construct($imageData, $bmpSupport = false)
+    {
+        if (!\extension_loaded('gd')) {
+            throw new CKFinderException('PHP GD library not found');
+        }
+
+        $imgInfo = @getimagesizefromstring($imageData);
+
+        if (false === $imgInfo) {
+            throw new CKFinderException('Unsupported image type');
+        }
+
+        $this->width = isset($imgInfo[0]) ? $imgInfo[0] : 0;
+        $this->height = isset($imgInfo[1]) ? $imgInfo[1] : 0;
+        $this->mime = isset($imgInfo['mime']) ? $imgInfo['mime'] : '';
+        $this->bits = isset($imgInfo['bits']) ? $imgInfo['bits'] : 8;
+        $this->channels = isset($imgInfo['channels']) ? $imgInfo['channels'] : 3;
+        $this->dataSize = \strlen($imageData);
+
+        if (!$this->width || !$this->height || !$this->mime) {
+            throw new CKFinderException('Unsupported image type');
+        }
+
+        $this->setMemory($this->width, $this->height, $this->bits, $this->channels);
+
+        $gdSupportedTypes = @imagetypes();
+
+        $supportedFormats = [
+            'image/gif' => $gdSupportedTypes & IMG_GIF,
+            'image/jpeg' => $gdSupportedTypes & IMG_JPG,
+            'image/png' => $gdSupportedTypes & IMG_PNG,
+            'image/wbmp' => $gdSupportedTypes & IMG_WBMP,
+            'image/bmp' => $bmpSupport && ($gdSupportedTypes & IMG_JPG),
+            'image/x-ms-bmp' => $bmpSupport && ($gdSupportedTypes & IMG_JPG),
+        ];
+
+        if (!\array_key_exists($this->mime, $supportedFormats) || !$supportedFormats[$this->mime]) {
+            throw new CKFinderException('Unsupported image type: '.$this->mime);
+        }
+
+        if ('image/bmp' === $this->mime || 'image/x-ms-bmp' === $this->mime) {
+            $this->gdImage = $this->createFromBmp($imageData);
+        } else {
+            $this->gdImage = imagecreatefromstring($imageData);
+        }
+
+        if (!\is_resource($this->gdImage)) {
+            throw new CKFinderException('Unsupported image type (not resource): '.$this->mime);
+        }
+
+        unset($imageData);
+    }
+
+    public function __destruct()
+    {
+        if (\is_resource($this->gdImage)) {
+            imagedestroy($this->gdImage);
+        }
+    }
+
+    /**
      * The factory method.
      *
      * @param string $data
@@ -93,7 +159,7 @@ class Image
      */
     public static function create($data, $bmpSupport = false)
     {
-        return new Image($data, $bmpSupport);
+        return new self($data, $bmpSupport);
     }
 
     /**
@@ -102,14 +168,14 @@ class Image
      *
      * @param string $size WxH string
      *
-     * @return array An array with width and height values array([width], [height]),
-     *               for the example above: array(278, 219).
+     * @return array an array with width and height values array([width], [height]),
+     *               for the example above: array(278, 219)
      */
     public static function parseSize($size)
     {
         $sizeParts = explode('x', trim($size));
 
-        return count($sizeParts) === 2 ? array_map('intval', $sizeParts) : array(0, 0);
+        return 2 === \count($sizeParts) ? array_map('intval', $sizeParts) : [0, 0];
     }
 
     /**
@@ -128,7 +194,7 @@ class Image
             $supportedExtensions[] = 'bmp';
         }
 
-        return in_array(strtolower($extension), $supportedExtensions);
+        return \in_array(strtolower($extension), $supportedExtensions, true);
     }
 
     /**
@@ -140,84 +206,23 @@ class Image
      */
     public static function mimeTypeFromExtension($extension)
     {
-        $extensionMimeTypeMap = array(
-            'gif'  => 'image/gif',
-            'jpg'  => 'image/jpeg',
+        $extensionMimeTypeMap = [
+            'gif' => 'image/gif',
+            'jpg' => 'image/jpeg',
             'jpeg' => 'image/jpeg',
-            'bmp'  => 'image/bmp',
-            'png'  => 'image/png',
-            'wbmp' => 'image/wbmp'
-        );
+            'bmp' => 'image/bmp',
+            'png' => 'image/png',
+            'wbmp' => 'image/wbmp',
+        ];
 
         $extension = strtolower($extension);
 
-        return array_key_exists($extension, $extensionMimeTypeMap) ? $extensionMimeTypeMap[$extension] : null;
+        return \array_key_exists($extension, $extensionMimeTypeMap) ? $extensionMimeTypeMap[$extension] : null;
     }
 
     /**
-     * Constructor.
+     * Returns the aspect ratio size as an associative array:.
      *
-     * @param string $imageData  image data
-     * @param bool   $bmpSupport `true` if bitmaps are supported (be aware of poor efficiency!).
-     *
-     * @throws CKFinderException in case the image could not be initialized properly.
-     */
-
-    public function __construct($imageData, $bmpSupport = false)
-    {
-        if (!extension_loaded('gd')) {
-            throw new CKFinderException('PHP GD library not found');
-        }
-
-        $imgInfo = @getimagesizefromstring($imageData);
-
-        if ($imgInfo === false) {
-            throw new CKFinderException('Unsupported image type');
-        }
-
-        $this->width    = isset($imgInfo[0])          ? $imgInfo[0]          : 0;
-        $this->height   = isset($imgInfo[1])          ? $imgInfo[1]          : 0;
-        $this->mime     = isset($imgInfo['mime'])     ? $imgInfo['mime']     : '';
-        $this->bits     = isset($imgInfo['bits'])     ? $imgInfo['bits']     : 8;
-        $this->channels = isset($imgInfo['channels']) ? $imgInfo['channels'] : 3;
-        $this->dataSize = strlen($imageData);
-
-        if (!$this->width || !$this->height || !$this->mime) {
-            throw new CKFinderException('Unsupported image type');
-        }
-
-        $this->setMemory($this->width, $this->height, $this->bits, $this->channels);
-
-        $gdSupportedTypes = @imagetypes();
-
-        $supportedFormats = array(
-            'image/gif'      => $gdSupportedTypes & IMG_GIF,
-            'image/jpeg'     => $gdSupportedTypes & IMG_JPG,
-            'image/png'      => $gdSupportedTypes & IMG_PNG,
-            'image/wbmp'     => $gdSupportedTypes & IMG_WBMP,
-            'image/bmp'      => $bmpSupport && ($gdSupportedTypes & IMG_JPG),
-            'image/x-ms-bmp' => $bmpSupport && ($gdSupportedTypes & IMG_JPG)
-        );
-
-        if (!array_key_exists($this->mime, $supportedFormats) || !$supportedFormats[$this->mime]) {
-            throw new CKFinderException('Unsupported image type: ' . $this->mime);
-        }
-
-        if ($this->mime === 'image/bmp' || $this->mime === 'image/x-ms-bmp') {
-            $this->gdImage = $this->createFromBmp($imageData);
-        } else {
-            $this->gdImage = imagecreatefromstring($imageData);
-        }
-
-        if (!is_resource($this->gdImage)) {
-            throw new CKFinderException('Unsupported image type (not resource): ' . $this->mime);
-        }
-
-        unset($imageData);
-    }
-
-    /**
-     * Returns the aspect ratio size as an associative array:
      * @code
      * array
      * (
@@ -240,14 +245,14 @@ class Image
      */
     public static function calculateAspectRatio($maxWidth, $maxHeight, $actualWidth, $actualHeight, $useHigherFactor = false)
     {
-        $oSize = array('width' => $maxWidth, 'height' => $maxHeight);
+        $oSize = ['width' => $maxWidth, 'height' => $maxHeight];
 
         // Calculates the X and Y resize factors
         $iFactorX = (float) $maxWidth / (float) $actualWidth;
         $iFactorY = (float) $maxHeight / (float) $actualHeight;
 
         // If some dimension have to be resized
-        if ($iFactorX != 1 || $iFactorY != 1) {
+        if (1 !== $iFactorX || 1 !== $iFactorY) {
             if ($useHigherFactor) {
                 // Uses the higher Factor to change the opposite size
                 if ($iFactorX > $iFactorY) {
@@ -277,9 +282,8 @@ class Image
         return $oSize;
     }
 
-
     /**
-     * @link http://pl.php.net/manual/pl/function.imagecreatefromjpeg.php
+     * @see http://pl.php.net/manual/pl/function.imagecreatefromjpeg.php
      * function posted by e dot a dot schultz at gmail dot com
      *
      * @param $imageWidth
@@ -294,19 +298,21 @@ class Image
         $MB = 1048576; // number of bytes in 1M
         $K64 = 65536; // number of bytes in 64K
         $TWEAKFACTOR = 2.4; // Or whatever works for you
-        $memoryNeeded = round(($imageWidth * $imageHeight
+        $memoryNeeded = round(
+            (
+            $imageWidth * $imageHeight
                     * $imageBits
                     * $imageChannels / 8
                     + $K64
-                ) * $TWEAKFACTOR
-            ) + 3 * $MB;
+        ) * $TWEAKFACTOR
+        ) + 3 * $MB;
 
         //ini_get('memory_limit') only works if compiled with "--enable-memory-limit" also
         //Default memory limit is 8MB so well stick with that.
         //To find out what yours is, view your php.ini file.
         $memoryLimit = Utils::returnBytes(@ini_get('memory_limit')) / $MB;
         // There are no memory limits, nothing to do
-        if ($memoryLimit == -1) {
+        if (-1 === $memoryLimit) {
             return true;
         }
         if (!$memoryLimit) {
@@ -314,25 +320,29 @@ class Image
         }
 
         $memoryLimitMB = $memoryLimit * $MB;
-        if (function_exists('memory_get_usage')) {
+        if (\function_exists('memory_get_usage')) {
             if (memory_get_usage() + $memoryNeeded > $memoryLimitMB) {
-                $newLimit = $memoryLimit + ceil((memory_get_usage()
+                $newLimit = $memoryLimit + ceil(
+                    (
+                    memory_get_usage()
                             + $memoryNeeded
                             - $memoryLimitMB
-                        ) / $MB
-                    );
-                if (@ini_set('memory_limit', $newLimit . 'M') === false) {
+                ) / $MB
+                );
+                if (false === @ini_set('memory_limit', $newLimit.'M')) {
                     return false;
                 }
             }
         } else {
             if ($memoryNeeded + 3 * $MB > $memoryLimitMB) {
-                $newLimit = $memoryLimit + ceil((3 * $MB
+                $newLimit = $memoryLimit + ceil(
+                    (
+                    3 * $MB
                             + $memoryNeeded
                             - $memoryLimitMB
-                        ) / $MB
-                    );
-                if (false === @ini_set('memory_limit', $newLimit . 'M')) {
+                ) / $MB
+                );
+                if (false === @ini_set('memory_limit', $newLimit.'M')) {
                     return false;
                 }
             }
@@ -342,25 +352,25 @@ class Image
     }
 
     /**
-     * @link http://pl.php.net/manual/en/function.imagecopyresampled.php
+     * @see http://pl.php.net/manual/en/function.imagecopyresampled.php
      * Replacement to `imagecopyresampled` that will deliver results that are almost identical except
      * MUCH faster (very typically 30 times faster).
      *
      * @static
-     * @access public
+     *
      * @param resource $dstImage
      * @param resource $srcImage
-     * @param int $dstX
-     * @param int $dstY
-     * @param int $srcX
-     * @param int $srcY
-     * @param int $dstW
-     * @param int $dstH
-     * @param int $srcW
-     * @param int $srcH
-     * @param int $quality
+     * @param int      $dstX
+     * @param int      $dstY
+     * @param int      $srcX
+     * @param int      $srcY
+     * @param int      $dstW
+     * @param int      $dstH
+     * @param int      $srcW
+     * @param int      $srcH
+     * @param int      $quality
      *
-     * @return boolean
+     * @return bool
      */
     public function fastCopyResampled(&$dstImage, $srcImage, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH, $quality = 3)
     {
@@ -404,22 +414,22 @@ class Image
         //20 seconds seems to be a reasonable value to not kill a server and process images up to 1680x1050
         @set_time_limit(20);
 
-        if (!is_resource($stream)) {
-            return false;
+        if (!\is_resource($stream)) {
+            return null;
         }
 
-        $FILE = unpack("vfile_type/Vfile_size/Vreserved/Vbitmap_offset", fread($stream, 14));
-        if ($FILE['file_type'] != 19778) {
-            return false;
+        $FILE = unpack('vfile_type/Vfile_size/Vreserved/Vbitmap_offset', fread($stream, 14));
+        if (19778 !== $FILE['file_type']) {
+            return null;
         }
 
-        $BMP = unpack('Vheader_size/Vwidth/Vheight/vplanes/vbits_per_pixel' .
-            '/Vcompression/Vsize_bitmap/Vhoriz_resolution' .
+        $BMP = unpack('Vheader_size/Vwidth/Vheight/vplanes/vbits_per_pixel'.
+            '/Vcompression/Vsize_bitmap/Vhoriz_resolution'.
             '/Vvert_resolution/Vcolors_used/Vcolors_important', fread($stream, 40));
 
         $BMP['colors'] = pow(2, $BMP['bits_per_pixel']);
 
-        if ($BMP['size_bitmap'] == 0) {
+        if (0 === $BMP['size_bitmap']) {
             $BMP['size_bitmap'] = $FILE['file_size'] - $FILE['bitmap_offset'];
         }
 
@@ -429,23 +439,23 @@ class Image
         $BMP['decal'] -= floor($BMP['width'] * $BMP['bytes_per_pixel'] / 4);
         $BMP['decal'] = 4 - (4 * $BMP['decal']);
 
-        if ($BMP['decal'] == 4) {
+        if (4 === $BMP['decal']) {
             $BMP['decal'] = 0;
         }
 
-        $PALETTE = array();
+        $PALETTE = [];
         if ($BMP['colors'] < 16777216) {
-            $PALETTE = unpack('V' . $BMP['colors'], fread($stream, $BMP['colors'] * 4));
+            $PALETTE = unpack('V'.$BMP['colors'], fread($stream, $BMP['colors'] * 4));
         }
 
         //2048x1536px@24bit don't even try to process larger files as it will probably fail
         if ($BMP['size_bitmap'] > 3 * 2048 * 1536) {
-            return false;
+            return null;
         }
 
         $IMG = fread($stream, $BMP['size_bitmap']);
         fclose($stream);
-        $VIDE = chr(0);
+        $VIDE = \chr(0);
 
         $res = imagecreatetruecolor($BMP['width'], $BMP['height']);
         $P = 0;
@@ -453,37 +463,37 @@ class Image
 
         $line_length = $BMP['bytes_per_pixel'] * $BMP['width'];
 
-        if ($BMP['bits_per_pixel'] == 24) {
+        if (24 === $BMP['bits_per_pixel']) {
             while ($Y >= 0) {
                 $X = 0;
-                $temp = unpack("C*", substr($IMG, $P, $line_length));
+                $temp = unpack('C*', substr($IMG, $P, $line_length));
 
                 while ($X < $BMP['width']) {
                     $offset = $X * 3;
                     imagesetpixel($res, $X++, $Y, ($temp[$offset + 3] << 16) + ($temp[$offset + 2] << 8) + $temp[$offset + 1]);
                 }
-                $Y--;
+                --$Y;
                 $P += $line_length + $BMP['decal'];
             }
-        } elseif ($BMP['bits_per_pixel'] == 8) {
+        } elseif (8 === $BMP['bits_per_pixel']) {
             while ($Y >= 0) {
                 $X = 0;
 
-                $temp = unpack("C*", substr($IMG, $P, $line_length));
+                $temp = unpack('C*', substr($IMG, $P, $line_length));
 
                 while ($X < $BMP['width']) {
                     imagesetpixel($res, $X++, $Y, $PALETTE[$temp[$X] + 1]);
                 }
-                $Y--;
+                --$Y;
                 $P += $line_length + $BMP['decal'];
             }
-        } elseif ($BMP['bits_per_pixel'] == 4) {
+        } elseif (4 === $BMP['bits_per_pixel']) {
             while ($Y >= 0) {
                 $X = 0;
                 $i = 1;
                 $low = true;
 
-                $temp = unpack("C*", substr($IMG, $P, $line_length));
+                $temp = unpack('C*', substr($IMG, $P, $line_length));
 
                 while ($X < $BMP['width']) {
                     if ($low) {
@@ -495,31 +505,31 @@ class Image
 
                     imagesetpixel($res, $X++, $Y, $PALETTE[$index + 1]);
                 }
-                $Y--;
+                --$Y;
                 $P += $line_length + $BMP['decal'];
             }
-        } elseif ($BMP['bits_per_pixel'] == 1) {
-            $COLOR = unpack("n", $VIDE . substr($IMG, floor($P), 1));
-            if (($P * 8) % 8 == 0) {
+        } elseif (1 === $BMP['bits_per_pixel']) {
+            $COLOR = unpack('n', $VIDE.substr($IMG, floor($P), 1));
+            if (0 === ($P * 8) % 8) {
                 $COLOR[1] = $COLOR[1] >> 7;
-            } elseif (($P * 8) % 8 == 1) {
+            } elseif (1 === ($P * 8) % 8) {
                 $COLOR[1] = ($COLOR[1] & 0x40) >> 6;
-            } elseif (($P * 8) % 8 == 2) {
+            } elseif (2 === ($P * 8) % 8) {
                 $COLOR[1] = ($COLOR[1] & 0x20) >> 5;
-            } elseif (($P * 8) % 8 == 3) {
+            } elseif (3 === ($P * 8) % 8) {
                 $COLOR[1] = ($COLOR[1] & 0x10) >> 4;
-            } elseif (($P * 8) % 8 == 4) {
+            } elseif (4 === ($P * 8) % 8) {
                 $COLOR[1] = ($COLOR[1] & 0x8) >> 3;
-            } elseif (($P * 8) % 8 == 5) {
+            } elseif (5 === ($P * 8) % 8) {
                 $COLOR[1] = ($COLOR[1] & 0x4) >> 2;
-            } elseif (($P * 8) % 8 == 6) {
+            } elseif (6 === ($P * 8) % 8) {
                 $COLOR[1] = ($COLOR[1] & 0x2) >> 1;
-            } elseif (($P * 8) % 8 == 7) {
+            } elseif (7 === ($P * 8) % 8) {
                 $COLOR[1] = ($COLOR[1] & 0x1);
             }
             $COLOR[1] = $PALETTE[$COLOR[1] + 1];
         } else {
-            return false;
+            return null;
         }
 
         return $res;
@@ -553,15 +563,26 @@ class Image
 
         $targetImage = imagecreatetruecolor($targetWidth, $targetHeight);
 
-        if ($this->mime === 'image/png') {
+        if ('image/png' === $this->mime) {
             $bg = imagecolorallocatealpha($targetImage, 255, 255, 255, 127);
             imagefill($targetImage, 0, 0, $bg);
             imagealphablending($targetImage, false);
             imagesavealpha($targetImage, true);
         }
 
-        $this->fastCopyResampled($targetImage, $this->gdImage, 0, 0, 0, 0, $targetWidth, $targetHeight,
-                                 $this->width, $this->height, (int)max(floor($quality / 20), 6));
+        $this->fastCopyResampled(
+            $targetImage,
+            $this->gdImage,
+            0,
+            0,
+            0,
+            0,
+            $targetWidth,
+            $targetHeight,
+            $this->width,
+            $this->height,
+            (int) max(floor($quality / 20), 6)
+        );
 
         imagedestroy($this->gdImage);
         $this->gdImage = $targetImage;
@@ -574,8 +595,8 @@ class Image
     /**
      * Returns image data.
      *
-     * @param string $format Returned image format MIME type (current image MIME type is used if not set).
-     * @param int $quality   Image quality (used for JPG images only)
+     * @param string $format  returned image format MIME type (current image MIME type is used if not set)
+     * @param int    $quality Image quality (used for JPG images only)
      *
      * @return string image data
      */
@@ -588,20 +609,24 @@ class Image
         switch ($mime) {
             case 'image/gif':
                 imagegif($this->gdImage);
+
                 break;
             case 'image/jpeg':
             case 'image/bmp':
             case 'image/x-ms-bmp':
                 $quality = $this->resizeQuality ?: $quality;
                 imagejpeg($this->gdImage, null, $quality);
+
                 break;
             case 'image/png':
                 imagealphablending($this->gdImage, false);
                 imagesavealpha($this->gdImage, true);
                 imagepng($this->gdImage);
+
                 break;
             case 'image/wbmp':
                 imagewbmp($this->gdImage);
+
                 break;
         }
 
@@ -664,7 +689,7 @@ class Image
     {
         $targetImage = imagecreatetruecolor($width, $height);
 
-        if ($this->mime === 'image/png') {
+        if ('image/png' === $this->mime) {
             $bg = imagecolorallocatealpha($targetImage, 255, 255, 255, 127);
             imagefill($targetImage, 0, 0, $bg);
             imagealphablending($targetImage, false);
@@ -683,7 +708,7 @@ class Image
 
     public function rotate($degrees, $bgcolor = 0)
     {
-        if ($this->mime === 'image/png') {
+        if ('image/png' === $this->mime) {
             imagesavealpha($this->gdImage, true);
             $bgcolor = imagecolorallocatealpha($this->gdImage, 0, 0, 0, 127);
         }
@@ -697,19 +722,10 @@ class Image
 
     public function getInfo()
     {
-        $info = array(
-            'width'  => $this->getWidth(),
+        return [
+            'width' => $this->getWidth(),
             'height' => $this->getHeight(),
-            'size'   => $this->getDataSize()
-        );
-
-        return $info;
-    }
-
-    public function __destruct()
-    {
-        if (is_resource($this->gdImage)) {
-            imagedestroy($this->gdImage);
-        }
+            'size' => $this->getDataSize(),
+        ];
     }
 }

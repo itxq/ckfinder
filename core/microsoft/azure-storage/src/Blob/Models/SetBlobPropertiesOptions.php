@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,6 +23,7 @@
  */
  
 namespace MicrosoftAzure\Storage\Blob\Models;
+use MicrosoftAzure\Storage\Common\Internal\Validate;
 
 /**
  * Optional parameters for setBlobProperties wrapper
@@ -32,30 +33,69 @@ namespace MicrosoftAzure\Storage\Blob\Models;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class SetBlobPropertiesOptions extends BlobServiceOptions
 {
+    /**
+     * @var BlobProperties
+     */
     private $_blobProperties;
+    
+    /**
+     * @var string
+     */
+    private $_leaseId;
+    
+    /**
+     * @var string
+     */
     private $_sequenceNumberAction;
     
     /**
-     * Creates a new SetBlobPropertiesOptions with a specified BlobProperties
+     * @var AccessCondition
+     */
+    private $_accessCondition;
+    
+    /**
+     * Creates a new SetBlobPropertiesOptions with a specified BlobProperties 
      * instance.
-     *
+     * 
      * @param BlobProperties $blobProperties The blob properties instance.
      */
-    public function __construct(BlobProperties $blobProperties = null)
+    public function __construct($blobProperties = null)
     {
-        parent::__construct();
-        $this->_blobProperties = is_null($blobProperties)
+        $this->_blobProperties = is_null($blobProperties) 
                                  ? new BlobProperties() : clone $blobProperties;
+    }
+    
+    /**
+     * Gets access condition
+     * 
+     * @return AccessCondition
+     */
+    public function getAccessCondition()
+    {
+        return $this->_accessCondition;
+    }
+    
+    /**
+     * Sets access condition
+     * 
+     * @param AccessCondition $accessCondition value to use.
+     * 
+     * @return none.
+     */
+    public function setAccessCondition($accessCondition)
+    {
+        $this->_accessCondition = $accessCondition;
     }
     
     /**
      * Gets blob sequenceNumber.
      *
-     * @return integer
+     * @return integer.
      */
     public function getSequenceNumber()
     {
@@ -67,7 +107,7 @@ class SetBlobPropertiesOptions extends BlobServiceOptions
      *
      * @param integer $sequenceNumber value.
      *
-     * @return void
+     * @return none.
      */
     public function setSequenceNumber($sequenceNumber)
     {
@@ -76,7 +116,7 @@ class SetBlobPropertiesOptions extends BlobServiceOptions
     
     /**
      * Gets lease Id for the blob
-     *
+     * 
      * @return string
      */
     public function getSequenceNumberAction()
@@ -86,10 +126,10 @@ class SetBlobPropertiesOptions extends BlobServiceOptions
     
     /**
      * Sets lease Id for the blob
-     *
+     * 
      * @param string $sequenceNumberAction action.
-     *
-     * @return void
+     * 
+     * @return none
      */
     public function setSequenceNumberAction($sequenceNumberAction)
     {
@@ -97,99 +137,121 @@ class SetBlobPropertiesOptions extends BlobServiceOptions
     }
     
     /**
-     * Gets blob contentLength.
-     *
-     * @return integer
+     * Gets lease Id for the blob
+     * 
+     * @return string
      */
-    public function getContentLength()
+    public function getLeaseId()
+    {
+        return $this->_leaseId;
+    }
+    
+    /**
+     * Sets lease Id for the blob
+     * 
+     * @param string $leaseId the blob lease id.
+     * 
+     * @return none
+     */
+    public function setLeaseId($leaseId)
+    {
+        $this->_leaseId = $leaseId;
+    }
+    
+    /**
+     * Gets blob blobContentLength.
+     *
+     * @return integer.
+     */
+    public function getBlobContentLength()
     {
         return $this->_blobProperties->getContentLength();
     }
 
     /**
-     * Sets blob contentLength.
+     * Sets blob blobContentLength.
      *
-     * @param integer $contentLength value.
+     * @param integer $blobContentLength value.
      *
-     * @return void
+     * @return none.
      */
-    public function setContentLength($contentLength)
+    public function setBlobContentLength($blobContentLength)
     {
-        $this->_blobProperties->setContentLength($contentLength);
+        $this->_blobProperties->setContentLength($blobContentLength);
     }
     
     /**
-     * Gets ContentType.
+     * Gets blob ContentType.
      *
-     * @return string
+     * @return string.
      */
-    public function getContentType()
+    public function getBlobContentType()
     {
         return $this->_blobProperties->getContentType();
     }
 
     /**
-     * Sets ContentType.
+     * Sets blob ContentType.
      *
-     * @param string $contentType value.
+     * @param string $blobContentType value.
      *
-     * @return void
+     * @return none.
      */
-    public function setContentType($contentType)
+    public function setBlobContentType($blobContentType)
     {
-        $this->_blobProperties->setContentType($contentType);
+        $this->_blobProperties->setContentType($blobContentType);
     }
     
     /**
-     * Gets ContentEncoding.
+     * Gets blob ContentEncoding.
      *
-     * @return string
+     * @return string.
      */
-    public function getContentEncoding()
+    public function getBlobContentEncoding()
     {
         return $this->_blobProperties->getContentEncoding();
     }
 
     /**
-     * Sets ContentEncoding.
+     * Sets blob ContentEncoding.
      *
-     * @param string $contentEncoding value.
+     * @param string $blobContentEncoding value.
      *
-     * @return void
+     * @return none.
      */
-    public function setContentEncoding($contentEncoding)
+    public function setBlobContentEncoding($blobContentEncoding)
     {
-        $this->_blobProperties->setContentEncoding($contentEncoding);
+        $this->_blobProperties->setContentEncoding($blobContentEncoding);
     }
     
     /**
-     * Gets ContentLanguage.
+     * Gets blob ContentLanguage.
      *
-     * @return string
+     * @return string.
      */
-    public function getContentLanguage()
+    public function getBlobContentLanguage()
     {
         return $this->_blobProperties->getContentLanguage();
     }
 
     /**
-     * Sets ContentLanguage.
+     * Sets blob ContentLanguage.
      *
-     * @param string $contentLanguage value.
+     * @param string $blobContentLanguage value.
      *
-     * @return void
+     * @return none.
      */
-    public function setContentLanguage($contentLanguage)
+    public function setBlobContentLanguage($blobContentLanguage)
     {
-        $this->_blobProperties->setContentLanguage($contentLanguage);
+        $this->_blobProperties->setContentLanguage($blobContentLanguage);
     }
     
     /**
-     * Gets ContentMD5.
+     * Gets blob ContentMD5.
      *
-     * @return void
+     * @return string.
      */
-    public function getContentMD5()
+    public function getBlobContentMD5()
     {
         return $this->_blobProperties->getContentMD5();
     }
@@ -197,56 +259,34 @@ class SetBlobPropertiesOptions extends BlobServiceOptions
     /**
      * Sets blob ContentMD5.
      *
-     * @param string $contentMD5 value.
+     * @param string $blobContentMD5 value.
      *
-     * @return void
+     * @return none.
      */
-    public function setContentMD5($contentMD5)
+    public function setBlobContentMD5($blobContentMD5)
     {
-        $this->_blobProperties->setContentMD5($contentMD5);
+        $this->_blobProperties->setContentMD5($blobContentMD5);
     }
     
     /**
-     * Gets cache control.
+     * Gets blob cache control.
      *
-     * @return string
+     * @return string.
      */
-    public function getCacheControl()
+    public function getBlobCacheControl()
     {
         return $this->_blobProperties->getCacheControl();
     }
     
     /**
-     * Sets cacheControl.
+     * Sets blob cacheControl.
      *
-     * @param string $cacheControl value to use.
-     *
-     * @return void
+     * @param string $blobCacheControl value to use.
+     * 
+     * @return none.
      */
-    public function setCacheControl($cacheControl)
+    public function setBlobCacheControl($blobCacheControl)
     {
-        $this->_blobProperties->setCacheControl($cacheControl);
-    }
-    
-    /**
-     * Gets content disposition.
-     *
-     * @return string
-     */
-    public function getContentDisposition()
-    {
-        return $this->_blobProperties->getContentDisposition();
-    }
-    
-    /**
-     * Sets contentDisposition.
-     *
-     * @param string $contentDisposition value to use.
-     *
-     * @return void
-     */
-    public function setContentDisposition($contentDisposition)
-    {
-        $this->_blobProperties->setContentDisposition($contentDisposition);
+        $this->_blobProperties->setCacheControl($blobCacheControl);
     }
 }

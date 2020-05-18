@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,7 +23,6 @@
  */
  
 namespace MicrosoftAzure\Storage\Blob\Models;
-
 use MicrosoftAzure\Storage\Common\Internal\Resources;
 use MicrosoftAzure\Storage\Common\Internal\Validate;
 use MicrosoftAzure\Storage\Common\Internal\Utilities;
@@ -36,59 +35,47 @@ use MicrosoftAzure\Storage\Common\Internal\Utilities;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class SetBlobMetadataResult
 {
-    private $etag;
-    private $lastModified;
-    private $requestServerEncrypted;
-
+    
+    /**
+     * @var \DateTime
+     */
+    private $_lastModified;
+    
+    /**
+     * @var string
+     */
+    private $_etag;
+    
     /**
      * Creates SetBlobMetadataResult from response headers.
-     *
+     * 
      * @param array $headers response headers
-     *
-     * @internal
-     *
+     * 
      * @return SetBlobMetadataResult
      */
-    public static function create(array $headers)
+    public static function create($headers)
     {
         $result = new SetBlobMetadataResult();
-
-        $result->setETag(Utilities::tryGetValueInsensitive(
-            Resources::ETAG,
-            $headers
-        ));
-
-        $date   = Utilities::tryGetValueInsensitive(
-            Resources::LAST_MODIFIED,
-            $headers
-        );
+        $date   = $headers[Resources::LAST_MODIFIED];
         $result->setLastModified(Utilities::rfc1123ToDateTime($date));
-
-        $result->setRequestServerEncrypted(
-            Utilities::toBoolean(
-                Utilities::tryGetValueInsensitive(
-                    Resources::X_MS_REQUEST_SERVER_ENCRYPTED,
-                    $headers
-                ),
-                true
-            )
-        );
-
+        $result->setETag($headers[Resources::ETAG]);
+        
         return $result;
     }
     
     /**
      * Gets blob lastModified.
      *
-     * @return \DateTime
+     * @return \DateTime.
      */
     public function getLastModified()
     {
-        return $this->lastModified;
+        return $this->_lastModified;
     }
 
     /**
@@ -96,22 +83,22 @@ class SetBlobMetadataResult
      *
      * @param \DateTime $lastModified value.
      *
-     * @return void
+     * @return none.
      */
-    protected function setLastModified(\DateTime $lastModified)
+    public function setLastModified($lastModified)
     {
         Validate::isDate($lastModified);
-        $this->lastModified = $lastModified;
+        $this->_lastModified = $lastModified;
     }
 
     /**
      * Gets blob etag.
      *
-     * @return string
+     * @return string.
      */
     public function getETag()
     {
-        return $this->etag;
+        return $this->_etag;
     }
 
     /**
@@ -119,33 +106,13 @@ class SetBlobMetadataResult
      *
      * @param string $etag value.
      *
-     * @return void
+     * @return none.
      */
-    protected function setETag($etag)
+    public function setETag($etag)
     {
-        Validate::canCastAsString($etag, 'etag');
-        $this->etag = $etag;
-    }
-
-    /**
-     * Gets the whether the contents of the request are successfully encrypted.
-     *
-     * @return boolean
-     */
-    public function getRequestServerEncrypted()
-    {
-        return $this->requestServerEncrypted;
-    }
-
-    /**
-     * Sets the request server encryption value.
-     *
-     * @param boolean $requestServerEncrypted
-     *
-     * @return void
-     */
-    public function setRequestServerEncrypted($requestServerEncrypted)
-    {
-        $this->requestServerEncrypted = $requestServerEncrypted;
+        Validate::isString($etag, 'etag');
+        $this->_etag = $etag;
     }
 }
+
+

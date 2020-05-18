@@ -3,8 +3,8 @@
 /*
  * CKFinder
  * ========
- * https://ckeditor.com/ckeditor-4/ckfinder/
- * Copyright (c) 2007-2018, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2020, CKSource - Frederico Knabben. All rights reserved.
  *
  * The software, this file and its contents are subject to the CKFinder
  * License. Please read the license.txt file before using, installing, copying,
@@ -35,8 +35,7 @@ class BackendAdapter implements AdapterInterface
     /**
      * Constructor.
      *
-     * @param Backend     $backend
-     * @param string|null $path
+     * @param null|string $path
      */
     public function __construct(Backend $backend, $path = null)
     {
@@ -45,7 +44,7 @@ class BackendAdapter implements AdapterInterface
     }
 
     /**
-     * Creates backend-relative path for cache file for given key
+     * Creates backend-relative path for cache file for given key.
      *
      * @param string $key
      * @param bool   $prefix
@@ -54,11 +53,11 @@ class BackendAdapter implements AdapterInterface
      */
     public function createCachePath($key, $prefix = false)
     {
-        return Path::combine($this->cachePath, trim($key, '/') . ($prefix ? '' : '.cache'));
+        return Path::combine($this->cachePath, trim($key, '/').($prefix ? '' : '.cache'));
     }
 
     /**
-     * Sets the value in cache under given key
+     * Sets the value in cache under given key.
      *
      * @param string $key
      * @param mixed  $value
@@ -71,7 +70,7 @@ class BackendAdapter implements AdapterInterface
     }
 
     /**
-     * Returns value under given key from cache
+     * Returns value under given key from cache.
      *
      * @param string $key
      *
@@ -89,7 +88,7 @@ class BackendAdapter implements AdapterInterface
     }
 
     /**
-     * Deletes value under given key  from cache
+     * Deletes value under given key  from cache.
      *
      * @param string $key
      *
@@ -105,7 +104,7 @@ class BackendAdapter implements AdapterInterface
 
         $this->backend->delete($cachePath);
 
-        $dirs = explode('/', dirname($cachePath));
+        $dirs = explode('/', \dirname($cachePath));
 
         do {
             $dirPath = implode('/', $dirs);
@@ -121,7 +120,7 @@ class BackendAdapter implements AdapterInterface
     }
 
     /**
-     * Deletes all cache entries with given key prefix
+     * Deletes all cache entries with given key prefix.
      *
      * @param string $keyPrefix
      *
@@ -138,7 +137,7 @@ class BackendAdapter implements AdapterInterface
     }
 
     /**
-     * Changes prefix for all entries given key prefix
+     * Changes prefix for all entries given key prefix.
      *
      * @param string $sourcePrefix
      * @param string $targetPrefix

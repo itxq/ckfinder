@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * 
  * PHP version 5
  *
  * @category  Microsoft
@@ -23,7 +23,6 @@
  */
  
 namespace MicrosoftAzure\Storage\Blob\Models;
-
 use MicrosoftAzure\Storage\Common\Internal\Resources;
 use MicrosoftAzure\Storage\Common\Internal\Utilities;
 
@@ -35,17 +34,21 @@ use MicrosoftAzure\Storage\Common\Internal\Utilities;
  * @author    Azure Storage PHP SDK <dmsh@microsoft.com>
  * @copyright 2016 Microsoft Corporation
  * @license   https://github.com/azure/azure-storage-php/LICENSE
+ * @version   Release: 0.10.2
  * @link      https://github.com/azure/azure-storage-php
  */
 class BreakLeaseResult
 {
+    /**
+     * @var string
+     */
     private $_leaseTime;
     
     /**
      * Creates BreakLeaseResult from response headers
-     *
+     * 
      * @param array $headers response headers
-     *
+     * 
      * @return BreakLeaseResult
      */
     public static function create($headers)
@@ -61,7 +64,7 @@ class BreakLeaseResult
     
     /**
      * Gets lease time.
-     *
+     * 
      * @return string
      */
     public function getLeaseTime()
@@ -71,12 +74,12 @@ class BreakLeaseResult
     
     /**
      * Sets lease time.
-     *
+     * 
      * @param string $leaseTime the blob lease time.
-     *
-     * @return void
+     * 
+     * @return none
      */
-    protected function setLeaseTime($leaseTime)
+    public function setLeaseTime($leaseTime)
     {
         $this->_leaseTime = $leaseTime;
     }
