@@ -13,6 +13,7 @@
 namespace itxq\ckfinder\tools;
 
 use CKSource\CKFinder\CKFinder;
+use itxq\pinyin\PinYin;
 use itxq\traits\SingletonPattern;
 
 /**
