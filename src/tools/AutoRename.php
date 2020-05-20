@@ -60,7 +60,7 @@ class AutoRename
         if (!empty($extension) && $this->config[self::FILE] === false) {
             return $name;
         }
-        $name = PinYin::make()->turn($name, false, '', 'utf-8');
+        $name = PinYin::make()->turn($name, false, false, '_', 'utf-8');
         // uuid 用于名称为空时
         $name = empty($name) ? $this->uuid() : strtolower($name);
         if ($name === '.' . $extension) {
